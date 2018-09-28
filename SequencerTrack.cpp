@@ -18,57 +18,57 @@
 #define MUTE_ARM_STATE_BIT 1
 
 SequencerTrack::SequencerTrack():
-    currentStep(0), trackLength(16), state(0) {
-    for (int i=0; i < NUMBER_OF_STEPBUTTONS; i++){
-        steps[i]=SequencerStep();
-        steps[i].parameter1=440;
+sampleIndex(0), currentPattern(0), state(0) {}
+
+const char * SequencerTrack::getCurrentSampleName(){
+    return sampleNames[sampleIndex];
+}
+
+const char * SequencerTrack::getNextSampleName(){
+    int nextIndex = sampleIndex+1;
+    if (nextIndex > 2){
+        nextIndex = 0;
+    }
+    return sampleNames[nextIndex];
+}
+
+void SequencerTrack::toggleSample(){
+    //Serial.println(sampleIndex);
+    sampleIndex++;
+    if (sampleIndex > 2){
+        sampleIndex = 0;
     }
 }
 
 
 uint8_t SequencerTrack::doStep(){
-    if (++currentStep >= trackLength){
-        currentStep = 0;
-    }
-    return steps[currentStep].state;
+    return patterns[currentPattern].doStep();
 }
 
-SequencerStep* SequencerTrack::getCurrentStep(){
-
-    return &steps[currentStep];
-
-}
-
-bool SequencerTrack::isInPLockMode(){
-    for (int i=0; i<NUMBER_OF_STEPBUTTONS; i++) {
-        if (steps[i].isParameterLockOn()){
-            return true;
-        }
-    }
-    return false;
-}
-
-void SequencerTrack::turnOffPLockMode(){
-    for (int i=0; i<NUMBER_OF_STEPBUTTONS; i++) {
-        steps[i].setParameterLockRecordOff();
+void SequencerTrack::onStop(){
+    for (int i = 0; i<NUMBER_OF_PATTERNS; i++) {
+        patterns[i].onStop();
     }
 }
 
-void SequencerTrack::togglePLockMode(){
-    if (isInPLockMode()){
-        //turn off all plocks if track is currently in plock mode
-        for (int i=0; i<NUMBER_OF_STEPBUTTONS; i++) {
-            steps[i].setParameterLockRecordOff();
-        }
-    } else {
-        //turn on plocks on all trigger steps, if track is not in plock mode
-        for (int i=0; i<NUMBER_OF_STEPBUTTONS; i++) {
-            if (steps[i].isTriggerOn()){
-                steps[i].setParameterLockRecordOn();
-            }
-        }
-    }
+
+SequencerStep& SequencerTrack::getCurrentStep(){
+    return patterns[currentPattern].getCurrentStep();
 }
+
+SequencerPattern& SequencerTrack::getCurrentPattern(){
+    return patterns[currentPattern];
+}
+
+uint8_t SequencerTrack::getCurrentPatternIndex(){
+    return currentPattern;
+}
+
+void SequencerTrack::switchToPattern(uint8_t number){
+    patterns[number].currentStep = patterns[currentPattern].currentStep;
+    currentPattern = number;
+}
+
 
 /*
  * TRACK MUTE

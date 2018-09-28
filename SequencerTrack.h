@@ -11,36 +11,28 @@
 
 #include <inttypes.h>
 #include "SequencerStep.h"
+#include "SequencerPattern.h"
 
-#define NUMBER_OF_STEPBUTTONS 16
+#define NUMBER_OF_PATTERNS 16
 
 class SequencerTrack
 {
 public:
     SequencerTrack();
     
-    uint8_t currentStep;
-    uint8_t trackLength;
+    SequencerPattern patterns [NUMBER_OF_PATTERNS];
     
-    SequencerStep steps [NUMBER_OF_STEPBUTTONS];
-    SequencerStep* getCurrentStep();
+    uint8_t sampleIndex;
     
-    //bit 0: mute/unmuted
-    //bit 1: mute/unmute arm state
-    uint8_t state;
+    const char * sampleNames[3];
     
-
+    SequencerPattern& getCurrentPattern();
+    uint8_t getCurrentPatternIndex();
+    SequencerStep& getCurrentStep();
+    
     //does a Step and returns 1 if the new step is a trigger, 0 if it is not a trigger
     uint8_t doStep();
-    
-    //returns true if at least one step in the track is in plock rec mode
-    bool isInPLockMode();
-    
-    //turns plock rec mode on for all steps, if no step in the track is in plock rec mode, otherwise turns all steps off.
-    void togglePLockMode();
-    
-    void turnOffPLockMode();
-    
+    void onStop();
     
     //control muting of the whole track
     void toggleMute();
@@ -53,6 +45,21 @@ public:
     void toggleMuteArm();
     
     void activateMuteArms();
+    
+    const char * getCurrentSampleName();
+    const char * getNextSampleName();
+    void toggleSample();
+    
+    void switchToPattern(uint8_t number);
+
+private:
+    //the currently active pattern
+    uint8_t currentPattern;
+    //bit 0: mute/unmuted
+    //bit 1: mute/unmute arm state
+    uint8_t state;
+    
+
 };
 
 #endif /* defined(__StepSequencerTeensy__SequencerTrack__) */

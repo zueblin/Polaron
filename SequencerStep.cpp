@@ -6,8 +6,7 @@
 
 
 SequencerStep::SequencerStep()
-    : state(0), parameter1(512u), parameter2(512u)
-{}
+: state(0), parameter1(512u), parameter2(512u), triggerPattern(0b00000001){}
 
 void SequencerStep::toggleTriggerState(){
     //toggle trigger state bit
@@ -38,4 +37,11 @@ void SequencerStep::setParameterLockRecordOff(){
 
 bool SequencerStep::isParameterLockOn(){
     return state & _BV(PLOCK_REC_STATE);
+}
+
+void SequencerStep::copyValuesFrom(SequencerStep sourceStep){
+    state = sourceStep.state;
+    parameter1 = sourceStep.parameter1;
+    parameter2 = sourceStep.parameter2;
+    triggerPattern = sourceStep.triggerPattern;
 }
