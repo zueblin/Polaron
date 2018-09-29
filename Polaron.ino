@@ -7,6 +7,9 @@
 
 #include <Audio.h>
 
+#include "AudioChannel1.h"
+#include "SimpleDrumChannel.h"
+
 #define PULSE_WIDTH_USEC 5
 
 #define SHIFT_IN_PLOAD_PIN 0 // 2  // Connects to Parallel load pin the 165
@@ -17,61 +20,44 @@
 #define POTI_PIN_1 A16
 #define POTI_PIN_2 A17
 
-AudioSynthWaveformSine   osc1;          
-AudioSynthWaveformSine   osc2;
-AudioSynthWaveformSine   osc3;          
-AudioSynthWaveformSine   osc4;          
-AudioSynthWaveformSine   osc5;          
-AudioSynthWaveformSine   osc6;          
-
-AudioEffectEnvelope      envelope1;
-AudioEffectEnvelope      envelope2;
-AudioEffectEnvelope      envelope3;
-AudioEffectEnvelope      envelope4;
-AudioEffectEnvelope      envelope5;
-AudioEffectEnvelope      envelope6;
-
 AudioOutputAnalogStereo  dacs1;          
 
 AudioMixer8              mixer1;
 AudioMixer8              mixer2;
 
-AudioConnection          patchCord2(osc1, envelope1);
-AudioConnection          patchCord3(osc2, envelope2);
-AudioConnection          patchCord4(osc3, envelope3);
-AudioConnection          patchCord5(osc4, envelope4);
-AudioConnection          patchCord6(osc5, envelope5);
-AudioConnection          patchCord7(osc6, envelope6);
+SimpleDrumChannel channel1;
+AudioChannel1 channel2;
+AudioChannel1 channel3;
+AudioChannel1 channel4;
+AudioChannel1 channel5;
+AudioChannel1 channel6;
 
-AudioConnection          patchCord8(envelope1, 0, mixer1, 0);
-AudioConnection          patchCord9(envelope2, 0, mixer1, 1);
-AudioConnection          patchCord10(envelope3, 0, mixer1, 2);
-AudioConnection          patchCord11(envelope4, 0, mixer1, 3);
-AudioConnection          patchCord12(envelope5, 0, mixer1, 4);
-AudioConnection          patchCord13(envelope6, 0, mixer1, 5);
-AudioConnection          patchCord14(envelope1, 0, mixer2, 0);
-AudioConnection          patchCord15(envelope2, 0, mixer2, 1);
-AudioConnection          patchCord16(envelope3, 0, mixer2, 2);
-AudioConnection          patchCord17(envelope4, 0, mixer2, 3);
-AudioConnection          patchCord18(envelope5, 0, mixer2, 4);
-AudioConnection          patchCord19(envelope6, 0, mixer2, 5);
+
+AudioConnection          patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
+AudioConnection          patchCord9(*channel2.getOutput1(), 0, mixer1, 1);
+AudioConnection          patchCord10(*channel3.getOutput1(), 0, mixer1, 2);
+AudioConnection          patchCord11(*channel4.getOutput1(), 0, mixer1, 3);
+AudioConnection          patchCord12(*channel5.getOutput1(), 0, mixer1, 4);
+AudioConnection          patchCord13(*channel6.getOutput1(), 0, mixer1, 5);
+AudioConnection          patchCord14(*channel1.getOutput2(), 0, mixer2, 0);
+AudioConnection          patchCord15(*channel2.getOutput2(), 0, mixer2, 1);
+AudioConnection          patchCord16(*channel3.getOutput2(), 0, mixer2, 2);
+AudioConnection          patchCord17(*channel4.getOutput2(), 0, mixer2, 3);
+AudioConnection          patchCord18(*channel5.getOutput2(), 0, mixer2, 4);
+AudioConnection          patchCord19(*channel6.getOutput2(), 0, mixer2, 5);
+
 AudioConnection          patchCord20(mixer1, 0, dacs1, 0);
 AudioConnection          patchCord21(mixer2, 0, dacs1, 1);
 
 // GUItool: end automatically generated code
 
-AudioSynthWaveformSine *players [NUMBER_OF_INSTRUMENTTRACKS] = {
-    &osc1, &osc2, &osc3, &osc4, &osc5, &osc6
-};
-
-
-AudioEffectEnvelope *envelopes [NUMBER_OF_INSTRUMENTTRACKS] = {
-    &envelope1, &envelope2, &envelope3, &envelope4, &envelope5, &envelope6
+AudioChannel *players [NUMBER_OF_INSTRUMENTTRACKS] = {
+    &channel1, &channel2, &channel3, &channel4, &channel5, &channel6
 };
 
 unsigned long last_step_time = millis();
 
-unsigned int step_length = 10;
+unsigned int step_length = 20;
 static bool externalClockReceived = false;
 static bool externalSync = false;
 
@@ -104,15 +90,6 @@ void setup() {
     mixer2.gain(3, 0.1f);
     mixer2.gain(4, 0.3f);
     mixer2.gain(5, 0.1f);
-    
-    
-    for (int i=0; i<NUMBER_OF_INSTRUMENTTRACKS; i++){
-        envelopes[i]->delay(0);
-        envelopes[i]->attack(1);
-        envelopes[i]->hold(0);
-        envelopes[i]->decay(5);
-        envelopes[i]->sustain(0.0f);
-    }
     
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
     FastLED.setBrightness(5);
@@ -277,14 +254,14 @@ void updateAudio() {
             //check if the bit for the n-th pulse of this step is set
             && (step.triggerPattern & (1 << sequencer.pulseCount))){
                 if (sequencer.functionButtons[BUTTON_INSTANT_PLOCK].read()){         
-                    players[i]->frequency((float)map(sensorValue1, 0, 1024, 35, 5070));
-                    envelopes[i]->decay(map(sensorValue2, 0, 1024, 0, 1024));
+                    players[i]->setParam1(sensorValue1);
+                    players[i]->setParam2(sensorValue2);
                 } else {
-                    players[i]->frequency((float)map(step.parameter1, 0, 1024, 35, 5070));
-                    envelopes[i]->decay(map(step.parameter2, 0, 1024, 0, 1024));
+                    players[i]->setParam1(step.parameter1);
+                    players[i]->setParam2(step.parameter2);
 
                 }
-                envelopes[i]->noteOn();
+                players[i]->trigger();
         }
     }
 }
