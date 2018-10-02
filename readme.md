@@ -8,7 +8,7 @@ Warning: This project is work in progress and not working correctly yet.
 License
 =======
 
-Code (AVR projects): GPL3.0.
+Code: MIT.
 
 Hardware: cc-by-sa-3.0
 
