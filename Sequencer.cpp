@@ -1,10 +1,24 @@
+// Copyright (c) 2018 Thomas Zueblin
 //
-//  Sequencer.cpp
-//  StepSequencerTeensy
+// Author: Thomas Zueblin (thomas.zueblin@gmail.com)
 //
-//  Created by Thomas on 08.10.15.
-//  Copyright © 2015 innercity. All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #include "Sequencer.h"
 
@@ -261,8 +275,6 @@ CRGB Sequencer::colorForStepState(uint8_t state){
 
 void Sequencer::updateState() {
     
-
-    
     FunctionMode functionMode = calculateFunctionMode();
     
     switch (functionMode) {
@@ -290,13 +302,6 @@ void Sequencer::updateState() {
         case FunctionMode::SET_TRIGGER_PATTERN:
             //nothing to do;
             break;
-        case FunctionMode::ARM_SAMPLING:
-            if (running){
-                sampleMode = SamplingMode::ARMED_ON_STEP;
-            } else {
-                sampleMode = SamplingMode::PREPARE_ARMED_ON_THRESHOLD;
-            }
-            break;
         default:
             break;
     }
@@ -320,20 +325,6 @@ void Sequencer::updateState() {
         functionLED(BUTTON_STARTSTOP) = CRGB::Green;
         stepLED(tracks[selectedTrack].getCurrentPattern().currentStep) = CRGB::Green;
     }
-    
-    switch (sampleMode) {
-        case SamplingMode::RECORDING:
-            functionLED(BUTTON_SAMPLE_RECORD) = CRGB::Red;
-            break;
-        case SamplingMode::PREPARE_ARMED_ON_THRESHOLD:
-        case SamplingMode::ARMED_ON_THRESHOLD:
-        case SamplingMode::ARMED_ON_STEP:
-            functionLED(BUTTON_SAMPLE_RECORD) = CRGB::DarkOrange;
-            break;
-        default:
-            functionLED(BUTTON_SAMPLE_RECORD) = CRGB::Black;
-    }
-    
 }
 
 bool Sequencer::isRunning(){
@@ -381,11 +372,6 @@ FunctionMode Sequencer::calculateFunctionMode(){
     }
     if (functionButtons[BUTTON_TRIGGER_PATTERN].read()) {
         return FunctionMode::SET_TRIGGER_PATTERN;
-    }
-    if (functionButtons[BUTTON_SAMPLE_RECORD].fell()
-        && (selectedTrack >= 0 && selectedTrack < 6)
-        && sampleMode == SamplingMode::STOPPED) {
-        return FunctionMode::ARM_SAMPLING;
     }
     return FunctionMode::DEFAULT_MODE;
 }

@@ -1,10 +1,24 @@
+// Copyright (c) 2018 Thomas Zueblin
 //
-//  Sequencer.hpp
-//  StepSequencerTeensy
+// Author: Thomas Zueblin (thomas.zueblin@gmail.com)
 //
-//  Created by Thomas on 08.10.15.
-//  Copyright © 2015 innercity. All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #ifndef Sequencer_h
 #define Sequencer_h
@@ -24,13 +38,12 @@
 #define NUMBER_OF_STEPBUTTONS 16
 
 #define BUTTON_STARTSTOP 0
-#define BUTTON_SET_TRACKLENGTH 1
-#define BUTTON_TOGGLE_PLOCK 2
-#define BUTTON_TOGGLE_MUTE 3
+#define BUTTON_TOGGLE_PLOCK 1
+#define BUTTON_TOGGLE_MUTE 2
+#define BUTTON_SET_TRACKLENGTH 3
 #define BUTTON_INSTANT_PLOCK 4
 #define BUTTON_TRIGGER_PATTERN 5
 #define BUTTON_SET_PATTERN 6
-#define BUTTON_SAMPLE_RECORD 7
 
 //led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS+NUMBER_OF_TRACKBUTTONS+NUMBER_OF_STEPBUTTONS
@@ -39,11 +52,8 @@
 #define stepLED(n) leds[(n)]
 #define trackLED(n) leds[NUMBER_OF_FUNCTIONBUTTONS+NUMBER_OF_STEPBUTTONS+(n)]
 
-enum class SamplingMode {STOPPED, ARMED_ON_STEP, PREPARE_ARMED_ON_THRESHOLD, ARMED_ON_THRESHOLD, RECORDING};
-
-enum class FunctionMode {START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, INSTANT_PLOCK, SET_TRIGGER_PATTERN, SET_PATTERN, ARM_SAMPLING, DEFAULT_MODE};
-
-
+enum class FunctionMode {START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, INSTANT_PLOCK, SET_TRIGGER_PATTERN, SET_PATTERN, DEFAULT_MODE};
+enum class PLockParam {SET1, SET2, SET3};
 
 class Sequencer
 {
@@ -56,9 +66,7 @@ public:
     
     // All leds are in the same array, since i could not get the lib to work with several arrays.
     CRGB leds[NUM_LEDS];
-    
-    SamplingMode sampleMode = SamplingMode::STOPPED;
-    
+
     bool isRunning();
     uint8_t getSelectedTrackIndex();
     SequencerTrack& getSelectedTrack();
@@ -69,9 +77,7 @@ public:
     void tick();
     
     uint8_t pulseCount= 0;
-    
-    
-    
+    PLockParam pLockParam = PLockParam::SET1;
     
 private:
     //currently selected track

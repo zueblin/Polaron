@@ -1,3 +1,26 @@
+// Copyright (c) 2018 Thomas Zueblin
+//
+// Author: Thomas Zueblin (thomas.zueblin@gmail.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+
 #include "Bounce2.h"
 #include "FastLED.h"
 #include "SequencerTrack.h"
@@ -222,8 +245,24 @@ void updateAudio() {
             SequencerStep &step = sequencer.tracks[i].getCurrentStep();
             
             if (step.isParameterLockOn()){
-                step.parameter1 = sensorValue1;
-                step.parameter2 = sensorValue2;
+                switch (sequencer.pLockParam){
+                    case PLockParam::SET1 : {
+                        step.parameter1 = sensorValue1;
+                        step.parameter2 = sensorValue2;
+                        break; }
+                    case PLockParam::SET2 : {
+                        step.parameter3 = sensorValue1;
+                        step.parameter4 = sensorValue2;
+                        break; }
+                    case PLockParam::SET3 : {
+                        step.parameter5 = sensorValue1;
+                        step.parameter6 = sensorValue2;
+                        break; }
+                    default: {
+                        step.parameter1 = sensorValue1;
+                        step.parameter2 = sensorValue2;
+                    }
+                }
             }
         }
     }
@@ -259,6 +298,10 @@ void updateAudio() {
                 } else {
                     players[i]->setParam1(step.parameter1);
                     players[i]->setParam2(step.parameter2);
+                    players[i]->setParam3(step.parameter3);
+                    players[i]->setParam4(step.parameter4);
+                    players[i]->setParam5(step.parameter5);
+                    players[i]->setParam6(step.parameter6);
 
                 }
                 players[i]->trigger();
