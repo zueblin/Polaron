@@ -30,7 +30,7 @@
 
 #include <Audio.h>
 
-#include "AudioChannel1.h"
+#include "SimpleSineChannel.h"
 #include "SimpleDrumChannel.h"
 
 #define PULSE_WIDTH_USEC 5
@@ -49,11 +49,11 @@ AudioMixer8              mixer1;
 AudioMixer8              mixer2;
 
 SimpleDrumChannel channel1;
-AudioChannel1 channel2;
-AudioChannel1 channel3;
-AudioChannel1 channel4;
-AudioChannel1 channel5;
-AudioChannel1 channel6;
+SimpleDrumChannel channel2;
+SimpleSineChannel channel3(20, 400);
+SimpleSineChannel channel4(880, 8800);
+SimpleSineChannel channel5(8800, 17600);
+SimpleSineChannel channel6(100, 1000);
 
 
 AudioConnection          patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
@@ -141,23 +141,6 @@ void setup() {
 }
 
 
-CRGB colorForStepState(uint8_t state){
-    switch (state) {
-        case 1:
-            //trigger on / plock rec off
-            return CRGB::CornflowerBlue;
-        case 2:
-            //trigger off / plock rec on
-            return CRGB::Green;
-        case 3:
-            //trigger on / plock rec on
-            return CRGB::DarkOrange;
-        default:
-            //trigger off / plock rec off
-            return CRGB::Black;
-    }
-}
-
 inline void readButtonState(Bounce &button) {
   button.update();
   //Pulse the Clock (rising edge shifts the next bit).
@@ -215,22 +198,7 @@ void readButtonStates(){
     readButtonState(sequencer.functionButtons[0]);
 }
 
-
-
-void updateControl() {
-    
-    readButtonStates();
-    sequencer.updateState();
-    FastLED.show();
-    
-}
-
-
-
-
-
 void updateAudio() {
-
     sequencer.tick();   
       
     uint16_t sensorValue1 = (uint16_t) (1024 - analogRead(POTI_PIN_1));
@@ -245,29 +213,27 @@ void updateAudio() {
             SequencerStep &step = sequencer.tracks[i].getCurrentStep();
             
             if (step.isParameterLockOn()){
-                switch (sequencer.pLockParam){
-                    case PLockParam::SET1 : {
+                switch (sequencer.pLockParamSet){
+                    case PLockParamSet::SET1 : {
                         step.parameter1 = sensorValue1;
                         step.parameter2 = sensorValue2;
                         break; }
-                    case PLockParam::SET2 : {
+                    case PLockParamSet::SET2 : {
                         step.parameter3 = sensorValue1;
                         step.parameter4 = sensorValue2;
                         break; }
-                    case PLockParam::SET3 : {
+                    case PLockParamSet::SET3 : {
                         step.parameter5 = sensorValue1;
                         step.parameter6 = sensorValue2;
                         break; }
-                    default: {
-                        step.parameter1 = sensorValue1;
-                        step.parameter2 = sensorValue2;
-                    }
+                    
                 }
             }
         }
     }
 
     // punch in style recording of the trigger pattern for the currently selected track
+    /*
     uint8_t triggerPattern = 0b00000001;
     if (sequencer.functionButtons[BUTTON_TRIGGER_PATTERN].read()){
         if (sensorValue1 < 200){
@@ -282,7 +248,7 @@ void updateAudio() {
             triggerPattern = 0b00111111;
         }
         sequencer.getSelectedTrack().getCurrentStep().triggerPattern = triggerPattern;
-    }
+    }*/
 
     // trigger tracks if step is set to on
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
@@ -292,10 +258,10 @@ void updateAudio() {
         if (!sequencer.tracks[i].isMuted() && step.isTriggerOn()
             //check if the bit for the n-th pulse of this step is set
             && (step.triggerPattern & (1 << sequencer.pulseCount))){
-                if (sequencer.functionButtons[BUTTON_INSTANT_PLOCK].read()){         
-                    players[i]->setParam1(sensorValue1);
-                    players[i]->setParam2(sensorValue2);
-                } else {
+                //if (sequencer.functionButtons[BUTTON_INSTANT_PLOCK].read()){         
+                //    players[i]->setParam1(sensorValue1);
+                //    players[i]->setParam2(sensorValue2);
+                //} else {
                     players[i]->setParam1(step.parameter1);
                     players[i]->setParam2(step.parameter2);
                     players[i]->setParam3(step.parameter3);
@@ -303,7 +269,7 @@ void updateAudio() {
                     players[i]->setParam5(step.parameter5);
                     players[i]->setParam6(step.parameter6);
 
-                }
+                //}
                 players[i]->trigger();
         }
     }

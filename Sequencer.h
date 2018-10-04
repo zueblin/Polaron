@@ -39,11 +39,12 @@
 
 #define BUTTON_STARTSTOP 0
 #define BUTTON_TOGGLE_PLOCK 1
-#define BUTTON_TOGGLE_MUTE 2
-#define BUTTON_SET_TRACKLENGTH 3
-#define BUTTON_INSTANT_PLOCK 4
-#define BUTTON_TRIGGER_PATTERN 5
-#define BUTTON_SET_PATTERN 6
+#define BUTTON_SET_PARAMSET_1 2
+#define BUTTON_SET_PARAMSET_2 3
+#define BUTTON_SET_PARAMSET_3 4
+#define BUTTON_TOGGLE_MUTE 5
+#define BUTTON_SET_TRACKLENGTH 6
+#define BUTTON_SET_PATTERN 7
 
 //led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS+NUMBER_OF_TRACKBUTTONS+NUMBER_OF_STEPBUTTONS
@@ -52,8 +53,8 @@
 #define stepLED(n) leds[(n)]
 #define trackLED(n) leds[NUMBER_OF_FUNCTIONBUTTONS+NUMBER_OF_STEPBUTTONS+(n)]
 
-enum class FunctionMode {START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, INSTANT_PLOCK, SET_TRIGGER_PATTERN, SET_PATTERN, DEFAULT_MODE};
-enum class PLockParam {SET1, SET2, SET3};
+enum class FunctionMode {START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, SET_PATTERN, DEFAULT_MODE};
+enum class PLockParamSet {SET1, SET2, SET3};
 
 class Sequencer
 {
@@ -67,17 +68,15 @@ public:
     // All leds are in the same array, since i could not get the lib to work with several arrays.
     CRGB leds[NUM_LEDS];
 
-    bool isRunning();
-    uint8_t getSelectedTrackIndex();
-    SequencerTrack& getSelectedTrack();
+    bool isRunning(){return running;}
+    uint8_t getSelectedTrackIndex(){return selectedTrack;}
+    SequencerTrack& getSelectedTrack(){return tracks[selectedTrack];}
     void updateState();
-    
-    void start();
-    void stop();
+
     void tick();
     
     uint8_t pulseCount= 0;
-    PLockParam pLockParam = PLockParam::SET1;
+    PLockParamSet pLockParamSet = PLockParamSet::SET1;
     
 private:
     //currently selected track
@@ -91,6 +90,7 @@ private:
     //tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
     bool patternCopy = false;
+    bool hasActivePLockReceivers = false;
     
     
     bool running = false;
@@ -107,6 +107,8 @@ private:
     void doUpdateMutes();
     void doTurnOffPlockMode();
     void doSetTrackSelection();
+    void setDefaultTrackLight(uint8_t trackNum);
+    void setFunctionButtonLights();
     
     CRGB colorForStepState(uint8_t state);
     
