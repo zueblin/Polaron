@@ -32,6 +32,8 @@
 
 #include "SimpleSineChannel.h"
 #include "SimpleDrumChannel.h"
+#include "FMChannel.h"
+#include "HatsChannel.h"
 
 #define PULSE_WIDTH_USEC 5
 
@@ -51,9 +53,9 @@ AudioMixer8              mixer2;
 SimpleDrumChannel channel1;
 SimpleDrumChannel channel2;
 SimpleSineChannel channel3(20, 400);
-SimpleSineChannel channel4(880, 8800);
+FMChannel channel4(110, 880);
 SimpleSineChannel channel5(8800, 17600);
-SimpleSineChannel channel6(100, 1000);
+HatsChannel channel6;
 
 
 AudioConnection          patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
@@ -97,22 +99,22 @@ void setup() {
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
         
-    AudioMemory(20);
+    AudioMemory(30);
     //dacs1.analogReference(EXTERNAL);
         
-    mixer1.gain(0, 0.3f);
-    mixer1.gain(1, 0.3f);
-    mixer1.gain(2, 0.1f);
-    mixer1.gain(3, 0.3f);
-    mixer1.gain(4, 0.1f);
-    mixer1.gain(5, 0.3f);
+    mixer1.gain(0, 0.6f);
+    mixer1.gain(1, 0.6f);
+    mixer1.gain(2, 0.6f);
+    mixer1.gain(3, 0.6f);
+    mixer1.gain(4, 0.6f);
+    mixer1.gain(5, 0.6f);
     
-    mixer2.gain(0, 0.3f);
-    mixer2.gain(1, 0.3f);
-    mixer2.gain(2, 0.3f);
-    mixer2.gain(3, 0.1f);
-    mixer2.gain(4, 0.3f);
-    mixer2.gain(5, 0.1f);
+    mixer2.gain(0, 0.6f);
+    mixer2.gain(1, 0.6f);
+    mixer2.gain(2, 0.6f);
+    mixer2.gain(3, 0.6f);
+    mixer2.gain(4, 0.6f);
+    mixer2.gain(5, 0.6f);
     
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
     FastLED.setBrightness(5);
