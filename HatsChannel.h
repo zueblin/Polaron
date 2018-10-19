@@ -40,7 +40,7 @@ class HatsChannel : public AudioChannel
         w7m(w7, 0, mixer, 6),
         w8m(w8, 0, mixer, 7),
         mixerFilter(mixer, 0, filter, 0),
-        filterEnv(filter, 2, envelope, 0){
+        filterEnv(filter, 0, envelope, 0){
         
         envelope.delay(0);
         envelope.attack(1);
@@ -48,14 +48,14 @@ class HatsChannel : public AudioChannel
         envelope.decay(5);
         envelope.sustain(0.0f);
 
-        mixer.gain(0, 0.6f);
-        mixer.gain(1, 0.6f);
-        mixer.gain(2, 0.6f);
-        mixer.gain(3, 0.6f);
-        mixer.gain(4, 0.6f);
-        mixer.gain(5, 0.6f);
-        mixer.gain(6, 0.6f);
-        mixer.gain(7, 0.6f);
+        mixer.gain(0, 0.5f);
+        mixer.gain(1, 0.5f);
+        mixer.gain(2, 0.5f);
+        mixer.gain(3, 0.5f);
+        mixer.gain(4, 0.5f);
+        mixer.gain(5, 0.5f);
+        mixer.gain(6, 0.5f);
+        mixer.gain(7, 0.0f);
         
         w1.begin(1.0, baseFreq, WAVEFORM_SQUARE);
         w2.begin(1.0, baseFreq * ratio1,WAVEFORM_SQUARE);
@@ -66,7 +66,10 @@ class HatsChannel : public AudioChannel
         w7.begin(1.0, baseFreq * ratio6,WAVEFORM_SQUARE);
         w8.begin(1.0, baseFreq * ratio7,WAVEFORM_SQUARE);
 
-        filter.frequency(5000);
+        filter.setHighpass(0, 8000, 0.700);
+        filter.setHighpass(1, 8000, 0.700);
+        filter.setHighpass(2, 8000, 0.700);
+        //filter.setHighpass(3, 8000, 0.700 );
 
     }
 	AudioStream* getOutput1(){return &envelope;}
@@ -87,10 +90,15 @@ class HatsChannel : public AudioChannel
         w8.frequency(baseFreq * ratio7);
     }
     void setParam2(int value){}
-    void setParam3(int value){filter.frequency((float)map(value, 0, 1024, 4000, 10000));}
+    void setParam3(int value){
+        float mappedValue = (float)map(value, 0, 1024, 2000, 10000);
+        filter.setHighpass(0, mappedValue, 0.700);
+        filter.setHighpass(1, mappedValue, 0.700);
+        filter.setHighpass(2, mappedValue, 0.700);
+      }
     void setParam4(int value){}
     void setParam5(int value){}
-    void setParam6(int value){envelope.decay((float)map(value, 0, 1024, 1, 200));}
+    void setParam6(int value){envelope.decay((float)map(value, 0, 1024, 1, 100));}
 
     private:
     float baseFreq = 40;
@@ -112,7 +120,7 @@ class HatsChannel : public AudioChannel
     AudioSynthWaveform w6;
     AudioSynthWaveform w7;
     AudioSynthWaveform w8;
-    AudioFilterStateVariable filter;
+    AudioFilterBiquad filter;
     AudioEffectEnvelope envelope;
     AudioConnection w1m;
     AudioConnection w2m;

@@ -52,6 +52,18 @@ void Sequencer::tick(){
     }
 }
 
+void Sequencer::start(){
+    if(!running){
+        doStartStop();
+    }
+}
+
+void Sequencer::stop(){
+    if(running){
+        doStartStop();
+    }
+}
+
 CRGB Sequencer::colorForStepState(uint8_t state){
     switch (state) {
         case 1:
@@ -124,7 +136,7 @@ void Sequencer::updateState() {
     
     //indicate current step
     if (running){
-        stepLED(tracks[selectedTrack].getCurrentPattern().currentStep) = CRGB::Green;
+        stepLED(tracks[selectedTrack].getCurrentPattern().currentStep) = CRGB::White;
     }
 }
 
@@ -294,6 +306,7 @@ void Sequencer::doStartStop(){
         for (int i=0; i<NUMBER_OF_INSTRUMENTTRACKS; i++) {
             tracks[i].onStop();
         }
+        pulseCount = 0;
     }
 }
 

@@ -74,6 +74,8 @@ public:
     void updateState();
 
     void tick();
+    void start();
+    void stop();
     
     uint8_t pulseCount= 0;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;

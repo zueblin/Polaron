@@ -29,12 +29,15 @@
 #include "mixer.h"
 
 #include <Audio.h>
+// #define USB_MIDI_SERIAL
+// #include "MIDIUSB.h"
 
 #include "SimpleSineChannel.h"
 #include "SimpleDrumChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
 
+//#define FASTLED_ALLOW_INTERRUPTS 0
 #define PULSE_WIDTH_USEC 5
 
 #define SHIFT_IN_PLOAD_PIN 0 // 2  // Connects to Parallel load pin the 165
@@ -83,6 +86,7 @@ AudioChannel *players [NUMBER_OF_INSTRUMENTTRACKS] = {
 unsigned long last_step_time = millis();
 
 unsigned int step_length = 20;
+
 static bool externalClockReceived = false;
 static bool externalSync = false;
 
@@ -98,6 +102,8 @@ void setup() {
     // init input shift register
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
+
+    usbMIDI.setHandleRealTimeSystem(onRealTimeSystem);
         
     AudioMemory(30);
     //dacs1.analogReference(EXTERNAL);
@@ -282,7 +288,7 @@ void updateAudio() {
 
 void loop() {
     
-    //usbMIDI.read();
+    usbMIDI.read();
     //long starttime = micros();
     
     FastLED.clearData();
@@ -292,16 +298,16 @@ void loop() {
     
     if (sequencer.isRunning()){
         
-        //if (externalSync && externalClockReceived){
-        //    externalClockReceived = false;
-        //    updateAudio();
-        //} else 
+        if (externalSync && externalClockReceived){
+            externalClockReceived = false;
+            updateAudio();
+        } else 
         if (!externalSync && (millis() - last_step_time >= step_length)){
             updateAudio();
             last_step_time = millis();
         }
         
-        if (0){
+        if (1){
 
             Serial.print("CPU: ");
             Serial.print("all=");
@@ -317,4 +323,29 @@ void loop() {
 
         }
     }  
+}
+
+void onRealTimeSystem(uint8_t rtb){
+    switch (rtb) {
+        case 0xF8: // Clock
+            externalClockReceived = true;
+            break;
+        case 0xFA: // Start
+            externalSync = true;
+            sequencer.start();
+            break;
+        case 0xFC: // Stop
+            externalSync = false;
+            sequencer.stop();
+            break;
+        case 0xFB: // Continue
+        case 0xFE: // ActiveSensing
+        case 0xFF: // SystemReset
+            break;
+        default: // Invalid Real Time marker
+            break;
+    }
+    //Serial.print("OnRealTimeSystem");
+    //Serial.print(rtb, DEC);
+    //Serial.println();
 }
