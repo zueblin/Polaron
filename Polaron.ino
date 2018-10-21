@@ -55,7 +55,7 @@ AudioMixer8              mixer2;
 
 SimpleDrumChannel channel1;
 SimpleDrumChannel channel2;
-SimpleSineChannel channel3(20, 400);
+SimpleSineChannel channel3(400, 4000);
 FMChannel channel4(110, 880);
 SimpleSineChannel channel5(8800, 17600);
 HatsChannel channel6;
@@ -307,7 +307,7 @@ void loop() {
             last_step_time = millis();
         }
         
-        if (1){
+        if (0){
 
             Serial.print("CPU: ");
             Serial.print("all=");

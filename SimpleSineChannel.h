@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include "AudioChannel.h"
+#include "effect_shaped_envelope.h"
 #include <Audio.h>
 
 #ifndef SimpleSineChannel_h
@@ -32,28 +33,26 @@ class SimpleSineChannel : public AudioChannel
     SimpleSineChannel(int lowFreq, int highFreq): patchCord(osc, envelope){
         low = lowFreq;
         high = highFreq;
-        envelope.delay(0);
-        envelope.attack(1);
+        envelope.attack(1000);
         envelope.hold(0);
-        envelope.decay(5);
-        envelope.sustain(0.0f);
+        envelope.decay(10);
     }
 	AudioStream* getOutput1(){return &envelope;}
     AudioStream* getOutput2(){return &envelope;}
     
     void trigger(){envelope.noteOn();}
-    void setParam1(int value){osc.frequency((float)map(value, 0, 1024, low, high));}
-    void setParam2(int value){envelope.decay((float)map(value, 0, 1024, 1, 200));}
-    void setParam3(int value){envelope.attack((float)map(value, 0, 1024, 1, 200));}
-    void setParam4(int value){envelope.delay((float)map(value, 0, 1024, 1, 200));}
-    void setParam5(int value){}
+    void setParam1(int value){osc.frequency(map(value, 0, 1024, low, high));}
+    void setParam2(int value){}
+    void setParam3(int value){envelope.attack(map(value, 0, 1024, 0, 10240));}
+    void setParam4(int value){}
+    void setParam5(int value){envelope.decay(map(value, 0, 1024, 0, 10240));}
     void setParam6(int value){}
 
     private:
     int low = 35;
     int high = 880;
     AudioSynthWaveformSine   osc;
-    AudioEffectEnvelope      envelope;
+    AudioEffectShapedEnvelope      envelope;
     AudioConnection patchCord;
 };
 #endif 
