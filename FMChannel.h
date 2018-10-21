@@ -22,6 +22,7 @@
 
 #include "AudioChannel.h"
 #include <Audio.h>
+#include "effect_shaped_envelope.h"
 
 #ifndef FMChannel_h
 #define FMChannel_h
@@ -42,11 +43,11 @@ class FMChannel : public AudioChannel
         fmEnvelope.decay(5);
         fmEnvelope.sustain(0.0f);
 
-        envelope.delay(0);
+        //envelope.delay(0);
         envelope.attack(1);
         envelope.hold(0);
         envelope.decay(5);
-        envelope.sustain(0.0f);
+        //envelope.sustain(0.0f);
 
         carrierOsc.amplitude(1.0);
         modulatorOsc.amplitude(1.0);
@@ -59,18 +60,18 @@ class FMChannel : public AudioChannel
             fmEnvelope.noteOn();
         }
     void setParam1(int value){carrierOsc.frequency((float)map(value, 0, 1024, low, high));}
-    void setParam2(int value){carrierOsc.phase((float)map(value, 0, 1024, 0, 360));}
-    void setParam3(int value){modulatorOsc.frequency((float)map(value, 0, 1024, low, high));}
-    void setParam4(int value){modulatorOsc.phase((float)map(value, 0, 1024, 0, 360));}
-    void setParam5(int value){fmEnvelope.decay((float)map(value, 0, 1024, 1, 100));}
-    void setParam6(int value){envelope.decay((float)map(value, 0, 1024, 1, 200));}
+    void setParam2(int value){modulatorOsc.frequency((float)map(value, 0, 1024, low, high));}
+    void setParam3(int value){fmEnvelope.attack((float)map(value, 0, 1024,  0, 360));}
+    void setParam4(int value){fmEnvelope.decay((float)map(value, 0, 1024, 0, 360));}
+    void setParam5(int value){envelope.attack(map(value, 0, 1024, 1, 2000));}
+    void setParam6(int value){envelope.decay(map(value, 0, 1024, 1, 2000));}
 
     private:
     int low = 35;
     int high = 880;
     AudioSynthWaveformSine   modulatorOsc;
     AudioSynthWaveformSineModulated   carrierOsc;
-    AudioEffectEnvelope  envelope;
+    AudioEffectShapedEnvelope  envelope;
     AudioEffectEnvelope  fmEnvelope;
     AudioConnection fmEnvPatchCord;
     AudioConnection fmOutPatchCord;

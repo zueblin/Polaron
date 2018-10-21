@@ -38,9 +38,8 @@ void AudioEffectShapedEnvelope::noteOn(void)
         count = attack_count;
         phase_increment = (4294967296 / count);
         phase_accumulator = 0;
-        phase_start = 0;
-        phase_end = 32767;
-        Serial.print("NOTE-ON-ATTACK");
+        calculateLinearTransformFactors(0, 32767);
+        //Serial.print("NOTE-ON-ATTACK");
     }
     else if (state != STATE_FORCED)
     {
@@ -48,9 +47,8 @@ void AudioEffectShapedEnvelope::noteOn(void)
         count = decay_forced_count;
         phase_increment = (4294967296 / count);
         phase_accumulator = 0;
-        phase_start = 32767;
-        phase_end = 0;
-        Serial.print("NOTE-ON-FORCED");
+        calculateLinearTransformFactors(32767, 0);
+        //Serial.print("NOTE-ON-FORCED");
     }
     __enable_irq();
 }
@@ -58,11 +56,11 @@ void AudioEffectShapedEnvelope::noteOn(void)
 void AudioEffectShapedEnvelope::update(void)
 {
     audio_block_t *block;
-    uint16_t *p, *end;
+    int16_t *p, *end;
     uint32_t index, scale;
-	  uint32_t val1, val2;
+	  int32_t val1, val2, interpolatedVal, transformedVal;
 
-    uint16_t sample;
+    int16_t sample;
 
     block = receiveWritable();
     if (!block)
@@ -72,11 +70,11 @@ void AudioEffectShapedEnvelope::update(void)
         release(block);
         return;
     }
-    p = (uint16_t *)(block->data);
+    p = (int16_t *)(block->data);
     end = p + AUDIO_BLOCK_SAMPLES;
 
-    Serial.print("--UPDATE--");
-    Serial.println(count);
+    //Serial.print("--UPDATE--");
+    //Serial.println(count);
 
     while (p < end)
     {
@@ -91,9 +89,8 @@ void AudioEffectShapedEnvelope::update(void)
                     state = STATE_HOLD;
                     phase_increment = (4294967296 / count);
                     phase_accumulator = 0;
-                    phase_start = 32767;
-                    phase_end = 32767;
-                    Serial.print("HOLD");
+                    calculateLinearTransformFactors(32767, 32767);
+                    //Serial.print("HOLD");
                 }
                 else
                 {
@@ -101,9 +98,8 @@ void AudioEffectShapedEnvelope::update(void)
                     count = decay_count;
                     phase_increment = (4294967296 / count);
                     phase_accumulator = 0;
-                    phase_start = 32767;
-                    phase_end = 0;
-                    Serial.print("DECAY");
+                    calculateLinearTransformFactors(32767, 0);
+                    //Serial.print("DECAY");
                 }
                 continue;
             }
@@ -113,15 +109,14 @@ void AudioEffectShapedEnvelope::update(void)
                 count = decay_count;
                 phase_increment = (4294967296 / count);
                 phase_accumulator = 0;
-                phase_start = 32767;
-                phase_end = 0;
-                Serial.print("DECAY");
+                calculateLinearTransformFactors(32767, 0);
+                //Serial.print("DECAY");
                 continue;
             }
             else if (state == STATE_DECAY)
             {
                 state = STATE_IDLE;
-                Serial.print("IDLE");
+                //Serial.print("IDLE");
                 while (p < end)
                 {
                     *p++ = 0;
@@ -134,9 +129,8 @@ void AudioEffectShapedEnvelope::update(void)
                 count = attack_count;
                 phase_increment = (4294967296 / count);
                 phase_accumulator = 0;
-                phase_start = 0;
-                phase_end = 32767;
-                Serial.print("ATTACK");
+                calculateLinearTransformFactors(0, 32767);
+                //Serial.print("ATTACK");
                 continue;
             }
         }
@@ -148,20 +142,16 @@ void AudioEffectShapedEnvelope::update(void)
         val2 *= scale;
         val1 *= 0x10000 - scale;
         
-        int32_t sum = (val1+val2) >> 16;
-        int32_t p_e = (int32_t) phase_end;
-        int32_t p_s = (int32_t) phase_start;
+        interpolatedVal = (val1+val2) >> 16;
+        transformedVal = lt_mult * interpolatedVal + lt_add;
         
-
-        uint16_t scaledVal = ((p_e - p_s) / 32767 * sum + p_s);
-        
-        Serial.print(index);
-        Serial.print(":");
-        Serial.print(scaledVal);
-        Serial.println();
+        //Serial.print(index);
+        //Serial.print(":");
+        //Serial.print(transformedVal);
+        //Serial.println();
         
         sample = *p;
-        *p++ = (scaledVal * sample) >> 16;
+        *p++ = (transformedVal * sample) >> 16;
         phase_accumulator += phase_increment;
         count--;
     }
