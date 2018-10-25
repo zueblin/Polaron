@@ -38,6 +38,7 @@ void AudioEffectShapedEnvelope::noteOn(void)
         count = attack_count;
         phase_increment = (4294967296 / count);
         phase_accumulator = 0;
+        triggerCount = maxRetriggers;
         calculateLinearTransformFactors(0, 32767);
         //Serial.print("NOTE-ON-ATTACK");
     }
@@ -115,13 +116,22 @@ void AudioEffectShapedEnvelope::update(void)
             }
             else if (state == STATE_DECAY)
             {
-                state = STATE_IDLE;
-                //Serial.print("IDLE");
-                while (p < end)
-                {
-                    *p++ = 0;
+                if (triggerCount-- > 0){
+                    state = STATE_ATTACK;
+                    count = attack_count;
+                    phase_increment = (4294967296 / count);
+                    phase_accumulator = 0;
+                    calculateLinearTransformFactors(0, 32767);
+                } else {
+                    state = STATE_IDLE;
+                    //Serial.print("IDLE");
+                    while (p < end)
+                    {
+                        *p++ = 0;
+                    }
+                    break;
                 }
-                break;
+                
             }
             else if (state == STATE_FORCED)
             {

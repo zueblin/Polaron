@@ -75,6 +75,14 @@ public:
       decay_forced_count = 1;
     }
 	}
+
+  void retriggers(int count) {
+    if (count >= 0 && count < 256){
+      maxRetriggers = count;
+    } else {
+      maxRetriggers = 0;
+    }
+	}
  
 	using AudioStream::release;
 	virtual void update(void);
@@ -83,6 +91,9 @@ private:
 	// state
 	uint8_t  state;      // idle, attack, hold, decay, forced
 	uint16_t count;      // how much time remains in this state, in sample units
+
+  uint16_t maxRetriggers = 6;
+  uint16_t triggerCount;
 
 	// settings
 	uint16_t attack_count;

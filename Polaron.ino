@@ -45,16 +45,16 @@
 #define SHIFT_IN_CLOCK_PIN 2 //5 // Connects to the Clock pin the 165
 //pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
-#define POTI_PIN_1 A16
-#define POTI_PIN_2 A17
+#define POTI_PIN_1 A8
+#define POTI_PIN_2 A9
 
 AudioOutputAnalogStereo  dacs1;          
 
 AudioMixer8              mixer1;
 AudioMixer8              mixer2;
 
-SimpleDrumChannel channel1;
-SimpleDrumChannel channel2;
+SimpleDrumChannel channel1(10,200);
+SimpleDrumChannel channel2(200,6000);
 SimpleSineChannel channel3(400, 4000);
 FMChannel channel4(110, 880);
 SimpleSineChannel channel5(8800, 17600);
@@ -209,7 +209,7 @@ void readButtonStates(){
 void updateAudio() {
     sequencer.tick();   
       
-    uint16_t sensorValue1 = (uint16_t) (1024 - analogRead(POTI_PIN_1));
+    uint16_t sensorValue1 = (uint16_t) analogRead(POTI_PIN_1);
     uint16_t sensorValue2 = (uint16_t) analogRead(POTI_PIN_2);
     
     if (sequencer.pulseCount == 0){
