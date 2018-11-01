@@ -13,6 +13,8 @@ Main features:
 * crunchy 12bit stereo outputs
 * open source hardware/software: if you miss a feature or are annoyed by a bug
 
+Disclaimer: This project is a work in progress. Features may change or not work, use at your own risk.
+
 ![Sideview](./Doc/Images/sideview.jpg)
 
 ![Top](./Doc/Images/topview.jpg)
@@ -43,8 +45,6 @@ Parts needed:
 * 2 x ALPS Potentiometer (RK09K1130AP5)
 * 2 x 2.2 uF SMD Capacitor (1206 housing)
 * 1 x Audio Jack (SJ-352X-SMT) 
-
-Disclaimer: This project is a work in progress. Features may not work, use at your own risk.
 
 License
 =======
