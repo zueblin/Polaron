@@ -1,0 +1,38 @@
+#********** START OF renumber-sheet.ulp ULP Version 4.4.4 10-11-2017 :09:17:23 LOG **********#
+    Conversion completed with no Messages
+#********** END OF renumber-sheet.ulp ULP Version 4.4.4 10-11-2017 :09:17:23 LOG **********#
+
+#********** START OF fix_via_hack.ulp ULP Version 4.8.0 10-11-2017 :09:17:44 LOG **********#
+VIA	ViaCount=1		Net=N$9				(X=8890.000000 Y=25400.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=2		Net=N$10				(X=21590.000000 Y=30480.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=3		Net=N$11				(X=17780.000000 Y=35560.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=4		Net=N$12				(X=64770.000000 Y=31750.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=5		Net=N$13				(X=39370.000000 Y=31750.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=6		Net=N$14				(X=41910.000000 Y=17780.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=7		Net=N$15				(X=62230.000000 Y=17780.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=8		Net=N$16				(X=21590.000000 Y=17780.000000)	LayerStart=1	LayerEnd=16
+VIA	ViaCount=9		Net=N$17				(X=71120.000000 Y=24130.000000)	LayerStart=1	LayerEnd=16
+PADFILL	PadCount=19		Net=GND				(X=6680.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=23		Net=GND				(X=16840.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=27		Net=GND				(X=27000.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=31		Net=GND				(X=37160.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=35		Net=GND				(X=47320.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=39		Net=GND				(X=57480.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=43		Net=GND				(X=67640.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+PADFILL	PadCount=47		Net=GND				(X=77800.000000 Y=15912.000000)	LayerStart=1	LayerEnd=1
+#********** END OF fix_via_hack.ulp ULP Version 4.8.0 10-11-2017 :09:17:44 LOG **********#
+
+#********** START OF eagle6xx-sch-to-kicad-sch.ulp 2.0 10-11-2017 :09:18:30 LOG **********#
+    Conversion completed with no Messages
+#********** END OF eagle6xx-sch-to-kicad-sch.ulp 2.0 10-11-2017 :09:18:30 LOG **********#
+
+#********** START OF exp-lbrs.ulp 6.8 10-11-2017 :09:19:15 LOG **********#
+OK: Eagle library export from SCH/PCB successful
+    Conversion completed with no messages
+#********** END OF exp-lbrs.ulp 6.8 10-11-2017 :09:19:15 LOG **********#
+
+
+#********** START OF eagle-lbr2kicad-1.0.ulp 3.1 10-11-2017 :09:19:25 LOG **********#
+    Conversion completed with no Messages
+#********** END OF eagle-lbr2kicad-1.0.ulp 3.1 10-11-2017 :09:19:25 LOG **********#
+

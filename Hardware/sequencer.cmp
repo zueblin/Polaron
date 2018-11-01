@@ -1,0 +1,811 @@
+Cmp-Mod V01 Created by PcbNew   date = Montag, 30. Juli 2018 'u17' 16:17:43
+
+BeginCmp
+TimeStamp = 5A088C32
+Path = /5A062966
+Reference = S24;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088C14
+Path = /5A062966
+Reference = S23;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088BF6
+Path = /5A062966
+Reference = S22;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088BD8
+Path = /5A062966
+Reference = S21;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088BBA
+Path = /5A062966
+Reference = S20;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B9C
+Path = /5A062966
+Reference = S19;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B7E
+Path = /5A062966
+Reference = S18;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B68
+Path = /5A06293C
+Reference = R24;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B53
+Path = /5A06293C
+Reference = R23;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B3E
+Path = /5A06293C
+Reference = R22;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B29
+Path = /5A06293C
+Reference = R21;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088B14
+Path = /5A06293C
+Reference = R20;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088AFF
+Path = /5A06293C
+Reference = R19;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088AEA
+Path = /5A06293C
+Reference = R18;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088AD5
+Path = /5A05CC4E
+Reference = D24;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088AC1
+Path = /5A05CC4E
+Reference = D23;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088AAD
+Path = /5A05CC4E
+Reference = D22;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088A99
+Path = /5A05CC4E
+Reference = D21;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088A85
+Path = /5A05CC4E
+Reference = D20;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088A71
+Path = /5A05CC4E
+Reference = D19;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088A5D
+Path = /5A05CC4E
+Reference = D18;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088225
+Path = /5A06293C
+Reference = R17;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0889A7
+Path = /5A062966
+Reference = S17;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088993
+Path = /5A05CC4E
+Reference = D17;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08897C
+Path = /5A06293C
+Reference = R32;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088967
+Path = /5A06293C
+Reference = R31;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088952
+Path = /5A06293C
+Reference = R30;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08893D
+Path = /5A06293C
+Reference = R29;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088928
+Path = /5A06293C
+Reference = R28;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088913
+Path = /5A06293C
+Reference = R27;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0888FE
+Path = /5A06293C
+Reference = R26;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0888E9
+Path = /5A05CC4E
+Reference = D32;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0888D5
+Path = /5A05CC4E
+Reference = D31;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0888C1
+Path = /5A05CC4E
+Reference = D30;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0888AD
+Path = /5A05CC4E
+Reference = D29;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088899
+Path = /5A05CC4E
+Reference = D28;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088885
+Path = /5A05CC4E
+Reference = D27;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088871
+Path = /5A05CC4E
+Reference = D26;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088852
+Path = /5A062966
+Reference = S32;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088834
+Path = /5A062966
+Reference = S31;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A088816
+Path = /5A062966
+Reference = S30;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0887F8
+Path = /5A062966
+Reference = S29;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0887DA
+Path = /5A062966
+Reference = S28;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0887BC
+Path = /5A062966
+Reference = S27;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08879E
+Path = /5A062966
+Reference = S26;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08765F
+Path = /5A060161
+Reference = S16;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087644
+Path = /5A06015B
+Reference = S15;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087629
+Path = /5A060155
+Reference = S14;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08760E
+Path = /5A06014F
+Reference = S13;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0875F3
+Path = /5A060149
+Reference = S12;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0875D8
+Path = /5A060143
+Reference = S11;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0875BD
+Path = /5A06013D
+Reference = S10;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0875A2
+Path = /5A060137
+Reference = S9;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087587
+Path = /5A062AB5
+Reference = S8;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08756C
+Path = /5A062AAF
+Reference = S7;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087551
+Path = /5A062AA9
+Reference = S6;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087536
+Path = /5A062AA3
+Reference = S5;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08751B
+Path = /5A062A9D
+Reference = S4;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087500
+Path = /5A062A97
+Reference = S3;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0874E5
+Path = /5A062A91
+Reference = S2;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087342
+Path = /5A05C21C
+Reference = D16;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087329
+Path = /5A05C216
+Reference = D15;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087310
+Path = /5A05C210
+Reference = D14;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0872F7
+Path = /5A05C20A
+Reference = D13;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0872DE
+Path = /5A05C204
+Reference = D12;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0872C5
+Path = /5A05C1FE
+Reference = D11;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0872AC
+Path = /5A05C1F8
+Reference = D10;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087293
+Path = /5A05C1F2
+Reference = D9;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08727A
+Path = /5A056D83
+Reference = D8;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087261
+Path = /5A056CBB
+Reference = D7;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087248
+Path = /5A056BF3
+Reference = D6;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08722F
+Path = /5A056B2B
+Reference = D5;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087216
+Path = /5A056A63
+Reference = D4;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0871FD
+Path = /5A05699B
+Reference = D3;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0871E4
+Path = /5A0568D3
+Reference = D2;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A061AA2
+Path = /5A05680B
+Reference = D1;
+ValeurCmp = ~;
+IdModule  = WS2812B;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A061CB2
+Path = /5A062A8B
+Reference = S1;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = TACTILE-PTH;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A06ED28
+Path = /5A0690A7
+Reference = U1;
+ValeurCmp = Teensy3.5;
+IdModule  = modules:Teensy35_36;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A084B98
+Path = /5A05CC4E
+Reference = D25;
+ValeurCmp = ~;
+IdModule  = LEDs:LED_WS2812B-PLCC4;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A084EC0
+Path = /5A062966
+Reference = S25;
+ValeurCmp = SWITCH-MOMENTARY-2PTH;
+IdModule  = Buttons_Switches_THT:SW_PUSH_6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A084C7C
+Path = /5A06293C
+Reference = R25;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A084C16
+Path = /5A062A5B
+Reference = R1;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08789F
+Path = /5A062A7F
+Reference = R7;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0878B4
+Path = /5A062A85
+Reference = R8;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0878C9
+Path = /5A060107
+Reference = R9;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0878DE
+Path = /5A06010D
+Reference = R10;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A0878F3
+Path = /5A060113
+Reference = R11;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087908
+Path = /5A060119
+Reference = R12;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08791D
+Path = /5A06011F
+Reference = R13;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087932
+Path = /5A060125
+Reference = R14;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087947
+Path = /5A06012B
+Reference = R15;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08795C
+Path = /5A060131
+Reference = R16;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08788A
+Path = /5A062A79
+Reference = R6;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087875
+Path = /5A062A73
+Reference = R5;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087860
+Path = /5A062A6D
+Reference = R4;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A08784B
+Path = /5A062A67
+Reference = R3;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A087836
+Path = /5A062A61
+Reference = R2;
+ValeurCmp = 270;
+IdModule  = Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A061BEA
+Path = /5A0573C3
+Reference = IC4;
+ValeurCmp = 74HC165N;
+IdModule  = Housings_SOIC:SOIC-16_3.9x9.9mm_Pitch1.27mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A061BD6
+Path = /5A062930
+Reference = IC3;
+ValeurCmp = 74HC165N;
+IdModule  = Housings_SOIC:SOIC-16_3.9x9.9mm_Pitch1.27mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A061BC2
+Path = /5A060101
+Reference = IC2;
+ValeurCmp = 74HC165N;
+IdModule  = Housings_SOIC:SOIC-16_3.9x9.9mm_Pitch1.27mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5A061BAE
+Path = /5A062A55
+Reference = IC1;
+ValeurCmp = 74HC165N;
+IdModule  = Housings_SOIC:SOIC-16_3.9x9.9mm_Pitch1.27mm;
+EndCmp
+
+EndListe

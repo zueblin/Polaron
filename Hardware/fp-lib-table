@@ -1,0 +1,5 @@
+(fp_lib_table
+  (lib (name sequencer)(type Legacy)(uri "/Users/itz/Documents/eagle/StepModule 2/kicad/sequencer.mod")(options "")(descr ""))
+  (lib (name modules)(type KiCad)(uri /Users/itz/Documents/KiCadParts/teensy-master/modules)(options "")(descr ""))
+  (lib (name SJ-3523-SMT-TR)(type Legacy)(uri /Users/itz/Documents/KiCadParts/SJ-3523-SMT-TR/SJ-3523-SMT-TR.mod)(options "")(descr ""))
+)
