@@ -25,6 +25,26 @@
 
 #include <inttypes.h>
 
+class SequencerStepDefault
+{
+  public:
+    SequencerStepDefault(uint16_t p1, uint16_t p2, uint16_t p3, uint16_t p4, uint16_t p5, uint16_t p6)
+    {
+        parameter1 = p1;
+        parameter2 = p2;
+        parameter3 = p3;
+        parameter4 = p4;
+        parameter5 = p5;
+        parameter6 = p6;
+    };
+    uint16_t parameter1;
+    uint16_t parameter2;
+    uint16_t parameter3;
+    uint16_t parameter4;
+    uint16_t parameter5;
+    uint16_t parameter6;
+};
+
 class SequencerStep
 {
   public:
@@ -38,6 +58,7 @@ class SequencerStep
     void setParameterLockRecordOff();
     bool isParameterLockOn();
     void copyValuesFrom(SequencerStep sourceStep);
+    void init(SequencerStepDefault &defaultValues);
 
     uint8_t state;
 

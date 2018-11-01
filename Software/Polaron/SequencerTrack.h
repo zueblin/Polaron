@@ -33,18 +33,12 @@ class SequencerTrack
 {
   public:
     SequencerTrack();
-
-    SequencerPattern patterns[NUMBER_OF_PATTERNS];
-
-    uint8_t sampleIndex;
-
-    const char *sampleNames[3];
-
     SequencerPattern &getCurrentPattern();
     uint8_t getCurrentPatternIndex();
     SequencerStep &getCurrentStep();
 
     //does a Step and returns 1 if the new step is a trigger, 0 if it is not a trigger
+    void init(SequencerStepDefault &defaultValues);
     uint8_t doStep();
     void onStop();
 
@@ -53,18 +47,12 @@ class SequencerTrack
     void unMute();
     void mute();
     bool isMuted();
-
     bool isArmed();
-
     void toggleMuteArm();
-
     void activateMuteArms();
-
-    const char *getCurrentSampleName();
-    const char *getNextSampleName();
-    void toggleSample();
-
     void switchToPattern(uint8_t number);
+
+    SequencerPattern patterns[NUMBER_OF_PATTERNS];
 
   private:
     //the currently active pattern

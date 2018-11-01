@@ -39,6 +39,7 @@ class SequencerPattern
     SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
     SequencerStep &getCurrentStep();
 
+    void init(SequencerStepDefault &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
 
     //does a Step and returns 1 if the new step is a trigger, 0 if it is not a trigger

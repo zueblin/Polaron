@@ -24,6 +24,14 @@
 
 SequencerPattern::SequencerPattern() : currentStep(0), trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
 
+void SequencerPattern::init(SequencerStepDefault &defaultValues)
+{
+    for (auto &step : steps)
+    {
+        step.init(defaultValues);
+    }
+}
+
 uint8_t SequencerPattern::doStep()
 {
     if (++currentStep >= trackLength)

@@ -90,17 +90,17 @@ class HatsChannel : public AudioChannel
         w7.frequency(baseFreq * ratio6);
         w8.frequency(baseFreq * ratio7);
     }
-    void setParam2(int value) {}
-    void setParam3(int value)
+    void setParam2(int value)
     {
         float mappedValue = (float)map(value, 0, 1024, 2000, 10000);
         filter.setHighpass(0, mappedValue, 0.700);
         filter.setHighpass(1, mappedValue, 0.700);
         filter.setHighpass(2, mappedValue, 0.700);
     }
-    void setParam4(int value) {}
+    void setParam3(int value) {}
+    void setParam4(int value) { envelope.decay((float)map(value, 0, 1024, 1, 100)); }
     void setParam5(int value) {}
-    void setParam6(int value) { envelope.decay((float)map(value, 0, 1024, 1, 100)); }
+    void setParam6(int value) {}
 
   private:
     float baseFreq = 40;

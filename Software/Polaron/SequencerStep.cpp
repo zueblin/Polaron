@@ -29,6 +29,19 @@
 SequencerStep::SequencerStep()
     : state(0), parameter1(512u), parameter2(512u), parameter3(512u), parameter4(512u), parameter5(512u), parameter6(512u), triggerPattern(0b00000001) {}
 
+void SequencerStep::init(SequencerStepDefault &defaultValues)
+{
+    state = 0;
+    parameter1 = defaultValues.parameter1;
+    parameter2 = defaultValues.parameter2;
+    parameter3 = defaultValues.parameter3;
+    parameter4 = defaultValues.parameter4;
+    parameter5 = defaultValues.parameter5;
+    parameter6 = defaultValues.parameter6;
+}
+
+
+
 void SequencerStep::toggleTriggerState()
 {
     //toggle trigger state bit

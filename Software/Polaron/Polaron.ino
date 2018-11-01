@@ -53,11 +53,19 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 
 SimpleDrumChannel channel1(10, 200);
+
 SimpleDrumChannel channel2(200, 6000);
 SimpleSineChannel channel3(400, 4000);
 FMChannel channel4(110, 880);
 SimpleSineChannel channel5(8800, 17600);
 HatsChannel channel6;
+
+SequencerStepDefault channel1Default(300, 300, 50, 50, 10, 10);
+SequencerStepDefault channel2Default(500, 700, 1, 30, 10, 10);
+SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
+SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 10);
+SequencerStepDefault channel5Default(300, 300, 50, 50, 10, 10);
+SequencerStepDefault channel6Default(300, 300, 50, 600, 10, 10);
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
 AudioConnection patchCord9(*channel2.getOutput1(), 0, mixer1, 1);
@@ -118,6 +126,13 @@ void setup()
     mixer2.gain(3, 1.0f);
     mixer2.gain(4, 1.0f);
     mixer2.gain(5, 1.0f);
+
+    sequencer.tracks[0].init(channel1Default);
+    sequencer.tracks[1].init(channel2Default);
+    sequencer.tracks[2].init(channel3Default);
+    sequencer.tracks[3].init(channel4Default);
+    sequencer.tracks[4].init(channel5Default);
+    sequencer.tracks[5].init(channel6Default);
 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
     FastLED.setBrightness(5);
@@ -212,6 +227,11 @@ void updateAudio()
 
     uint16_t sensorValue1 = (uint16_t)analogRead(POTI_PIN_1);
     uint16_t sensorValue2 = (uint16_t)analogRead(POTI_PIN_2);
+
+    //Serial.print(sensorValue1);
+    //Serial.print(",");
+    //Serial.print(sensorValue2);
+    //Serial.println();
 
     if (sequencer.pulseCount == 0)
     {

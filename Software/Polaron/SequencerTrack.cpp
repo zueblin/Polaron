@@ -31,30 +31,13 @@
 //bit=1:toggle mute state on next update
 #define MUTE_ARM_STATE_BIT 1
 
-SequencerTrack::SequencerTrack() : sampleIndex(0), currentPattern(0), state(0) {}
+SequencerTrack::SequencerTrack() : currentPattern(0), state(0) {}
 
-const char *SequencerTrack::getCurrentSampleName()
+void SequencerTrack::init(SequencerStepDefault &defaultValues)
 {
-    return sampleNames[sampleIndex];
-}
-
-const char *SequencerTrack::getNextSampleName()
-{
-    int nextIndex = sampleIndex + 1;
-    if (nextIndex > 2)
+    for (auto &pattern : patterns)
     {
-        nextIndex = 0;
-    }
-    return sampleNames[nextIndex];
-}
-
-void SequencerTrack::toggleSample()
-{
-    //Serial.println(sampleIndex);
-    sampleIndex++;
-    if (sampleIndex > 2)
-    {
-        sampleIndex = 0;
+        pattern.init(defaultValues);
     }
 }
 
