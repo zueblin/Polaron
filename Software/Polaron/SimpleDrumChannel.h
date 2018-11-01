@@ -28,26 +28,27 @@
 
 class SimpleDrumChannel : public AudioChannel
 {
-	public:
-    SimpleDrumChannel(int lowFreq, int highFreq){
+  public:
+    SimpleDrumChannel(int lowFreq, int highFreq)
+    {
         low = lowFreq;
         high = highFreq;
     }
-	AudioStream* getOutput1(){return &drum;}
-    AudioStream* getOutput2(){return &drum;}
-    
-    void trigger(){drum.noteOn();}
-    void setParam1(int value){drum.frequency((float)map(value, 0, 1024, low, high));}
-    void setParam2(int value){drum.length((float)map(value, 0, 1024, 0, 1024));}
-    void setParam3(int value){drum.pitchMod((float)value / 1024.0);}
-    void setParam4(int value){drum.secondMix((float)value / 1024.0);}
-    void setParam5(int value){}
-    void setParam6(int value){}
+    AudioStream *getOutput1() { return &drum; }
+    AudioStream *getOutput2() { return &drum; }
 
-    private:
+    void trigger() { drum.noteOn(); }
+    void setParam1(int value) { drum.frequency((float)map(value, 0, 1024, low, high)); }
+    void setParam2(int value) { drum.pitchMod((float)value / 1024.0); }
+    void setParam3(int value) { drum.secondMix((float)value / 1024.0); }
+    void setParam4(int value) { drum.length((float)map(value, 0, 1024, 0, 1024)); }
+    void setParam5(int value) {}
+    void setParam6(int value) {}
+
+  private:
     int low = 35;
     int high = 880;
-    AudioSynthSimpleDrum   drum;
+    AudioSynthSimpleDrum drum;
 };
 
 #endif

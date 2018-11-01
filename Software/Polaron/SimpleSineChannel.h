@@ -29,8 +29,9 @@
 
 class SimpleSineChannel : public AudioChannel
 {
-	public:
-    SimpleSineChannel(int lowFreq, int highFreq): patchCord(osc, envelope){
+  public:
+    SimpleSineChannel(int lowFreq, int highFreq) : patchCord(osc, envelope)
+    {
         low = lowFreq;
         high = highFreq;
         envelope.attack(20);
@@ -38,22 +39,22 @@ class SimpleSineChannel : public AudioChannel
         envelope.decay(40);
         envelope.retriggers(0);
     }
-	AudioStream* getOutput1(){return &envelope;}
-    AudioStream* getOutput2(){return &envelope;}
-    
-    void trigger(){envelope.noteOn();}
-    void setParam1(int value){osc.frequency(map(value, 0, 1024, low, high));}
-    void setParam2(int value){}
-    void setParam3(int value){envelope.attack(map(value, 0, 1024, 0, 10240));}
-    void setParam4(int value){envelope.decay(map(value, 0, 1024, 0, 10240));}
-    void setParam5(int value){envelope.retriggers(map(value, 0, 1024, 0, 12));}
-    void setParam6(int value){}
+    AudioStream *getOutput1() { return &envelope; }
+    AudioStream *getOutput2() { return &envelope; }
 
-    private:
+    void trigger() { envelope.noteOn(); }
+    void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
+    void setParam2(int value) {}
+    void setParam3(int value) { envelope.attack(map(value, 0, 1024, 0, 10240)); }
+    void setParam4(int value) { envelope.decay(map(value, 0, 1024, 0, 10240)); }
+    void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
+    void setParam6(int value) {}
+
+  private:
     int low = 35;
     int high = 880;
     AudioSynthWaveformSine osc;
     AudioEffectShapedEnvelope envelope;
     AudioConnection patchCord;
 };
-#endif 
+#endif

@@ -59,7 +59,7 @@ void AudioEffectShapedEnvelope::update(void)
     audio_block_t *block;
     int16_t *p, *end;
     uint32_t index, scale;
-	  int32_t val1, val2, interpolatedVal, transformedVal;
+    int32_t val1, val2, interpolatedVal, transformedVal;
 
     int16_t sample;
 
@@ -116,13 +116,16 @@ void AudioEffectShapedEnvelope::update(void)
             }
             else if (state == STATE_DECAY)
             {
-                if (triggerCount-- > 0){
+                if (triggerCount-- > 0)
+                {
                     state = STATE_ATTACK;
                     count = attack_count;
                     phase_increment = (4294967296 / count);
                     phase_accumulator = 0;
                     calculateLinearTransformFactors(0, 32767);
-                } else {
+                }
+                else
+                {
                     state = STATE_IDLE;
                     //Serial.print("IDLE");
                     while (p < end)
@@ -131,7 +134,6 @@ void AudioEffectShapedEnvelope::update(void)
                     }
                     break;
                 }
-                
             }
             else if (state == STATE_FORCED)
             {
@@ -147,19 +149,19 @@ void AudioEffectShapedEnvelope::update(void)
 
         index = phase_accumulator >> 24;
         val1 = EnvelopeShapeInvertedExponential[index];
-        val2 = EnvelopeShapeInvertedExponential[index+1];
+        val2 = EnvelopeShapeInvertedExponential[index + 1];
         scale = (phase_accumulator >> 8) & 0xFFFF;
         val2 *= scale;
         val1 *= 0x10000 - scale;
-        
-        interpolatedVal = (val1+val2) >> 16;
+
+        interpolatedVal = (val1 + val2) >> 16;
         transformedVal = lt_mult * interpolatedVal + lt_add;
-        
+
         //Serial.print(index);
         //Serial.print(":");
         //Serial.print(transformedVal);
         //Serial.println();
-        
+
         sample = *p;
         *p++ = (transformedVal * sample) >> 16;
         phase_accumulator += phase_increment;

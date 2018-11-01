@@ -27,9 +27,9 @@
 
 class AudioChannel
 {
-	public:
-    virtual AudioStream* getOutput1();
-    virtual AudioStream* getOutput2();
+  public:
+    virtual AudioStream *getOutput1();
+    virtual AudioStream *getOutput2();
     virtual void trigger();
     virtual void setParam1(int value);
     virtual void setParam2(int value);
@@ -39,4 +39,4 @@ class AudioChannel
     virtual void setParam6(int value);
 };
 
-#endif 
+#endif

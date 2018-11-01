@@ -29,14 +29,14 @@
 
 class FMChannel : public AudioChannel
 {
-	public:
-    FMChannel(int lowFreq, int highFreq): 
-        fmEnvPatchCord(modulatorOsc, fmEnvelope), 
-        fmOutPatchCord(fmEnvelope, carrierOsc),
-        envPatchCord(carrierOsc, envelope){
+  public:
+    FMChannel(int lowFreq, int highFreq) : fmEnvPatchCord(modulatorOsc, fmEnvelope),
+                                           fmOutPatchCord(fmEnvelope, carrierOsc),
+                                           envPatchCord(carrierOsc, envelope)
+    {
         low = lowFreq;
         high = highFreq;
-        
+
         fmEnvelope.delay(0);
         fmEnvelope.attack(1);
         fmEnvelope.hold(0);
@@ -52,29 +52,30 @@ class FMChannel : public AudioChannel
         carrierOsc.amplitude(1.0);
         modulatorOsc.amplitude(1.0);
     }
-	AudioStream* getOutput1(){return &envelope;}
-    AudioStream* getOutput2(){return &envelope;}
-    
-    void trigger(){
-            envelope.noteOn();
-            fmEnvelope.noteOn();
-        }
-    void setParam1(int value){carrierOsc.frequency((float)map(value, 0, 1024, low, high));}
-    void setParam2(int value){modulatorOsc.frequency((float)map(value, 0, 1024, low, high));}
-    void setParam3(int value){fmEnvelope.attack((float)map(value, 0, 1024,  0, 360));}
-    void setParam4(int value){fmEnvelope.decay((float)map(value, 0, 1024, 0, 360));}
-    void setParam5(int value){envelope.attack(map(value, 0, 1024, 1, 2000));}
-    void setParam6(int value){envelope.decay(map(value, 0, 1024, 1, 2000));}
+    AudioStream *getOutput1() { return &envelope; }
+    AudioStream *getOutput2() { return &envelope; }
 
-    private:
+    void trigger()
+    {
+        envelope.noteOn();
+        fmEnvelope.noteOn();
+    }
+    void setParam1(int value) { carrierOsc.frequency((float)map(value, 0, 1024, low, high)); }
+    void setParam2(int value) { modulatorOsc.frequency((float)map(value, 0, 1024, low, high)); }
+    void setParam3(int value) { fmEnvelope.attack((float)map(value, 0, 1024, 0, 360)); }
+    void setParam4(int value) { fmEnvelope.decay((float)map(value, 0, 1024, 0, 360)); }
+    void setParam5(int value) { envelope.attack(map(value, 0, 1024, 1, 2000)); }
+    void setParam6(int value) { envelope.decay(map(value, 0, 1024, 1, 2000)); }
+
+  private:
     int low = 35;
     int high = 880;
-    AudioSynthWaveformSine   modulatorOsc;
-    AudioSynthWaveformSineModulated   carrierOsc;
-    AudioEffectShapedEnvelope  envelope;
-    AudioEffectEnvelope  fmEnvelope;
+    AudioSynthWaveformSine modulatorOsc;
+    AudioSynthWaveformSineModulated carrierOsc;
+    AudioEffectShapedEnvelope envelope;
+    AudioEffectEnvelope fmEnvelope;
     AudioConnection fmEnvPatchCord;
     AudioConnection fmOutPatchCord;
     AudioConnection envPatchCord;
 };
-#endif 
+#endif

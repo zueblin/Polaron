@@ -47,59 +47,73 @@
 #define BUTTON_SET_PATTERN 7
 
 //led config
-#define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS+NUMBER_OF_TRACKBUTTONS+NUMBER_OF_STEPBUTTONS
+#define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_TRACKBUTTONS + NUMBER_OF_STEPBUTTONS
 
-#define functionLED(n) leds[NUMBER_OF_STEPBUTTONS+(n)]
+#define functionLED(n) leds[NUMBER_OF_STEPBUTTONS + (n)]
 #define stepLED(n) leds[(n)]
-#define trackLED(n) leds[NUMBER_OF_FUNCTIONBUTTONS+NUMBER_OF_STEPBUTTONS+(n)]
+#define trackLED(n) leds[NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_STEPBUTTONS + (n)]
 
-enum class FunctionMode {START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, SET_PATTERN, DEFAULT_MODE};
-enum class PLockParamSet {SET1, SET2, SET3};
+enum class FunctionMode
+{
+    START_STOP,
+    SET_TRACK_LENGTH,
+    TOGGLE_PLOCKS,
+    LEAVE_TOGGLE_PLOCKS,
+    TOGGLE_MUTES,
+    LEAVE_TOGGLE_MUTES,
+    SET_PATTERN,
+    DEFAULT_MODE
+};
+enum class PLockParamSet
+{
+    SET1,
+    SET2,
+    SET3
+};
 
 class Sequencer
 {
-public:
+  public:
     Sequencer();
-    Bounce functionButtons [NUMBER_OF_FUNCTIONBUTTONS];
-    Bounce trackButtons [NUMBER_OF_TRACKBUTTONS];
-    Bounce stepButtons [NUMBER_OF_STEPBUTTONS];
-    SequencerTrack tracks [NUMBER_OF_INSTRUMENTTRACKS];
-    
+    Bounce functionButtons[NUMBER_OF_FUNCTIONBUTTONS];
+    Bounce trackButtons[NUMBER_OF_TRACKBUTTONS];
+    Bounce stepButtons[NUMBER_OF_STEPBUTTONS];
+    SequencerTrack tracks[NUMBER_OF_INSTRUMENTTRACKS];
+
     // All leds are in the same array, since i could not get the lib to work with several arrays.
     CRGB leds[NUM_LEDS];
 
-    bool isRunning(){return running;}
-    uint8_t getSelectedTrackIndex(){return selectedTrack;}
-    SequencerTrack& getSelectedTrack(){return tracks[selectedTrack];}
+    bool isRunning() { return running; }
+    uint8_t getSelectedTrackIndex() { return selectedTrack; }
+    SequencerTrack &getSelectedTrack() { return tracks[selectedTrack]; }
     void updateState();
 
     void tick();
     void start();
     void stop();
-    
-    uint8_t pulseCount= 0;
+
+    uint8_t pulseCount = 0;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
-    
-private:
+
+  private:
     //currently selected track
     uint8_t selectedTrack = 0;
     uint8_t ledFader = 0;
-    
+
     //tracks state of step copy operation
     int8_t sourceStepIndex = -1;
     bool stepCopy = false;
-    
+
     //tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
     bool patternCopy = false;
     bool hasActivePLockReceivers = false;
-    
-    
+
     bool running = false;
     bool trackOrStepButtonPressed = false;
-    
+
     FunctionMode calculateFunctionMode();
-    
+
     void doSetTriggers();
     void doSetTrackLength();
     void doSetPattern();
@@ -111,11 +125,8 @@ private:
     void doSetTrackSelection();
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
-    
+
     CRGB colorForStepState(uint8_t state);
-    
 };
-
-
 
 #endif /* Sequencer_h */

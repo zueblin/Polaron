@@ -29,19 +29,19 @@
 
 class HatsChannel : public AudioChannel
 {
-	public:
-    HatsChannel():
-        w1m(w1, 0, mixer, 0),
-        w2m(w2, 0, mixer, 1),
-        w3m(w3, 0, mixer, 2),
-        w4m(w4, 0, mixer, 3),
-        w5m(w5, 0, mixer, 4),
-        w6m(w6, 0, mixer, 5),
-        w7m(w7, 0, mixer, 6),
-        w8m(w8, 0, mixer, 7),
-        mixerFilter(mixer, 0, filter, 0),
-        filterEnv(filter, 0, envelope, 0){
-        
+  public:
+    HatsChannel() : w1m(w1, 0, mixer, 0),
+                    w2m(w2, 0, mixer, 1),
+                    w3m(w3, 0, mixer, 2),
+                    w4m(w4, 0, mixer, 3),
+                    w5m(w5, 0, mixer, 4),
+                    w6m(w6, 0, mixer, 5),
+                    w7m(w7, 0, mixer, 6),
+                    w8m(w8, 0, mixer, 7),
+                    mixerFilter(mixer, 0, filter, 0),
+                    filterEnv(filter, 0, envelope, 0)
+    {
+
         envelope.delay(0);
         envelope.attack(1);
         envelope.hold(0);
@@ -56,29 +56,30 @@ class HatsChannel : public AudioChannel
         mixer.gain(5, 0.5f);
         mixer.gain(6, 0.5f);
         mixer.gain(7, 0.0f);
-        
+
         w1.begin(1.0, baseFreq, WAVEFORM_SQUARE);
-        w2.begin(1.0, baseFreq * ratio1,WAVEFORM_SQUARE);
-        w3.begin(1.0, baseFreq * ratio2,WAVEFORM_SQUARE);
-        w4.begin(1.0, baseFreq * ratio3,WAVEFORM_SQUARE);
-        w5.begin(1.0, baseFreq * ratio4,WAVEFORM_SQUARE);
-        w6.begin(1.0, baseFreq * ratio5,WAVEFORM_SQUARE);
-        w7.begin(1.0, baseFreq * ratio6,WAVEFORM_SQUARE);
-        w8.begin(1.0, baseFreq * ratio7,WAVEFORM_SQUARE);
+        w2.begin(1.0, baseFreq * ratio1, WAVEFORM_SQUARE);
+        w3.begin(1.0, baseFreq * ratio2, WAVEFORM_SQUARE);
+        w4.begin(1.0, baseFreq * ratio3, WAVEFORM_SQUARE);
+        w5.begin(1.0, baseFreq * ratio4, WAVEFORM_SQUARE);
+        w6.begin(1.0, baseFreq * ratio5, WAVEFORM_SQUARE);
+        w7.begin(1.0, baseFreq * ratio6, WAVEFORM_SQUARE);
+        w8.begin(1.0, baseFreq * ratio7, WAVEFORM_SQUARE);
 
         filter.setHighpass(0, 8000, 0.700);
         filter.setHighpass(1, 8000, 0.700);
         filter.setHighpass(2, 8000, 0.700);
         //filter.setHighpass(3, 8000, 0.700 );
+    }
+    AudioStream *getOutput1() { return &envelope; }
+    AudioStream *getOutput2() { return &envelope; }
 
+    void trigger()
+    {
+        envelope.noteOn();
     }
-	AudioStream* getOutput1(){return &envelope;}
-    AudioStream* getOutput2(){return &envelope;}
-    
-    void trigger(){
-            envelope.noteOn();
-    }
-    void setParam1(int value){
+    void setParam1(int value)
+    {
         baseFreq = (float)map(value, 0, 1024, 40, 80);
         w1.frequency(baseFreq);
         w2.frequency(baseFreq * ratio1);
@@ -89,18 +90,19 @@ class HatsChannel : public AudioChannel
         w7.frequency(baseFreq * ratio6);
         w8.frequency(baseFreq * ratio7);
     }
-    void setParam2(int value){}
-    void setParam3(int value){
+    void setParam2(int value) {}
+    void setParam3(int value)
+    {
         float mappedValue = (float)map(value, 0, 1024, 2000, 10000);
         filter.setHighpass(0, mappedValue, 0.700);
         filter.setHighpass(1, mappedValue, 0.700);
         filter.setHighpass(2, mappedValue, 0.700);
-      }
-    void setParam4(int value){}
-    void setParam5(int value){}
-    void setParam6(int value){envelope.decay((float)map(value, 0, 1024, 1, 100));}
+    }
+    void setParam4(int value) {}
+    void setParam5(int value) {}
+    void setParam6(int value) { envelope.decay((float)map(value, 0, 1024, 1, 100)); }
 
-    private:
+  private:
     float baseFreq = 40;
     float ratio1 = 2.0;
     float ratio2 = 3.0;
@@ -133,4 +135,4 @@ class HatsChannel : public AudioChannel
     AudioConnection mixerFilter;
     AudioConnection filterEnv;
 };
-#endif 
+#endif

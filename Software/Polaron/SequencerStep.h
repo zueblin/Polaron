@@ -27,32 +27,28 @@
 
 class SequencerStep
 {
-public:
+  public:
     SequencerStep();
-    
+
     void toggleTriggerState();
     bool isTriggerOn();
-    
-    
+
     void toggleParameterLockRecord();
     void setParameterLockRecordOn();
     void setParameterLockRecordOff();
     bool isParameterLockOn();
     void copyValuesFrom(SequencerStep sourceStep);
-    
-    
+
     uint8_t state;
-    
+
     uint16_t parameter1;
     uint16_t parameter2;
     uint16_t parameter3;
     uint16_t parameter4;
     uint16_t parameter5;
     uint16_t parameter6;
-    
-    uint8_t triggerPattern;
-    
-};
 
+    uint8_t triggerPattern;
+};
 
 #endif

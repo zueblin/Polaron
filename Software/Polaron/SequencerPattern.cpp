@@ -22,65 +22,76 @@
 
 #include "SequencerPattern.h"
 
-SequencerPattern::SequencerPattern():
-currentStep(0), trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
+SequencerPattern::SequencerPattern() : currentStep(0), trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
 
-
-uint8_t SequencerPattern::doStep(){
-    if (++currentStep >= trackLength){
+uint8_t SequencerPattern::doStep()
+{
+    if (++currentStep >= trackLength)
+    {
         currentStep = 0;
     }
     return steps[currentStep].state;
 }
 
-SequencerStep& SequencerPattern::getCurrentStep(){
-    
+SequencerStep &SequencerPattern::getCurrentStep()
+{
+
     return steps[currentStep];
-    
 }
 
-void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern){
+void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern)
+{
     trackLength = sourcePattern.trackLength;
-    for (int i=0; i<NUMBER_OF_STEPS_PER_PATTERN; i++) {
+    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
+    {
         steps[i].copyValuesFrom(sourcePattern.steps[i]);
     }
 }
 
-
-bool SequencerPattern::isInPLockMode(){
-    for (int i=0; i<NUMBER_OF_STEPS_PER_PATTERN; i++) {
-        if (steps[i].isParameterLockOn()){
+bool SequencerPattern::isInPLockMode()
+{
+    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
+    {
+        if (steps[i].isParameterLockOn())
+        {
             return true;
         }
     }
     return false;
 }
 
-void SequencerPattern::turnOffPLockMode(){
-    for (int i=0; i<NUMBER_OF_STEPS_PER_PATTERN; i++) {
+void SequencerPattern::turnOffPLockMode()
+{
+    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
+    {
         steps[i].setParameterLockRecordOff();
     }
 }
 
-void SequencerPattern::togglePLockMode(){
-    if (isInPLockMode()){
+void SequencerPattern::togglePLockMode()
+{
+    if (isInPLockMode())
+    {
         //turn off all plocks if track is currently in plock mode
-        for (int i=0; i<NUMBER_OF_STEPS_PER_PATTERN; i++) {
+        for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
+        {
             steps[i].setParameterLockRecordOff();
         }
-    } else {
+    }
+    else
+    {
         //turn on plocks on all trigger steps, if track is not in plock mode
-        for (int i=0; i<NUMBER_OF_STEPS_PER_PATTERN; i++) {
-            if (steps[i].isTriggerOn()){
+        for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
+        {
+            if (steps[i].isTriggerOn())
+            {
                 steps[i].setParameterLockRecordOn();
             }
         }
     }
 }
 
-
-
-void SequencerPattern::onStop(){
+void SequencerPattern::onStop()
+{
     currentStep = 0;
 }
-
