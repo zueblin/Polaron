@@ -25,6 +25,7 @@
 #include "SequencerTrack.h"
 #include "SequencerStep.h"
 #include "Sequencer.h"
+#include "Sensor.h"
 #include "mixer.h"
 
 #include <Audio.h>
@@ -96,6 +97,8 @@ static bool externalClockReceived = false;
 static bool externalSync = false;
 
 Sequencer sequencer;
+Sensor sensor1;
+Sensor sensor2;
 
 void setup()
 {
@@ -113,19 +116,19 @@ void setup()
     AudioMemory(30);
     //dacs1.analogReference(EXTERNAL);
 
-    mixer1.gain(0, 1.0f);
-    mixer1.gain(1, 1.0f);
-    mixer1.gain(2, 1.0f);
-    mixer1.gain(3, 1.0f);
-    mixer1.gain(4, 1.0f);
-    mixer1.gain(5, 1.0f);
+    mixer1.gain(0, 0.8f);
+    mixer1.gain(1, 0.8f);
+    mixer1.gain(2, 0.8f);
+    mixer1.gain(3, 0.8f);
+    mixer1.gain(4, 0.8f);
+    mixer1.gain(5, 0.8f);
 
-    mixer2.gain(0, 1.0f);
-    mixer2.gain(1, 1.0f);
-    mixer2.gain(2, 1.0f);
-    mixer2.gain(3, 1.0f);
-    mixer2.gain(4, 1.0f);
-    mixer2.gain(5, 1.0f);
+    mixer2.gain(0, 0.8f);
+    mixer2.gain(1, 0.8f);
+    mixer2.gain(2, 0.8f);
+    mixer2.gain(3, 0.8f);
+    mixer2.gain(4, 0.8f);
+    mixer2.gain(5, 0.8f);
 
     sequencer.tracks[0].init(channel1Default);
     sequencer.tracks[1].init(channel2Default);
@@ -157,6 +160,9 @@ void setup()
         FastLED.show();
         delay(20);
     }
+
+    sensor1.init(analogRead(POTI_PIN_1));
+    sensor2.init(analogRead(POTI_PIN_2));
 
     sequencer.leds[0] = CRGB::Black;
     FastLED.show();
@@ -228,6 +234,15 @@ void updateAudio()
     uint16_t sensorValue1 = (uint16_t)analogRead(POTI_PIN_1);
     uint16_t sensorValue2 = (uint16_t)analogRead(POTI_PIN_2);
 
+    sensor1.update(sensorValue1);
+    sensor2.update(sensorValue2);
+
+    //Serial.print("Sensor1:");
+    //Serial.print(sensor1.isActive());
+    //Serial.print("Sensor2:");
+    //Serial.print(sensor2.isActive());
+    //Serial.println();
+
     //Serial.print(sensorValue1);
     //Serial.print(",");
     //Serial.print(sensorValue2);
@@ -249,41 +264,54 @@ void updateAudio()
                 {
                 case PLockParamSet::SET1:
                 {
-                    step.parameter1 = sensorValue1;
-                    step.parameter2 = sensorValue2;
+                    if (sensor1.isActive())
+                    {
+                        step.parameter1 = sensorValue1;
+                    }
+                    if (sensor2.isActive())
+                    {
+                        step.parameter2 = sensorValue2;
+                    }
                     break;
                 }
                 case PLockParamSet::SET2:
                 {
-                    step.parameter3 = sensorValue1;
-                    step.parameter4 = sensorValue2;
+                    if (sensor1.isActive())
+                    {
+                        step.parameter3 = sensorValue1;
+                    }
+                    if (sensor2.isActive())
+                    {
+                        step.parameter4 = sensorValue2;
+                    }
                     break;
                 }
                 case PLockParamSet::SET3:
                 {
-                    step.parameter5 = sensorValue1;
-                    step.parameter6 = sensorValue2;
+                    if (sensor1.isActive())
+                    {
+                        step.parameter5 = sensorValue1;
+                    }
+                    if (sensor2.isActive())
+                    {
+                        step.parameter6 = sensorValue2;
+                    }
                     break;
                 }
                 }
             }
-        }
-    }
-
-    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++)
-    {
-        SequencerStep step = sequencer.tracks[i].getCurrentStep();
-        if (!sequencer.tracks[i].isMuted() && step.isTriggerOn()
-            //check if the bit for the n-th pulse of this step is set
-            && (step.triggerPattern & (1 << sequencer.pulseCount)))
-        {
-            players[i]->setParam1(step.parameter1);
-            players[i]->setParam2(step.parameter2);
-            players[i]->setParam3(step.parameter3);
-            players[i]->setParam4(step.parameter4);
-            players[i]->setParam5(step.parameter5);
-            players[i]->setParam6(step.parameter6);
-            players[i]->trigger();
+            if (!sequencer.tracks[i].isMuted() && step.isTriggerOn()
+                //check if the bit for the n-th pulse of this step is set
+                && (step.triggerPattern & (1 << sequencer.pulseCount)))
+            {
+                players[i]->setParam1(step.parameter1);
+                players[i]->setParam2(step.parameter2);
+                players[i]->setParam3(step.parameter3);
+                players[i]->setParam4(step.parameter4);
+                players[i]->setParam5(step.parameter5);
+                players[i]->setParam6(step.parameter6);
+                players[i]->trigger();
+            }
         }
     }
 }

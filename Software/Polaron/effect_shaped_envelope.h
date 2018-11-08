@@ -42,6 +42,7 @@ class AudioEffectShapedEnvelope : public AudioStream
         hold(0);
         decay(200.0f);
         decayNoteOn(5.0f);
+        retriggers(0);
     }
     void noteOn();
 
@@ -114,7 +115,7 @@ class AudioEffectShapedEnvelope : public AudioStream
     uint8_t state;  // idle, attack, hold, decay, forced
     uint16_t count; // how much time remains in this state, in sample units
 
-    uint16_t maxRetriggers = 6;
+    uint16_t maxRetriggers = 0;
     uint16_t triggerCount;
 
     // settings
