@@ -56,6 +56,69 @@ void Sequencer::tick()
     if (++pulseCount >= 6)
     {
         pulseCount = 0;
+        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++)
+        {
+
+            //advance one step;
+            tracks[i].doStep();
+            // checks if the bit at position of the current_step is set to 1 in the step on/off integer
+            SequencerStep &step = tracks[i].getCurrentStep();
+
+            if (step.isParameterLockOn())
+            {
+                switch (pLockParamSet)
+                {
+                case PLockParamSet::SET1:
+                {
+                    if (input1.isActive())
+                    {
+                        step.parameter1 = input1.getValue();
+                    }
+                    if (input2.isActive())
+                    {
+                        step.parameter2 = input2.getValue();
+                    }
+                    break;
+                }
+                case PLockParamSet::SET2:
+                {
+                    if (input1.isActive())
+                    {
+                        step.parameter3 = input1.getValue();
+                    }
+                    if (input2.isActive())
+                    {
+                        step.parameter4 = input2.getValue();
+                    }
+                    break;
+                }
+                case PLockParamSet::SET3:
+                {
+                    if (input1.isActive())
+                    {
+                        step.parameter5 = input1.getValue();
+                    }
+                    if (input2.isActive())
+                    {
+                        step.parameter6 = input2.getValue();
+                    }
+                    break;
+                }
+                }
+            }
+            if (!tracks[i].isMuted() && step.isTriggerOn()
+                //check if the bit for the n-th pulse of this step is set
+                && (step.triggerPattern & (1 << pulseCount)))
+            {
+                audioChannels[i]->setParam1(step.parameter1);
+                audioChannels[i]->setParam2(step.parameter2);
+                audioChannels[i]->setParam3(step.parameter3);
+                audioChannels[i]->setParam4(step.parameter4);
+                audioChannels[i]->setParam5(step.parameter5);
+                audioChannels[i]->setParam6(step.parameter6);
+                audioChannels[i]->trigger();
+            }
+        }
     }
 }
 
@@ -447,7 +510,7 @@ void Sequencer::setDefaultTrackLight(uint8_t trackNum)
 void Sequencer::setFunctionButtonLights()
 {
     functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : CRGB::Black;
-    if (hasActivePLockReceivers && pulseCount == 0)
+    if (hasActivePLockReceivers && (pulseCount == 0 || (input1.isActive() || input2.isActive())))
     {
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
     }

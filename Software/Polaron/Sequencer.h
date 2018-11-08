@@ -27,6 +27,8 @@
 
 #include "SequencerTrack.h"
 #include "Bounce2.h"
+#include "Sensor.h"
+#include "AudioChannel.h"
 #include "FastLED.h"
 
 #define SHIFT_IN_DATA_PIN 1
@@ -79,6 +81,9 @@ class Sequencer
     Bounce trackButtons[NUMBER_OF_TRACKBUTTONS];
     Bounce stepButtons[NUMBER_OF_STEPBUTTONS];
     SequencerTrack tracks[NUMBER_OF_INSTRUMENTTRACKS];
+    AudioChannel *audioChannels[NUMBER_OF_INSTRUMENTTRACKS];
+    Sensor input1;
+    Sensor input2;
 
     // All leds are in the same array, since i could not get the lib to work with several arrays.
     CRGB leds[NUM_LEDS];

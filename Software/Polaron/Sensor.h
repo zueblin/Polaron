@@ -25,10 +25,12 @@
 // certain hold time (currentHoldTime)
 // we want to read values from potentiometers only when the user actively uses the potentiometer
 
+#include "Arduino.h"
+
 #ifndef Sensor_h
 #define Sensor_h
 
-#define SENSITIVITY 10
+#define SENSITIVITY 6
 #define HOLD_TIME 96
 
 class Sensor
@@ -45,14 +47,13 @@ class Sensor
     }
     void update(uint16_t value)
     {
-
+        sum = 0;
         for (auto &v : memory)
         {
             sum += v;
         }
         // divide by 4
         sum = sum >> 2;
-
         if (abs(sum - value) > SENSITIVITY)
         {
             currentHoldTime = HOLD_TIME;
@@ -64,12 +65,14 @@ class Sensor
         // & 0x3 is a mod 4 operation
         index = (index + 1) & 0x3;
         memory[index] = value;
-    };
-    bool isActive() { return currentHoldTime > 0; };
+        //
+    }
+    uint16_t getValue() { return memory[index]; }
+    bool isActive() { return currentHoldTime > 0; }
 
   private:
     int32_t sum = 0;
-    u_int16_t currentHoldTime = 0;
+    uint16_t currentHoldTime = 0;
     uint8_t index = 0;
     uint16_t memory[4];
 };

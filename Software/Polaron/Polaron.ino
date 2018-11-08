@@ -22,10 +22,7 @@
 
 #include "Bounce2.h"
 #include "FastLED.h"
-#include "SequencerTrack.h"
-#include "SequencerStep.h"
 #include "Sequencer.h"
-#include "Sensor.h"
 #include "mixer.h"
 
 #include <Audio.h>
@@ -54,9 +51,8 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 
 SimpleDrumChannel channel1(10, 200);
-
 SimpleDrumChannel channel2(200, 6000);
-SimpleSineChannel channel3(400, 4000);
+SimpleSineChannel channel3(100, 2000);
 FMChannel channel4(110, 880);
 SimpleSineChannel channel5(8800, 17600);
 HatsChannel channel6;
@@ -86,9 +82,6 @@ AudioConnection patchCord21(mixer2, 0, dacs1, 1);
 
 // GUItool: end automatically generated code
 
-AudioChannel *players[NUMBER_OF_INSTRUMENTTRACKS] = {
-    &channel1, &channel2, &channel3, &channel4, &channel5, &channel6};
-
 unsigned long last_step_time = millis();
 
 unsigned int step_length = 20;
@@ -97,8 +90,6 @@ static bool externalClockReceived = false;
 static bool externalSync = false;
 
 Sequencer sequencer;
-Sensor sensor1;
-Sensor sensor2;
 
 void setup()
 {
@@ -137,6 +128,13 @@ void setup()
     sequencer.tracks[4].init(channel5Default);
     sequencer.tracks[5].init(channel6Default);
 
+    sequencer.audioChannels[0] = &channel1;
+    sequencer.audioChannels[1] = &channel2;
+    sequencer.audioChannels[2] = &channel3;
+    sequencer.audioChannels[3] = &channel4;
+    sequencer.audioChannels[4] = &channel5;
+    sequencer.audioChannels[5] = &channel6;
+
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
     FastLED.setBrightness(5);
 
@@ -161,8 +159,8 @@ void setup()
         delay(20);
     }
 
-    sensor1.init(analogRead(POTI_PIN_1));
-    sensor2.init(analogRead(POTI_PIN_2));
+    sequencer.input1.init(analogRead(POTI_PIN_1));
+    sequencer.input2.init(analogRead(POTI_PIN_2));
 
     sequencer.leds[0] = CRGB::Black;
     FastLED.show();
@@ -229,91 +227,9 @@ void readButtonStates()
 
 void updateAudio()
 {
+    sequencer.input1.update((uint16_t)analogRead(POTI_PIN_1));
+    sequencer.input2.update((uint16_t)analogRead(POTI_PIN_2));
     sequencer.tick();
-
-    uint16_t sensorValue1 = (uint16_t)analogRead(POTI_PIN_1);
-    uint16_t sensorValue2 = (uint16_t)analogRead(POTI_PIN_2);
-
-    sensor1.update(sensorValue1);
-    sensor2.update(sensorValue2);
-
-    //Serial.print("Sensor1:");
-    //Serial.print(sensor1.isActive());
-    //Serial.print("Sensor2:");
-    //Serial.print(sensor2.isActive());
-    //Serial.println();
-
-    //Serial.print(sensorValue1);
-    //Serial.print(",");
-    //Serial.print(sensorValue2);
-    //Serial.println();
-
-    if (sequencer.pulseCount == 0)
-    {
-        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++)
-        {
-
-            //advance one step;
-            sequencer.tracks[i].doStep();
-            // checks if the bit at position of the current_step is set to 1 in the step on/off integer
-            SequencerStep &step = sequencer.tracks[i].getCurrentStep();
-
-            if (step.isParameterLockOn())
-            {
-                switch (sequencer.pLockParamSet)
-                {
-                case PLockParamSet::SET1:
-                {
-                    if (sensor1.isActive())
-                    {
-                        step.parameter1 = sensorValue1;
-                    }
-                    if (sensor2.isActive())
-                    {
-                        step.parameter2 = sensorValue2;
-                    }
-                    break;
-                }
-                case PLockParamSet::SET2:
-                {
-                    if (sensor1.isActive())
-                    {
-                        step.parameter3 = sensorValue1;
-                    }
-                    if (sensor2.isActive())
-                    {
-                        step.parameter4 = sensorValue2;
-                    }
-                    break;
-                }
-                case PLockParamSet::SET3:
-                {
-                    if (sensor1.isActive())
-                    {
-                        step.parameter5 = sensorValue1;
-                    }
-                    if (sensor2.isActive())
-                    {
-                        step.parameter6 = sensorValue2;
-                    }
-                    break;
-                }
-                }
-            }
-            if (!sequencer.tracks[i].isMuted() && step.isTriggerOn()
-                //check if the bit for the n-th pulse of this step is set
-                && (step.triggerPattern & (1 << sequencer.pulseCount)))
-            {
-                players[i]->setParam1(step.parameter1);
-                players[i]->setParam2(step.parameter2);
-                players[i]->setParam3(step.parameter3);
-                players[i]->setParam4(step.parameter4);
-                players[i]->setParam5(step.parameter5);
-                players[i]->setParam6(step.parameter6);
-                players[i]->trigger();
-            }
-        }
-    }
 }
 
 void loop()
@@ -356,6 +272,10 @@ void loop()
             Serial.print(AudioMemoryUsageMax());
             Serial.println();
         }
+    }
+    else
+    {
+        step_length = map((uint16_t)analogRead(POTI_PIN_1), 0, 1024, 100, 10);
     }
 }
 
