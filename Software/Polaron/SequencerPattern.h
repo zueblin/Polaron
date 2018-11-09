@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,9 +28,8 @@
 
 #define NUMBER_OF_STEPS_PER_PATTERN 16
 
-class SequencerPattern
-{
-  public:
+class SequencerPattern {
+   public:
     SequencerPattern();
 
     uint8_t currentStep;
@@ -42,15 +41,17 @@ class SequencerPattern
     void init(SequencerStepDefault &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
 
-    //does a Step and returns 1 if the new step is a trigger, 0 if it is not a trigger
+    // does a Step and returns 1 if the new step is a trigger, 0 if it is not a
+    // trigger
     uint8_t doStep();
 
     void onStop();
 
-    //returns true if at least one step in the track is in plock rec mode
+    // returns true if at least one step in the track is in plock rec mode
     bool isInPLockMode();
 
-    //turns plock rec mode on for all steps, if no step in the track is in plock rec mode, otherwise turns all steps off.
+    // turns plock rec mode on for all steps, if no step in the track is in
+    // plock rec mode, otherwise turns all steps off.
     void togglePLockMode();
 
     void turnOffPLockMode();

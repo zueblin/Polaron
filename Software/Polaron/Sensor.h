@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -21,9 +21,11 @@
 // SOFTWARE.
 
 // A utility class for input sensors (potentiometers):
-// - a pot is inactive as long as its values doesnt change significantly between several readings. When it changes it becomes active and stays active for a
+// - a pot is inactive as long as its values doesnt change significantly between
+// several readings. When it changes it becomes active and stays active for a
 // certain hold time (currentHoldTime)
-// we want to read values from potentiometers only when the user actively uses the potentiometer
+// we want to read values from potentiometers only when the user actively uses
+// the potentiometer
 
 #include "Arduino.h"
 
@@ -33,33 +35,26 @@
 #define SENSITIVITY 6
 #define HOLD_TIME 96
 
-class Sensor
-{
-  public:
+class Sensor {
+   public:
     Sensor(){};
-    void init(uint16_t value)
-    {
-        for (auto &v : memory)
-        {
+    void init(uint16_t value) {
+        for (auto &v : memory) {
             v = value;
         }
         index = 0;
     }
-    void update(uint16_t value)
-    {
+    void update(uint16_t value) {
         sum = 0;
-        for (auto &v : memory)
-        {
+        for (auto &v : memory) {
             sum += v;
         }
         // divide by 4
         sum = sum >> 2;
-        if (abs(sum - value) > SENSITIVITY)
-        {
+        if (abs(sum - value) > SENSITIVITY) {
             currentHoldTime = HOLD_TIME;
         }
-        if (currentHoldTime > 0)
-        {
+        if (currentHoldTime > 0) {
             currentHoldTime--;
         }
         // & 0x3 is a mod 4 operation
@@ -70,7 +65,7 @@ class Sensor
     uint16_t getValue() { return memory[index]; }
     bool isActive() { return currentHoldTime > 0; }
 
-  private:
+   private:
     int32_t sum = 0;
     uint16_t currentHoldTime = 0;
     uint8_t index = 0;

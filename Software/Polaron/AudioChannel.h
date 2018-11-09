@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,11 +25,10 @@
 #ifndef AudioChannel_h
 #define AudioChannel_h
 
-class AudioChannel
-{
-  public:
-    virtual AudioStream *getOutput1();
-    virtual AudioStream *getOutput2();
+class AudioChannel {
+   public:
+    virtual AudioStream* getOutput1();
+    virtual AudioStream* getOutput2();
     virtual void trigger();
     virtual void setParam1(int value);
     virtual void setParam2(int value);

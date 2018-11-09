@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,11 +25,11 @@
 
 #include <stdint.h>
 
-#include "SequencerTrack.h"
-#include "Bounce2.h"
-#include "Sensor.h"
 #include "AudioChannel.h"
+#include "Bounce2.h"
 #include "FastLED.h"
+#include "Sensor.h"
+#include "SequencerTrack.h"
 
 #define SHIFT_IN_DATA_PIN 1
 
@@ -48,34 +48,18 @@
 #define BUTTON_SET_TRACKLENGTH 6
 #define BUTTON_SET_PATTERN 7
 
-//led config
+// led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_TRACKBUTTONS + NUMBER_OF_STEPBUTTONS
 
 #define functionLED(n) leds[NUMBER_OF_STEPBUTTONS + (n)]
 #define stepLED(n) leds[(n)]
 #define trackLED(n) leds[NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_STEPBUTTONS + (n)]
 
-enum class FunctionMode
-{
-    START_STOP,
-    SET_TRACK_LENGTH,
-    TOGGLE_PLOCKS,
-    LEAVE_TOGGLE_PLOCKS,
-    TOGGLE_MUTES,
-    LEAVE_TOGGLE_MUTES,
-    SET_PATTERN,
-    DEFAULT_MODE
-};
-enum class PLockParamSet
-{
-    SET1,
-    SET2,
-    SET3
-};
+enum class FunctionMode { START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, SET_PATTERN, DEFAULT_MODE };
+enum class PLockParamSet { SET1, SET2, SET3 };
 
-class Sequencer
-{
-  public:
+class Sequencer {
+   public:
     Sequencer();
     Bounce functionButtons[NUMBER_OF_FUNCTIONBUTTONS];
     Bounce trackButtons[NUMBER_OF_TRACKBUTTONS];
@@ -85,7 +69,8 @@ class Sequencer
     Sensor input1;
     Sensor input2;
 
-    // All leds are in the same array, since i could not get the lib to work with several arrays.
+    // All leds are in the same array, since i could not get the lib to work
+    // with several arrays.
     CRGB leds[NUM_LEDS];
 
     bool isRunning() { return running; }
@@ -93,6 +78,7 @@ class Sequencer
     SequencerTrack &getSelectedTrack() { return tracks[selectedTrack]; }
     void updateState();
 
+    bool shouldTick();
     void tick();
     void start();
     void stop();
@@ -100,16 +86,19 @@ class Sequencer
     uint8_t pulseCount = 0;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 
-  private:
-    //currently selected track
+   private:
+    uint32_t lastStepTime = 0;
+    uint16_t stepLength = 20;
+
+    // currently selected track
     uint8_t selectedTrack = 0;
     uint8_t ledFader = 0;
 
-    //tracks state of step copy operation
+    // tracks state of step copy operation
     int8_t sourceStepIndex = -1;
     bool stepCopy = false;
 
-    //tracks state of pattern copy operation
+    // tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
     bool patternCopy = false;
     bool hasActivePLockReceivers = false;

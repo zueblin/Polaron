@@ -13,7 +13,8 @@
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice, development funding notice, and this permission
- * notice shall be included in all copies or substantial portions of the Software.
+ * notice shall be included in all copies or substantial portions of the
+ * Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -27,14 +28,12 @@
 #include "mixer.h"
 #include "utility/dspinst.h"
 
-void applyGain(int16_t *data, int32_t mult)
-{
+void applyGain(int16_t *data, int32_t mult) {
     uint32_t *p = (uint32_t *)data;
     const uint32_t *end = (uint32_t *)(data + AUDIO_BLOCK_SAMPLES);
 
-    do
-    {
-        uint32_t tmp32 = *p; // read 2 samples from *data
+    do {
+        uint32_t tmp32 = *p;  // read 2 samples from *data
         int32_t val1 = signed_multiply_32x16b(mult, tmp32);
         int32_t val2 = signed_multiply_32x16t(mult, tmp32);
         val1 = signed_saturate_rshift(val1, 16, 0);
@@ -45,27 +44,21 @@ void applyGain(int16_t *data, int32_t mult)
 
 // page 133
 
-void applyGainThenAdd(int16_t *data, const int16_t *in, int32_t mult)
-{
+void applyGainThenAdd(int16_t *data, const int16_t *in, int32_t mult) {
     uint32_t *dst = (uint32_t *)data;
     const uint32_t *src = (uint32_t *)in;
     const uint32_t *end = (uint32_t *)(data + AUDIO_BLOCK_SAMPLES);
 
-    if (mult == 65536)
-    {
-        do
-        {
+    if (mult == 65536) {
+        do {
             uint32_t tmp32 = *dst;
             *dst++ = signed_add_16_and_16(tmp32, *src++);
             tmp32 = *dst;
             *dst++ = signed_add_16_and_16(tmp32, *src++);
         } while (dst < end);
-    }
-    else
-    {
-        do
-        {
-            uint32_t tmp32 = *src++; // read 2 samples from *data
+    } else {
+        do {
+            uint32_t tmp32 = *src++;  // read 2 samples from *data
             int32_t val1 = signed_multiply_32x16b(mult, tmp32);
             int32_t val2 = signed_multiply_32x16t(mult, tmp32);
             val1 = signed_saturate_rshift(val1, 16, 0);
@@ -77,35 +70,26 @@ void applyGainThenAdd(int16_t *data, const int16_t *in, int32_t mult)
     }
 }
 
-void AudioMixer8::update(void)
-{
+void AudioMixer8::update(void) {
     audio_block_t *in, *out = NULL;
     unsigned int channel;
 
-    for (channel = 0; channel < 8; channel++)
-    {
-        if (!out)
-        {
+    for (channel = 0; channel < 8; channel++) {
+        if (!out) {
             out = receiveWritable(channel);
-            if (out)
-            {
+            if (out) {
                 int32_t mult = multiplier[channel];
-                if (mult != 65536)
-                    applyGain(out->data, mult);
+                if (mult != 65536) applyGain(out->data, mult);
             }
-        }
-        else
-        {
+        } else {
             in = receiveReadOnly(channel);
-            if (in)
-            {
+            if (in) {
                 applyGainThenAdd(out->data, in->data, multiplier[channel]);
                 release(in);
             }
         }
     }
-    if (out)
-    {
+    if (out) {
         transmit(out);
         release(out);
     }

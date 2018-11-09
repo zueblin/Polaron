@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,11 +25,9 @@
 
 #include <inttypes.h>
 
-class SequencerStepDefault
-{
-  public:
-    SequencerStepDefault(uint16_t p1, uint16_t p2, uint16_t p3, uint16_t p4, uint16_t p5, uint16_t p6)
-    {
+class SequencerStepDefault {
+   public:
+    SequencerStepDefault(uint16_t p1, uint16_t p2, uint16_t p3, uint16_t p4, uint16_t p5, uint16_t p6) {
         parameter1 = p1;
         parameter2 = p2;
         parameter3 = p3;
@@ -45,9 +43,8 @@ class SequencerStepDefault
     uint16_t parameter6;
 };
 
-class SequencerStep
-{
-  public:
+class SequencerStep {
+   public:
     SequencerStep();
 
     void toggleTriggerState();

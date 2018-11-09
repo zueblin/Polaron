@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,8 +29,7 @@
 SequencerStep::SequencerStep()
     : state(0), parameter1(512u), parameter2(512u), parameter3(512u), parameter4(512u), parameter5(512u), parameter6(512u), triggerPattern(0b00000001) {}
 
-void SequencerStep::init(SequencerStepDefault &defaultValues)
-{
+void SequencerStep::init(SequencerStepDefault &defaultValues) {
     state = 0;
     parameter1 = defaultValues.parameter1;
     parameter2 = defaultValues.parameter2;
@@ -40,45 +39,34 @@ void SequencerStep::init(SequencerStepDefault &defaultValues)
     parameter6 = defaultValues.parameter6;
 }
 
-
-
-void SequencerStep::toggleTriggerState()
-{
-    //toggle trigger state bit
+void SequencerStep::toggleTriggerState() {
+    // toggle trigger state bit
     state ^= _BV(TRIGGER_STATE);
 }
 
-bool SequencerStep::isTriggerOn()
-{
-    //return value of trigger state bit
+bool SequencerStep::isTriggerOn() {
+    // return value of trigger state bit
     return state & _BV(TRIGGER_STATE);
 }
 
-void SequencerStep::toggleParameterLockRecord()
-{
-    //sets the plock bit
+void SequencerStep::toggleParameterLockRecord() {
+    // sets the plock bit
     state ^= _BV(PLOCK_REC_STATE);
 }
 
-void SequencerStep::setParameterLockRecordOn()
-{
-    //sets the plock bit
+void SequencerStep::setParameterLockRecordOn() {
+    // sets the plock bit
     state |= _BV(PLOCK_REC_STATE);
 }
 
-void SequencerStep::setParameterLockRecordOff()
-{
-    //clears the plock bit
+void SequencerStep::setParameterLockRecordOff() {
+    // clears the plock bit
     state &= ~_BV(PLOCK_REC_STATE);
 }
 
-bool SequencerStep::isParameterLockOn()
-{
-    return state & _BV(PLOCK_REC_STATE);
-}
+bool SequencerStep::isParameterLockOn() { return state & _BV(PLOCK_REC_STATE); }
 
-void SequencerStep::copyValuesFrom(SequencerStep sourceStep)
-{
+void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
     state = sourceStep.state;
     parameter1 = sourceStep.parameter1;
     parameter2 = sourceStep.parameter2;

@@ -13,7 +13,8 @@
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice, development funding notice, and this permission
- * notice shall be included in all copies or substantial portions of the Software.
+ * notice shall be included in all copies or substantial portions of the
+ * Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,27 +30,22 @@
 
 #include "AudioStream.h"
 
-class AudioMixer8 : public AudioStream
-{
-  public:
-    AudioMixer8(void) : AudioStream(8, inputQueueArray)
-    {
-        for (int i = 0; i < 8; i++)
-            multiplier[i] = 65536;
+class AudioMixer8 : public AudioStream {
+   public:
+    AudioMixer8(void) : AudioStream(8, inputQueueArray) {
+        for (int i = 0; i < 8; i++) multiplier[i] = 65536;
     }
     virtual void update(void);
-    void gain(unsigned int channel, float gain)
-    {
-        if (channel >= 8)
-            return;
+    void gain(unsigned int channel, float gain) {
+        if (channel >= 8) return;
         if (gain > 32767.0f)
             gain = 32767.0f;
         else if (gain < 0.0f)
             gain = 0.0f;
-        multiplier[channel] = gain * 65536.0f; // TODO: proper roundoff?
+        multiplier[channel] = gain * 65536.0f;  // TODO: proper roundoff?
     }
 
-  private:
+   private:
     int32_t multiplier[8];
     audio_block_t *inputQueueArray[8];
 };

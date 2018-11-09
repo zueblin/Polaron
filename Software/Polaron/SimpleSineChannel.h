@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,18 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <Audio.h>
 #include "AudioChannel.h"
 #include "effect_shaped_envelope.h"
-#include <Audio.h>
 
 #ifndef SimpleSineChannel_h
 #define SimpleSineChannel_h
 
-class SimpleSineChannel : public AudioChannel
-{
-  public:
-    SimpleSineChannel(int lowFreq, int highFreq) : patchCord(osc, envelope)
-    {
+class SimpleSineChannel : public AudioChannel {
+   public:
+    SimpleSineChannel(int lowFreq, int highFreq) : patchCord(osc, envelope) {
         low = lowFreq;
         high = highFreq;
         envelope.attack(20);
@@ -50,7 +48,7 @@ class SimpleSineChannel : public AudioChannel
     void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
     void setParam6(int value) {}
 
-  private:
+   private:
     int low = 35;
     int high = 880;
     AudioSynthWaveformSine osc;

@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,18 +29,18 @@
 // #define USB_MIDI_SERIAL
 // #include "MIDIUSB.h"
 
-#include "SimpleSineChannel.h"
-#include "SimpleDrumChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
+#include "SimpleDrumChannel.h"
+#include "SimpleSineChannel.h"
 
 //#define FASTLED_ALLOW_INTERRUPTS 0
 #define PULSE_WIDTH_USEC 5
 
-#define SHIFT_IN_PLOAD_PIN 0 // 2  // Connects to Parallel load pin the 165
-#define SHIFT_IN_DATA_PIN 1  // 4 // Connects to the Q7 pin the 165
-#define SHIFT_IN_CLOCK_PIN 2 //5 // Connects to the Clock pin the 165
-//pin used to send the serial data to the array of leds (via fastLED)
+#define SHIFT_IN_PLOAD_PIN 0  // 2  // Connects to Parallel load pin the 165
+#define SHIFT_IN_DATA_PIN 1   // 4 // Connects to the Q7 pin the 165
+#define SHIFT_IN_CLOCK_PIN 2  // 5 // Connects to the Clock pin the 165
+// pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
 #define POTI_PIN_1 A8
 #define POTI_PIN_2 A9
@@ -82,20 +82,19 @@ AudioConnection patchCord21(mixer2, 0, dacs1, 1);
 
 // GUItool: end automatically generated code
 
-unsigned long last_step_time = millis();
-
-unsigned int step_length = 20;
-
 static bool externalClockReceived = false;
 static bool externalSync = false;
 
 Sequencer sequencer;
 
-void setup()
-{
+void setup() {
+    // Serial.begin(9600);
+    // while (!Serial)
+    //{
+    //    ; // wait for serial port to connect. Needed for native USB
+    //}
 
     pinMode(SHIFT_IN_PLOAD_PIN, OUTPUT);
-    //pinMode(inClockEnablePin, OUTPUT);
     pinMode(SHIFT_IN_CLOCK_PIN, OUTPUT);
     pinMode(SHIFT_IN_DATA_PIN, INPUT);
     // init input shift register
@@ -104,8 +103,8 @@ void setup()
 
     usbMIDI.setHandleRealTimeSystem(onRealTimeSystem);
 
-    AudioMemory(30);
-    //dacs1.analogReference(EXTERNAL);
+    AudioMemory(50);
+    // dacs1.analogReference(EXTERNAL);
 
     mixer1.gain(0, 0.8f);
     mixer1.gain(1, 0.8f);
@@ -138,20 +137,16 @@ void setup()
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
     FastLED.setBrightness(5);
 
-    for (int i = 0; i < NUM_LEDS; i++)
-    {
-        for (int j = 0; j < NUM_LEDS; j++)
-        {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        for (int j = 0; j < NUM_LEDS; j++) {
             sequencer.leds[j] = CRGB::Black;
         }
         sequencer.leds[i] = CRGB::Red;
         FastLED.show();
         delay(20);
     }
-    for (int i = NUM_LEDS - 1; i >= 0; i--)
-    {
-        for (int j = 0; j < NUM_LEDS; j++)
-        {
+    for (int i = NUM_LEDS - 1; i >= 0; i--) {
+        for (int j = 0; j < NUM_LEDS; j++) {
             sequencer.leds[j] = CRGB::Black;
         }
         sequencer.leds[i] = CRGB::Red;
@@ -166,21 +161,20 @@ void setup()
     FastLED.show();
 }
 
-inline void readButtonState(Bounce &button)
-{
+inline void readButtonState(Bounce &button) {
     button.update();
-    //Pulse the Clock (rising edge shifts the next bit).
+    // Pulse the Clock (rising edge shifts the next bit).
     digitalWrite(SHIFT_IN_CLOCK_PIN, HIGH);
-    //delayMicroseconds(PULSE_WIDTH_USEC);
+    // delayMicroseconds(PULSE_WIDTH_USEC);
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
 }
 
 /*
  * updates all button states by reading in the values from the shift registers
  */
-void readButtonStates()
-{
-    // Trigger a parallel Load to latch the state of the data lines in the input shift register.
+void readButtonStates() {
+    // Trigger a parallel Load to latch the state of the data lines in the input
+    // shift register.
     digitalWrite(SHIFT_IN_PLOAD_PIN, LOW);
     delayMicroseconds(PULSE_WIDTH_USEC);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
@@ -225,83 +219,65 @@ void readButtonStates()
     readButtonState(sequencer.functionButtons[0]);
 }
 
-void updateAudio()
-{
+void inline updateAudio() {
     sequencer.input1.update((uint16_t)analogRead(POTI_PIN_1));
     sequencer.input2.update((uint16_t)analogRead(POTI_PIN_2));
     sequencer.tick();
 }
 
-void loop()
-{
-
+void loop() {
     usbMIDI.read();
-    //long starttime = micros();
+    // long starttime = micros();
 
     FastLED.clearData();
     readButtonStates();
     sequencer.updateState();
-    FastLED.show();
-
-    if (sequencer.isRunning())
-    {
-
-        if (externalSync && externalClockReceived)
-        {
+    if (sequencer.isRunning()) {
+        if (externalSync && externalClockReceived) {
             externalClockReceived = false;
             updateAudio();
-        }
-        else if (!externalSync && (millis() - last_step_time >= step_length))
-        {
+        } else if (!externalSync && sequencer.shouldTick()) {
             updateAudio();
-            last_step_time = millis();
-        }
-
-        if (0)
-        {
-
-            Serial.print("CPU: ");
-            Serial.print("all=");
-            Serial.print(AudioProcessorUsage());
-            Serial.print(",");
-            Serial.print(AudioProcessorUsageMax());
-            Serial.print("    ");
-            Serial.print("Memory: ");
-            Serial.print(AudioMemoryUsage());
-            Serial.print(",");
-            Serial.print(AudioMemoryUsageMax());
-            Serial.println();
         }
     }
-    else
-    {
-        step_length = map((uint16_t)analogRead(POTI_PIN_1), 0, 1024, 100, 10);
-    }
+    FastLED.show();
 }
 
-void onRealTimeSystem(uint8_t rtb)
-{
-    switch (rtb)
-    {
-    case 0xF8: // Clock
-        externalClockReceived = true;
-        break;
-    case 0xFA: // Start
-        externalSync = true;
-        sequencer.start();
-        break;
-    case 0xFC: // Stop
-        externalSync = false;
-        sequencer.stop();
-        break;
-    case 0xFB: // Continue
-    case 0xFE: // ActiveSensing
-    case 0xFF: // SystemReset
-        break;
-    default: // Invalid Real Time marker
-        break;
+void onRealTimeSystem(uint8_t rtb) {
+    switch (rtb) {
+        case 0xF8:  // Clock
+            externalClockReceived = true;
+            break;
+        case 0xFA:  // Start
+            externalSync = true;
+            sequencer.start();
+            break;
+        case 0xFC:  // Stop
+            externalSync = false;
+            sequencer.stop();
+            break;
+        case 0xFB:  // Continue
+        case 0xFE:  // ActiveSensing
+        case 0xFF:  // SystemReset
+            break;
+        default:  // Invalid Real Time marker
+            break;
     }
-    //Serial.print("OnRealTimeSystem");
-    //Serial.print(rtb, DEC);
-    //Serial.println();
+    // Serial.print("OnRealTimeSystem");
+    // Serial.print(rtb, DEC);
+    // Serial.println();
+}
+
+void debugAudioUsage() {
+    Serial.print("CPU: ");
+    Serial.print("all=");
+    Serial.print(AudioProcessorUsage());
+    Serial.print(",");
+    Serial.print(AudioProcessorUsageMax());
+    Serial.print("    ");
+    Serial.print("Memory: ");
+    Serial.print(AudioMemoryUsage());
+    Serial.print(",");
+    Serial.print(AudioMemoryUsageMax());
+    Serial.println();
 }

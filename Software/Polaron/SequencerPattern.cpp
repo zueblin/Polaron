@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,82 +24,57 @@
 
 SequencerPattern::SequencerPattern() : currentStep(0), trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
 
-void SequencerPattern::init(SequencerStepDefault &defaultValues)
-{
-    for (auto &step : steps)
-    {
+void SequencerPattern::init(SequencerStepDefault &defaultValues) {
+    for (auto &step : steps) {
         step.init(defaultValues);
     }
 }
 
-uint8_t SequencerPattern::doStep()
-{
-    if (++currentStep >= trackLength)
-    {
+uint8_t SequencerPattern::doStep() {
+    if (++currentStep >= trackLength) {
         currentStep = 0;
     }
     return steps[currentStep].state;
 }
 
-SequencerStep &SequencerPattern::getCurrentStep()
-{
+SequencerStep &SequencerPattern::getCurrentStep() { return steps[currentStep]; }
 
-    return steps[currentStep];
-}
-
-void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern)
-{
+void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern) {
     trackLength = sourcePattern.trackLength;
-    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
-    {
+    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
         steps[i].copyValuesFrom(sourcePattern.steps[i]);
     }
 }
 
-bool SequencerPattern::isInPLockMode()
-{
-    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
-    {
-        if (steps[i].isParameterLockOn())
-        {
+bool SequencerPattern::isInPLockMode() {
+    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
+        if (steps[i].isParameterLockOn()) {
             return true;
         }
     }
     return false;
 }
 
-void SequencerPattern::turnOffPLockMode()
-{
-    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
-    {
+void SequencerPattern::turnOffPLockMode() {
+    for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
         steps[i].setParameterLockRecordOff();
     }
 }
 
-void SequencerPattern::togglePLockMode()
-{
-    if (isInPLockMode())
-    {
-        //turn off all plocks if track is currently in plock mode
-        for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
-        {
+void SequencerPattern::togglePLockMode() {
+    if (isInPLockMode()) {
+        // turn off all plocks if track is currently in plock mode
+        for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
             steps[i].setParameterLockRecordOff();
         }
-    }
-    else
-    {
-        //turn on plocks on all trigger steps, if track is not in plock mode
-        for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++)
-        {
-            if (steps[i].isTriggerOn())
-            {
+    } else {
+        // turn on plocks on all trigger steps, if track is not in plock mode
+        for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
+            if (steps[i].isTriggerOn()) {
                 steps[i].setParameterLockRecordOn();
             }
         }
     }
 }
 
-void SequencerPattern::onStop()
-{
-    currentStep = 0;
-}
+void SequencerPattern::onStop() { currentStep = 0; }
