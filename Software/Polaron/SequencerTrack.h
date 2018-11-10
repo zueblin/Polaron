@@ -24,6 +24,7 @@
 #define SequencerTrack_h
 
 #include <inttypes.h>
+#include "Arduino.h"
 #include "SequencerPattern.h"
 #include "SequencerStep.h"
 
@@ -43,6 +44,7 @@ class SequencerTrack {
     void onStop();
 
     // control muting of the whole track
+    void setTrackNum(uint8_t trackNumber) { trackNum = trackNumber; }
     void toggleMute();
     void unMute();
     void mute();
@@ -50,16 +52,27 @@ class SequencerTrack {
     bool isArmed();
     void toggleMuteArm();
     void activateMuteArms();
+
+    void togglePatternOpsArm() { patternOpsArmState ^= _BV(trackNum); }
+    void deactivatePatternOpsArm() { patternOpsArmState &= ~_BV(trackNum); }
+    bool isPatternOpsArmed() { return patternOpsArmState & _BV(trackNum); }
+    static bool anyPatternOpsArmed() { return patternOpsArmState > 0; }
+    static void deactivateAllPatternOpsArms() { patternOpsArmState = 0; }
+
     void switchToPattern(uint8_t number);
 
     SequencerPattern patterns[NUMBER_OF_PATTERNS];
 
    private:
+    uint8_t trackNum;
     // the currently active pattern
     uint8_t currentPattern;
     // bit 0: mute/unmuted
     // bit 1: mute/unmute arm state
     uint8_t state;
+
+    // we use a static variable to store state of all tracks, making it easy to get global information like if any of the tracks is armed
+    static uint8_t patternOpsArmState;
 };
 
 #endif /* defined(__StepSequencerTeensy__SequencerTrack__) */

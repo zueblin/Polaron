@@ -55,7 +55,17 @@
 #define stepLED(n) leds[(n)]
 #define trackLED(n) leds[NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_STEPBUTTONS + (n)]
 
-enum class FunctionMode { START_STOP, SET_TRACK_LENGTH, TOGGLE_PLOCKS, LEAVE_TOGGLE_PLOCKS, TOGGLE_MUTES, LEAVE_TOGGLE_MUTES, SET_PATTERN, DEFAULT_MODE };
+enum class FunctionMode {
+    START_STOP,
+    SET_TRACK_LENGTH,
+    TOGGLE_PLOCKS,
+    LEAVE_TOGGLE_PLOCKS,
+    TOGGLE_MUTES,
+    LEAVE_TOGGLE_MUTES,
+    PATTERN_OPS,
+    LEAVE_PATTERN_OPS,
+    DEFAULT_MODE
+};
 enum class PLockParamSet { SET1, SET2, SET3 };
 
 class Sequencer {
@@ -100,6 +110,7 @@ class Sequencer {
 
     // tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
+    int8_t nextPatternIndex = -1;
     bool patternCopy = false;
     bool hasActivePLockReceivers = false;
 
@@ -110,13 +121,15 @@ class Sequencer {
 
     void doSetTriggers();
     void doSetTrackLength();
-    void doSetPattern();
     void doSetTrackPLock();
     void doStartStop();
     void doToggleTrackMuteArm();
     void doUpdateMutes();
     void doTurnOffPlockMode();
     void doSetTrackSelection();
+    void doPatternOps();
+    void doLeavePatternOps();
+
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
 

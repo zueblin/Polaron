@@ -31,6 +31,8 @@
 // bit=1:toggle mute state on next update
 #define MUTE_ARM_STATE_BIT 1
 
+uint8_t SequencerTrack::patternOpsArmState = 0;
+
 SequencerTrack::SequencerTrack() : currentPattern(0), state(0) {}
 
 void SequencerTrack::init(SequencerStepDefault &defaultValues) {
@@ -42,8 +44,8 @@ void SequencerTrack::init(SequencerStepDefault &defaultValues) {
 uint8_t SequencerTrack::doStep() { return patterns[currentPattern].doStep(); }
 
 void SequencerTrack::onStop() {
-    for (int i = 0; i < NUMBER_OF_PATTERNS; i++) {
-        patterns[i].onStop();
+    for (auto &pattern : patterns) {
+        pattern.onStop();
     }
 }
 
@@ -58,34 +60,17 @@ void SequencerTrack::switchToPattern(uint8_t number) {
     currentPattern = number;
 }
 
-/*
- * TRACK MUTE
- */
-void SequencerTrack::toggleMute() {
-    // toggles mute bit
-    state ^= _BV(MUTE_STATE_BIT);
-}
+void SequencerTrack::toggleMute() { state ^= _BV(MUTE_STATE_BIT); }
 
-void SequencerTrack::unMute() {
-    // sets the plock bit
-    state |= _BV(MUTE_STATE_BIT);
-}
+void SequencerTrack::unMute() { state |= _BV(MUTE_STATE_BIT); }
 
-void SequencerTrack::mute() {
-    // clears the plock bit
-    state &= ~_BV(MUTE_STATE_BIT);
-}
+void SequencerTrack::mute() { state &= ~_BV(MUTE_STATE_BIT); }
 
 bool SequencerTrack::isMuted() { return state & _BV(MUTE_STATE_BIT); }
 
 bool SequencerTrack::isArmed() { return state & _BV(MUTE_ARM_STATE_BIT); }
 
-void SequencerTrack::toggleMuteArm() {
-    // toggles mute bit
-    state ^= _BV(MUTE_ARM_STATE_BIT);
-    // Serial.print("mute arm:");
-    // Serial.println(state);
-}
+void SequencerTrack::toggleMuteArm() { state ^= _BV(MUTE_ARM_STATE_BIT); }
 
 void SequencerTrack::activateMuteArms() {
     if (state & _BV(MUTE_ARM_STATE_BIT)) {

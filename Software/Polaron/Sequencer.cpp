@@ -22,7 +22,7 @@
 
 #include "Sequencer.h"
 
-#define MUTE_DIM_FACTOR 40
+#define MUTE_DIM_FACTOR 20
 
 Sequencer::Sequencer() {
     for (int i = 0; i < NUMBER_OF_FUNCTIONBUTTONS; i++) {
@@ -42,6 +42,10 @@ Sequencer::Sequencer() {
 
     for (int i = 0; i < NUM_LEDS; i++) {
         leds[i] = CRGB::Black;
+    }
+
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        tracks[i].setTrackNum(i);
     }
 }
 
@@ -174,20 +178,23 @@ void Sequencer::updateState() {
         case FunctionMode::LEAVE_TOGGLE_MUTES:
             doUpdateMutes();
             break;
-        case FunctionMode::SET_PATTERN:
-            doSetPattern();
+        case FunctionMode::PATTERN_OPS:
+            doPatternOps();
+            break;
+        case FunctionMode::LEAVE_PATTERN_OPS:
+            doLeavePatternOps();
             break;
         default:
             break;
     }
 
-    if (functionMode != FunctionMode::TOGGLE_MUTES) {
+    if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS) {
         // if mute button is not pressed down, handle pressing track buttons as
         // normal track selection.
         doSetTrackSelection();
     }
 
-    if (functionMode != FunctionMode::SET_TRACK_LENGTH && functionMode != FunctionMode::TOGGLE_PLOCKS && functionMode != FunctionMode::SET_PATTERN) {
+    if (functionMode != FunctionMode::SET_TRACK_LENGTH && functionMode != FunctionMode::TOGGLE_PLOCKS && functionMode != FunctionMode::PATTERN_OPS) {
         // if not in set_length, plock or set pattern mode, handle step button
         // presses as normal trigger presses.
         doSetTriggers();
@@ -238,7 +245,11 @@ FunctionMode Sequencer::calculateFunctionMode() {
 
     // SWITCH PATTERN
     if (functionButtons[BUTTON_SET_PATTERN].read()) {
-        return FunctionMode::SET_PATTERN;
+        return FunctionMode::PATTERN_OPS;
+    }
+    // SWITCH PATTERN
+    if (functionButtons[BUTTON_SET_PATTERN].fell()) {
+        return FunctionMode::LEAVE_PATTERN_OPS;
     }
     return FunctionMode::DEFAULT_MODE;
 }
@@ -305,45 +316,6 @@ void Sequencer::doSetTrackLength() {
 }
 
 /*
- * Set track length mode. Step button presses set the track length.
- */
-void Sequencer::doSetPattern() {
-    functionLED(BUTTON_SET_PATTERN) = CRGB::CornflowerBlue;
-    uint8_t currentPatternIndex = tracks[selectedTrack].getCurrentPatternIndex();
-    bool aButtonIsPressed = false;
-
-    for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
-        if (stepButtons[i].read()) {
-            aButtonIsPressed = true;
-            if (sourcePatternIndex == -1) {
-                // this is the first button that is pressed down (after no steps
-                // were pressed). Register this step as source for (a possible,
-                // to follow) copy operation.
-                sourcePatternIndex = i;
-            } else if (i != sourcePatternIndex) {
-                // this is not the first button that is pressed down, so this is
-                // a target step for copy (from source step)
-                tracks[selectedTrack].patterns[i].copyValuesFrom(tracks[selectedTrack].patterns[sourcePatternIndex]);
-                patternCopy = true;
-            }
-        }
-
-        if (stepButtons[i].fell() && !patternCopy) {
-            tracks[selectedTrack].switchToPattern(i);
-        }
-        stepLED(i) = i == currentPatternIndex ? CRGB::Red : CRGB::Black;
-    }
-    if (!aButtonIsPressed) {
-        // reset values needed for the copy operation as soon as no step buttons
-        // are pressed at all
-        sourcePatternIndex = -1;
-        patternCopy = false;
-    }
-    // stepLED(tracks[selectedTrack].getCurrentPattern().trackLength-1) =
-    // CRGB::Red;
-}
-
-/*
  * Toggles plock mode of all steps in a track
  */
 void Sequencer::doSetTrackPLock() {
@@ -402,6 +374,74 @@ void Sequencer::doToggleTrackMuteArm() {
             setDefaultTrackLight(i);
         }
     }
+}
+
+void Sequencer::doPatternOps() {
+    functionLED(BUTTON_SET_PATTERN) = CRGB::CornflowerBlue;
+    ledFader++;
+    if (ledFader > 200) ledFader = 10;
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        if (trackButtons[i].fell()) {
+            tracks[i].togglePatternOpsArm();
+        }
+        if (tracks[i].isPatternOpsArmed()) {
+            trackLED(i) = CRGB::CornflowerBlue;
+            trackLED(i).nscale8(255 - ledFader);
+        } else {
+            setDefaultTrackLight(i);
+        }
+    }
+
+    uint8_t currentPatternIndex = tracks[selectedTrack].getCurrentPatternIndex();
+    bool aButtonIsPressed = false;
+    for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
+        if (stepButtons[i].read()) {
+            aButtonIsPressed = true;
+            if (sourcePatternIndex == -1) {
+                // this is the first button that is pressed down (after no steps
+                // were pressed). Register this step as source for (a possible,
+                // to follow) copy operation.
+                sourcePatternIndex = i;
+            } else if (i != sourcePatternIndex) {
+                // this is not the first button that is pressed down, so this is
+                // a target step for copy (from source step)
+                for (auto &track : tracks) {
+                    if (!SequencerTrack::anyPatternOpsArmed() || track.isPatternOpsArmed()) {
+                        track.patterns[i].copyValuesFrom(track.patterns[sourcePatternIndex]);
+                        stepLED(i) = CRGB::Red;
+                    }
+                }
+                patternCopy = true;
+            }
+        }
+        if (stepButtons[i].fell() && !patternCopy) {
+            nextPatternIndex = i;
+        }
+        stepLED(i) = i == currentPatternIndex ? CRGB::Red : CRGB::Black;
+    }
+    if (!aButtonIsPressed) {
+        // reset values needed for the copy operation as soon as no step buttons
+        // are pressed at all
+        sourcePatternIndex = -1;
+        patternCopy = false;
+    }
+    if (nextPatternIndex >= 0) {
+        stepLED(nextPatternIndex) = CRGB::Red;
+        stepLED(nextPatternIndex).nscale8(255 - ledFader);
+    }
+}
+
+/*
+ * Set track length mode. Step button presses set the track length.
+ */
+void Sequencer::doLeavePatternOps() {
+    for (auto &track : tracks) {
+        if (nextPatternIndex >= 0 && (!SequencerTrack::anyPatternOpsArmed() || track.isPatternOpsArmed())) {
+            track.switchToPattern(nextPatternIndex);
+        }
+    }
+    SequencerTrack::deactivateAllPatternOpsArms();
+    nextPatternIndex = -1;
 }
 
 void Sequencer::doSetTrackSelection() {

@@ -29,6 +29,7 @@
 // #define USB_MIDI_SERIAL
 // #include "MIDIUSB.h"
 
+#include "DualSineChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
 #include "SimpleDrumChannel.h"
@@ -54,7 +55,7 @@ SimpleDrumChannel channel1(10, 200);
 SimpleDrumChannel channel2(200, 6000);
 SimpleSineChannel channel3(100, 2000);
 FMChannel channel4(110, 880);
-SimpleSineChannel channel5(8800, 17600);
+DualSineChannel channel5(200, 6000);
 HatsChannel channel6;
 
 SequencerStepDefault channel1Default(300, 300, 50, 50, 10, 10);
@@ -135,7 +136,7 @@ void setup() {
     sequencer.audioChannels[5] = &channel6;
 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
-    FastLED.setBrightness(5);
+    FastLED.setBrightness(10);
 
     for (int i = 0; i < NUM_LEDS; i++) {
         for (int j = 0; j < NUM_LEDS; j++) {
@@ -226,6 +227,7 @@ void inline updateAudio() {
 }
 
 void loop() {
+    FastLED.show();
     usbMIDI.read();
     // long starttime = micros();
 
@@ -240,7 +242,6 @@ void loop() {
             updateAudio();
         }
     }
-    FastLED.show();
 }
 
 void onRealTimeSystem(uint8_t rtb) {
