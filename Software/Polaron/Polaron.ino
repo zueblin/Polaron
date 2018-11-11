@@ -55,15 +55,15 @@ SimpleDrumChannel channel1(10, 200);
 SimpleDrumChannel channel2(200, 6000);
 SimpleSineChannel channel3(100, 2000);
 FMChannel channel4(110, 880);
-DualSineChannel channel5(200, 6000);
+DualSineChannel channel5(16, 2000);
 HatsChannel channel6;
 
 SequencerStepDefault channel1Default(300, 300, 50, 50, 10, 10);
 SequencerStepDefault channel2Default(500, 700, 1, 30, 10, 10);
 SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
 SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 10);
-SequencerStepDefault channel5Default(300, 300, 50, 50, 10, 10);
-SequencerStepDefault channel6Default(300, 300, 50, 600, 10, 10);
+SequencerStepDefault channel5Default(300, 300, 50, 50, 10, 512);
+SequencerStepDefault channel6Default(300, 600, 50, 50, 10, 10);
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
 AudioConnection patchCord9(*channel2.getOutput1(), 0, mixer1, 1);
@@ -107,14 +107,14 @@ void setup() {
     AudioMemory(50);
     // dacs1.analogReference(EXTERNAL);
 
-    mixer1.gain(0, 0.8f);
+    mixer1.gain(0, 1.0f);
     mixer1.gain(1, 0.8f);
     mixer1.gain(2, 0.8f);
     mixer1.gain(3, 0.8f);
     mixer1.gain(4, 0.8f);
     mixer1.gain(5, 0.8f);
 
-    mixer2.gain(0, 0.8f);
+    mixer2.gain(0, 1.0f);
     mixer2.gain(1, 0.8f);
     mixer2.gain(2, 0.8f);
     mixer2.gain(3, 0.8f);
@@ -237,8 +237,10 @@ void loop() {
     if (sequencer.isRunning()) {
         if (externalSync && externalClockReceived) {
             externalClockReceived = false;
-            updateAudio();
-        } else if (!externalSync && sequencer.shouldTick()) {
+            if (sequencer.shouldStepMidiClock()) {
+                updateAudio();
+            }
+        } else if (!externalSync && sequencer.shouldStepInternalClock()) {
             updateAudio();
         }
     }

@@ -29,9 +29,19 @@
 
 class DualSineChannel : public AudioChannel {
    public:
-    DualSineChannel(int lowFreq, int highFreq) : oscToMult1(osc1, 0, mult, 0), oscToMult2(osc2, 0, mult, 1), multToEnv(mult, envelope) {
+    DualSineChannel(int lowFreq, int highFreq)
+        : osc1ToMult(osc1, 0, mult, 0),
+          osc2ToMult(osc2, 0, mult, 1),
+          osc1ToCombine(osc1, 0, combine, 0),
+          osc2ToCombine(osc2, 0, combine, 1),
+          multToMix(mult, 0, mixer, 0),
+          combineToMix(combine, 0, mixer, 1),
+          mixToEnv(mixer, envelope) {
         low = lowFreq;
         high = highFreq;
+        combine.setCombineMode(AudioEffectDigitalCombine::AND);
+        osc1.amplitude(0.7f);
+        osc2.amplitude(0.7f);
         envelope.attack(20);
         envelope.hold(0);
         envelope.decay(40);
@@ -46,7 +56,11 @@ class DualSineChannel : public AudioChannel {
     void setParam3(int value) { envelope.attack(map(value, 0, 1024, 0, 10240)); }
     void setParam4(int value) { envelope.decay(map(value, 0, 1024, 0, 10240)); }
     void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
-    void setParam6(int value) {}
+    void setParam6(int value) {
+        float g = ((float)value) / 1024.0f;
+        mixer.gain(0, g);
+        mixer.gain(1, 1.0 - g);
+    }
 
    private:
     int low = 35;
@@ -54,9 +68,15 @@ class DualSineChannel : public AudioChannel {
     AudioSynthWaveformSine osc1;
     AudioSynthWaveformSine osc2;
     AudioEffectMultiply mult;
+    AudioEffectDigitalCombine combine;
+    AudioMixer4 mixer;
     AudioEffectShapedEnvelope envelope;
-    AudioConnection oscToMult1;
-    AudioConnection oscToMult2;
-    AudioConnection multToEnv;
+    AudioConnection osc1ToMult;
+    AudioConnection osc2ToMult;
+    AudioConnection osc1ToCombine;
+    AudioConnection osc2ToCombine;
+    AudioConnection multToMix;
+    AudioConnection combineToMix;
+    AudioConnection mixToEnv;
 };
 #endif

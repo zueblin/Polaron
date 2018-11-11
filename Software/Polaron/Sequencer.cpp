@@ -49,9 +49,18 @@ Sequencer::Sequencer() {
     }
 }
 
-bool Sequencer::shouldTick() {
-    if (millis() - lastStepTime >= stepLength) {
-        lastStepTime = millis();
+bool Sequencer::shouldStepMidiClock() {
+    bool result = (pulseCount == 0);
+    if (pulseCount++ >= 5) {
+        pulseCount = 0;
+    }
+    return result;
+}
+
+bool Sequencer::shouldStepInternalClock() {
+    if (millis() >= nextStepTime) {
+        lastStepTime = nextStepTime;
+        nextStepTime += stepLength;
         return true;
     } else {
         return false;
@@ -59,62 +68,55 @@ bool Sequencer::shouldTick() {
 }
 
 void Sequencer::tick() {
-    // Serial.print("pulseCount");
-    // Serial.print(pulseCount);
-    // Serial.println();
+    // modulatedStepLength = (stepCount++ % 2 == 0) ? stepLength + (swing * stepLength) : stepLength - (swing * stepLength);
+    // Serial.println(modulatedStepLength);
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        // checks if the bit at position of the current_step is set to 1 in
+        // the step on/off integer
+        SequencerStep &step = tracks[i].getCurrentStep();
 
-    if (pulseCount == 0) {
-        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-            // checks if the bit at position of the current_step is set to 1 in
-            // the step on/off integer
-            SequencerStep &step = tracks[i].getCurrentStep();
+        if (step.isParameterLockOn()) {
+            switch (pLockParamSet) {
+                case PLockParamSet::SET1:
+                    if (input1.isActive()) {
+                        step.parameter1 = input1.getValue();
+                    }
+                    if (input2.isActive()) {
+                        step.parameter2 = input2.getValue();
+                    }
+                    break;
+                case PLockParamSet::SET2:
 
-            if (step.isParameterLockOn()) {
-                switch (pLockParamSet) {
-                    case PLockParamSet::SET1:
-                        if (input1.isActive()) {
-                            step.parameter1 = input1.getValue();
-                        }
-                        if (input2.isActive()) {
-                            step.parameter2 = input2.getValue();
-                        }
-                        break;
-                    case PLockParamSet::SET2:
+                    if (input1.isActive()) {
+                        step.parameter3 = input1.getValue();
+                    }
+                    if (input2.isActive()) {
+                        step.parameter4 = input2.getValue();
+                    }
+                    break;
 
-                        if (input1.isActive()) {
-                            step.parameter3 = input1.getValue();
-                        }
-                        if (input2.isActive()) {
-                            step.parameter4 = input2.getValue();
-                        }
-                        break;
+                case PLockParamSet::SET3:
 
-                    case PLockParamSet::SET3:
-
-                        if (input1.isActive()) {
-                            step.parameter5 = input1.getValue();
-                        }
-                        if (input2.isActive()) {
-                            step.parameter6 = input2.getValue();
-                        }
-                        break;
-                }
+                    if (input1.isActive()) {
+                        step.parameter5 = input1.getValue();
+                    }
+                    if (input2.isActive()) {
+                        step.parameter6 = input2.getValue();
+                    }
+                    break;
             }
-            if (!tracks[i].isMuted() && step.isTriggerOn()) {
-                audioChannels[i]->setParam1(step.parameter1);
-                audioChannels[i]->setParam2(step.parameter2);
-                audioChannels[i]->setParam3(step.parameter3);
-                audioChannels[i]->setParam4(step.parameter4);
-                audioChannels[i]->setParam5(step.parameter5);
-                audioChannels[i]->setParam6(step.parameter6);
-                audioChannels[i]->trigger();
-            }
-            // advance one step;
-            tracks[i].doStep();
         }
-    }
-    if (pulseCount++ >= 5) {
-        pulseCount = 0;
+        if (!tracks[i].isMuted() && step.isTriggerOn()) {
+            audioChannels[i]->setParam1(step.parameter1);
+            audioChannels[i]->setParam2(step.parameter2);
+            audioChannels[i]->setParam3(step.parameter3);
+            audioChannels[i]->setParam4(step.parameter4);
+            audioChannels[i]->setParam5(step.parameter5);
+            audioChannels[i]->setParam6(step.parameter6);
+            audioChannels[i]->trigger();
+        }
+        // advance one step;
+        tracks[i].doStep();
     }
 }
 
@@ -311,7 +313,11 @@ void Sequencer::doSetTrackLength() {
     }
     stepLED(tracks[selectedTrack].getCurrentPattern().trackLength - 1) = CRGB::Red;
     if (input1.isActive()) {
-        stepLength = map(input1.getValue(), 0, 1024, 100, 10);
+        stepLength = map(input1.getValue(), 0, 1024, 512, 32);
+        nextStepTime = lastStepTime + stepLength;
+    }
+    if (input2.isActive()) {
+        swing = ((float)input2.getValue()) / 2048.0f;
     }
 }
 
@@ -343,13 +349,16 @@ void Sequencer::doSetTrackPLock() {
  */
 void Sequencer::doStartStop() {
     running = !running;
-    if (running) {
+    if (!running) {
         // reset current step to 0 (it will start with zero if it is at
         // tracklength -1) whenever the sequencer is started
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
             tracks[i].onStop();
         }
         pulseCount = 0;
+        stepCount = 0;
+    } else {
+        nextStepTime = millis() + stepLength;
     }
 }
 
@@ -481,7 +490,7 @@ void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
 
 void Sequencer::setFunctionButtonLights() {
     functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : CRGB::Black;
-    if (hasActivePLockReceivers && (pulseCount == 0 || (input1.isActive() || input2.isActive()))) {
+    if (hasActivePLockReceivers && (((stepCount % 2) == 0) || (input1.isActive() || input2.isActive()))) {
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
     }
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::Black;

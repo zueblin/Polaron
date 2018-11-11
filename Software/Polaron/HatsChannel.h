@@ -41,6 +41,14 @@ class HatsChannel : public AudioChannel {
           // w8m(w8, 0, mixer, 7),
           mixerFilter(mixer, 0, filter, 0),
           filterEnv(filter, 0, envelope, 0) {
+        w1.amplitude(1.0f);
+        w2.amplitude(1.0f);
+        w3.amplitude(1.0f);
+        w4.amplitude(1.0f);
+        w5.amplitude(1.0f);
+        w6.amplitude(1.0f);
+        w7.amplitude(1.0f);
+
         envelope.attack(1);
         envelope.hold(0);
         envelope.decay(5);

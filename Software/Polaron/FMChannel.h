@@ -58,10 +58,10 @@ class FMChannel : public AudioChannel {
     }
     void setParam1(int value) { carrierOsc.frequency((float)map(value, 0, 1024, low, high)); }
     void setParam2(int value) { modulatorOsc.frequency((float)map(value, 0, 1024, low, high)); }
-    void setParam3(int value) { fmEnvelope.attack((float)map(value, 0, 1024, 0, 360)); }
-    void setParam4(int value) { fmEnvelope.decay((float)map(value, 0, 1024, 0, 360)); }
-    void setParam5(int value) { envelope.attack(map(value, 0, 1024, 1, 2000)); }
-    void setParam6(int value) { envelope.decay(map(value, 0, 1024, 1, 2000)); }
+    void setParam3(int value) { envelope.attack(map(value, 0, 1024, 1, 2000)); }
+    void setParam4(int value) { envelope.decay(map(value, 0, 1024, 1, 2000)); }
+    void setParam5(int value) { fmEnvelope.attack((float)map(value, 0, 1024, 0, 360)); }
+    void setParam6(int value) { fmEnvelope.decay((float)map(value, 0, 1024, 0, 360)); }
 
    private:
     int low = 35;

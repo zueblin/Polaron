@@ -88,7 +88,8 @@ class Sequencer {
     SequencerTrack &getSelectedTrack() { return tracks[selectedTrack]; }
     void updateState();
 
-    bool shouldTick();
+    bool shouldStepMidiClock();
+    bool shouldStepInternalClock();
     void tick();
     void start();
     void stop();
@@ -98,7 +99,11 @@ class Sequencer {
 
    private:
     uint32_t lastStepTime = 0;
-    uint16_t stepLength = 20;
+    uint32_t nextStepTime = 0;
+    uint16_t stepLength = 120;
+    // uint16_t modulatedStepLength = 20;
+    uint8_t stepCount = 0;
+    float swing = 0.5;
 
     // currently selected track
     uint8_t selectedTrack = 0;

@@ -25,8 +25,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef mixer_h_
-#define mixer_h_
+#ifndef mixer8_h_
+#define mixer8_h_
 
 #include "AudioStream.h"
 
