@@ -94,6 +94,11 @@ class Sequencer {
     void start();
     void stop();
 
+    void deactivateSensors() {
+        input1.deactivate();
+        input2.deactivate();
+    };
+
     uint8_t pulseCount = 0;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 

@@ -155,10 +155,13 @@ void Sequencer::updateState() {
 
     if (functionButtons[BUTTON_SET_PARAMSET_1].rose()) {
         pLockParamSet = PLockParamSet::SET1;
+        deactivateSensors();
     } else if (functionButtons[BUTTON_SET_PARAMSET_2].rose()) {
         pLockParamSet = PLockParamSet::SET2;
+        deactivateSensors();
     } else if (functionButtons[BUTTON_SET_PARAMSET_3].rose()) {
         pLockParamSet = PLockParamSet::SET3;
+        deactivateSensors();
     }
 
     FunctionMode functionMode = calculateFunctionMode();
@@ -474,6 +477,7 @@ void Sequencer::doTurnOffPlockMode() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         tracks[i].getCurrentPattern().turnOffPLockMode();
     }
+    deactivateSensors();
 }
 
 void Sequencer::setDefaultTrackLight(uint8_t trackNum) {

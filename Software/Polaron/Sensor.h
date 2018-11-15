@@ -65,11 +65,16 @@ class Sensor {
     }
     uint16_t getValue() { return memory[index]; }
     bool isActive() { return currentHoldTime > 0; }
+    void deactivate() {
+        currentHoldTime = 0;
+        init(getValue());
+    }
 
    private:
     int32_t sum = 0;
     uint16_t currentHoldTime = 0;
     uint8_t index = 0;
+    // TODO: do we really need memory/averaging? does it improve behaviour?
     uint16_t memory[4];
 };
 

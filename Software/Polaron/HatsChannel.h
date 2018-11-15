@@ -81,16 +81,18 @@ class HatsChannel : public AudioChannel {
     AudioStream *getOutput1() { return &envelope; }
     AudioStream *getOutput2() { return &envelope; }
 
-    void trigger() { envelope.noteOn(); }
-    void setParam1(int value) {
-        baseFreq = (float)map(value, 0, 1024, 40, 80);
+    void trigger() {
         w1.frequency(baseFreq);
-        w2.frequency(baseFreq * ratio1);
-        w3.frequency(baseFreq * ratio2);
-        w4.frequency(baseFreq * ratio3);
-        w5.frequency(baseFreq * ratio4);
-        w6.frequency(baseFreq * ratio5);
-        w7.frequency(baseFreq * ratio6);
+        w2.frequency(baseFreq * ratio1 * ratioFactor1);
+        w3.frequency(baseFreq * ratio2 * ratioFactor2);
+        w4.frequency(baseFreq * ratio3 * ratioFactor1);
+        w5.frequency(baseFreq * ratio4 * ratioFactor2);
+        w6.frequency(baseFreq * ratio5 * ratioFactor1);
+        w7.frequency(baseFreq * ratio6 * ratioFactor2);
+        envelope.noteOn();
+    }
+    void setParam1(int value) {
+        baseFreq = (float)map(value, 0, 1024, 10, 200);
         // w8.frequency(baseFreq * ratio7);
     }
     void setParam2(int value) {
@@ -99,10 +101,10 @@ class HatsChannel : public AudioChannel {
         filter.setHighpass(1, mappedValue, 0.700);
         filter.setHighpass(2, mappedValue, 0.700);
     }
-    void setParam3(int value) {}
+    void setParam3(int value) { envelope.attack(value); }
     void setParam4(int value) { envelope.decay(5.0 + (float)map(value, 0, 1024, 0, 65536)); }
-    void setParam5(int value) {}
-    void setParam6(int value) {}
+    void setParam5(int value) { ratioFactor1 = 0.5 + value / 1024.0f; }
+    void setParam6(int value) { ratioFactor2 = 0.5 + value / 1024.0f; }
 
    private:
     float baseFreq = 40;
@@ -112,6 +114,9 @@ class HatsChannel : public AudioChannel {
     float ratio4 = 5.43;
     float ratio5 = 6.79;
     float ratio6 = 8.21;
+
+    float ratioFactor1 = 1.0;
+    float ratioFactor2 = 1.0;
     // float ratio7 = 10.0;
     // float ratio2 = 2.0;
 

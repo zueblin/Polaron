@@ -55,7 +55,7 @@ AudioMixer8 mixer2;
 BoomChannel channel1(10, 200);
 SimpleDrumChannel channel2(200, 6000);
 SimpleSineChannel channel3(100, 2000);
-FMChannel channel4(110, 880);
+FMChannel channel4(64, 1024);
 DualSineChannel channel5(16, 2000);
 HatsChannel channel6;
 
