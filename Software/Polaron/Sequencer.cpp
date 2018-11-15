@@ -70,6 +70,7 @@ bool Sequencer::shouldStepInternalClock() {
 void Sequencer::tick() {
     // modulatedStepLength = (stepCount++ % 2 == 0) ? stepLength + (swing * stepLength) : stepLength - (swing * stepLength);
     // Serial.println(modulatedStepLength);
+    stepCount++;
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         // checks if the bit at position of the current_step is set to 1 in
         // the step on/off integer
@@ -490,7 +491,7 @@ void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
 
 void Sequencer::setFunctionButtonLights() {
     functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : CRGB::Black;
-    if (hasActivePLockReceivers && (((stepCount % 2) == 0) || (input1.isActive() || input2.isActive()))) {
+    if ((hasActivePLockReceivers && (stepCount % 2) == 0) || (hasActivePLockReceivers && (input1.isActive() || input2.isActive()))) {
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
     }
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::Black;

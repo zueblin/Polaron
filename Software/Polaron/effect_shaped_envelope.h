@@ -51,7 +51,6 @@ class AudioEffectShapedEnvelope : public AudioStream {
         attack(50.0f);
         hold(0);
         decay(200.0f);
-        decayNoteOn(5.0f);
         retriggers(0);
     }
     void noteOn();
@@ -65,10 +64,10 @@ class AudioEffectShapedEnvelope : public AudioStream {
     }
 
     void hold(int samples) {
-        if (samples > 0 && samples < 65535) {
+        if (samples >= 0 && samples < 65535) {
             hold_count = samples;
         } else {
-            hold_count = 1;
+            hold_count = 0;
         }
     }
 
@@ -77,14 +76,6 @@ class AudioEffectShapedEnvelope : public AudioStream {
             decay_count = samples;
         } else {
             decay_count = 1;
-        }
-    }
-
-    void decayNoteOn(int samples) {
-        if (samples > 0 && samples < 65535) {
-            decay_forced_count = samples;
-        } else {
-            decay_forced_count = 1;
         }
     }
 
@@ -112,20 +103,26 @@ class AudioEffectShapedEnvelope : public AudioStream {
     uint16_t attack_count;
     uint16_t hold_count;
     uint16_t decay_count;
-    uint16_t decay_forced_count;
 
-    uint32_t phase_accumulator;
-    uint32_t phase_increment;
+    uint32_t phase_accumulator = 0;
+    uint32_t phase_increment = 0;
 
-    int32_t lt_mult;
-    int32_t lt_add;
+    int32_t interpolatedVal = 0;
+    int32_t currentEnvVal = 0;
+
+    float lt_mult = 0.0f;
+    float lt_add = 0.0f;
 
     // calculates a linear transfrom to be used to map the values from the
     // lookup table to the desired start/end values of the envelope (eg. map
     // values 0-32767 to 10000-0 for a decay)
     void calculateLinearTransformFactors(int16_t outMin, int16_t outMax) {
-        lt_mult = (outMax - outMin) / 32767;
-        lt_add = outMin;
+        lt_mult = ((float)(outMax - outMin)) / 32767.0;
+        lt_add = (float)outMin;
+        // Serial.print("lt_mult: ");
+        // Serial.println(lt_mult);
+        // Serial.print("lt_add: ");
+        // Serial.println(lt_add);
     }
 };
 

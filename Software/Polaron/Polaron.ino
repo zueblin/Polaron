@@ -29,6 +29,7 @@
 // #define USB_MIDI_SERIAL
 // #include "MIDIUSB.h"
 
+#include "BoomChannel.h"
 #include "DualSineChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
@@ -51,14 +52,14 @@ AudioOutputAnalogStereo dacs1;
 AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 
-SimpleDrumChannel channel1(10, 200);
+BoomChannel channel1(10, 200);
 SimpleDrumChannel channel2(200, 6000);
 SimpleSineChannel channel3(100, 2000);
 FMChannel channel4(110, 880);
 DualSineChannel channel5(16, 2000);
 HatsChannel channel6;
 
-SequencerStepDefault channel1Default(300, 300, 50, 50, 10, 10);
+SequencerStepDefault channel1Default(300, 300, 10, 800, 10, 200);
 SequencerStepDefault channel2Default(500, 700, 1, 30, 10, 10);
 SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
 SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 10);

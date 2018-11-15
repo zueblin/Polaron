@@ -33,7 +33,7 @@
 #define Sensor_h
 
 #define SENSITIVITY 6
-#define HOLD_TIME 96
+#define HOLD_TIME 16
 
 class Sensor {
    public:
@@ -51,6 +51,7 @@ class Sensor {
         }
         // divide by 4
         sum = sum >> 2;
+
         if (abs(sum - value) > SENSITIVITY) {
             currentHoldTime = HOLD_TIME;
         }

@@ -24,36 +24,53 @@
 #include "AudioChannel.h"
 #include "effect_shaped_envelope.h"
 
-#ifndef SimpleSineChannel_h
-#define SimpleSineChannel_h
+#ifndef BoomChannel_h
+#define BoomChannel_h
 
-class SimpleSineChannel : public AudioChannel {
+class BoomChannel : public AudioChannel {
    public:
-    SimpleSineChannel(int lowFreq, int highFreq) : patchCord(osc, envelope) {
+    BoomChannel(int lowFreq, int highFreq) : dcToPitchEnv(dc, pitchEnv), pitchEnvToOsc(pitchEnv, 0, osc, 0), oscToAmpEnv(osc, 0, ampEnv, 0) {
         low = lowFreq;
         high = highFreq;
+        osc.begin(0);
         osc.amplitude(1.0f);
-        envelope.attack(20);
-        envelope.hold(0);
-        envelope.decay(40);
-        envelope.retriggers(0);
+        osc.frequencyModulation(4.0f);
+        pitchEnv.attack(4);
+        pitchEnv.hold(0);
+        pitchEnv.decay(40);
+        pitchEnv.retriggers(0);
+        ampEnv.attack(4);
+        ampEnv.hold(0);
+        ampEnv.decay(40);
+        ampEnv.retriggers(0);
+        // filter.resonance(0.8f);
+        // filter.frequency(200.0f);
     }
-    AudioStream *getOutput1() { return &envelope; }
-    AudioStream *getOutput2() { return &envelope; }
+    AudioStream *getOutput1() { return &ampEnv; }
+    AudioStream *getOutput2() { return &ampEnv; }
 
-    void trigger() { envelope.noteOn(); }
+    void trigger() {
+        ampEnv.noteOn();
+        pitchEnv.noteOn();
+    }
     void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
-    void setParam2(int value) {}
-    void setParam3(int value) { envelope.attack(map(value, 0, 1024, 0, 10240)); }
-    void setParam4(int value) { envelope.decay(map(value, 0, 1024, 0, 10240)); }
-    void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
-    void setParam6(int value) {}
+    void setParam2(int value) { dc.amplitude(((float)value) / 1024.0f); }
+    void setParam3(int value) { ampEnv.attack(map(value, 0, 1024, 0, 10240)); }
+    void setParam4(int value) { ampEnv.decay(value * 20); }
+    void setParam5(int value) { pitchEnv.attack(value); }
+    void setParam6(int value) { pitchEnv.decay(map(value, 0, 1024, 0, 10240)); }
 
    private:
     int low = 35;
     int high = 880;
-    AudioSynthWaveformSine osc;
-    AudioEffectShapedEnvelope envelope;
-    AudioConnection patchCord;
+    AudioSynthWaveformDc dc;
+    AudioSynthWaveformModulated osc;
+    AudioEffectShapedEnvelope pitchEnv;
+    AudioEffectShapedEnvelope ampEnv;
+    AudioFilterStateVariable filter;
+    AudioConnection dcToPitchEnv;
+    AudioConnection pitchEnvToOsc;
+    AudioConnection oscToAmpEnv;
+    // AudioConnection filterToAmpEnv;
 };
 #endif
