@@ -30,6 +30,7 @@
 // #include "MIDIUSB.h"
 
 #include "BoomChannel.h"
+#include "BroadbandNoiseChannel.h"
 #include "DualSineChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
@@ -54,15 +55,17 @@ AudioMixer8 mixer2;
 
 BoomChannel channel1(10, 200);
 SimpleDrumChannel channel2(200, 6000);
-SimpleSineChannel channel3(100, 2000);
-FMChannel channel4(64, 1024);
-DualSineChannel channel5(16, 2000);
+// SimpleSineChannel channel3(100, 2000);
+FMChannel channel3(0, 1024);
+DualSineChannel channel4(16, 2000);
+BroadbandNoiseChannel channel5;
 HatsChannel channel6;
 
 SequencerStepDefault channel1Default(300, 300, 10, 800, 10, 200);
 SequencerStepDefault channel2Default(500, 700, 1, 30, 10, 10);
-SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
-SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 10);
+// SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
+SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);
+SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 512);
 SequencerStepDefault channel5Default(300, 300, 50, 50, 10, 512);
 SequencerStepDefault channel6Default(300, 600, 50, 50, 10, 10);
 
@@ -105,7 +108,7 @@ void setup() {
 
     usbMIDI.setHandleRealTimeSystem(onRealTimeSystem);
 
-    AudioMemory(50);
+    AudioMemory(70);
     // dacs1.analogReference(EXTERNAL);
 
     mixer1.gain(0, 1.0f);

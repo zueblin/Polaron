@@ -34,17 +34,13 @@ class FMChannel : public AudioChannel {
         low = lowFreq;
         high = highFreq;
 
-        fmEnvelope.delay(0);
         fmEnvelope.attack(1);
         fmEnvelope.hold(0);
         fmEnvelope.decay(5);
-        fmEnvelope.sustain(0.0f);
 
-        // envelope.delay(0);
         envelope.attack(1);
         envelope.hold(0);
         envelope.decay(5);
-        // envelope.sustain(0.0f);
 
         carrierOsc.amplitude(1.0);
         modulatorOsc.amplitude(1.0);
@@ -61,7 +57,7 @@ class FMChannel : public AudioChannel {
     void setParam3(int value) { envelope.attack(value >> 2); }
     void setParam4(int value) { envelope.decay(value * 4); }
     void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
-    void setParam6(int value) { fmEnvelope.decay(value * 4); }
+    void setParam6(int value) { fmEnvelope.decay(value * 16); }
 
    private:
     int low = 35;
@@ -69,7 +65,7 @@ class FMChannel : public AudioChannel {
     AudioSynthWaveformSine modulatorOsc;
     AudioSynthWaveformSineModulated carrierOsc;
     AudioEffectShapedEnvelope envelope;
-    AudioEffectEnvelope fmEnvelope;
+    AudioEffectShapedEnvelope fmEnvelope;
     AudioConnection fmEnvPatchCord;
     AudioConnection fmOutPatchCord;
     AudioConnection envPatchCord;

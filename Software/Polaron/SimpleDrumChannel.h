@@ -35,10 +35,10 @@ class SimpleDrumChannel : public AudioChannel {
     AudioStream *getOutput2() { return &drum; }
 
     void trigger() { drum.noteOn(); }
-    void setParam1(int value) { drum.frequency((float)map(value, 0, 1024, low, high)); }
-    void setParam2(int value) { drum.pitchMod((float)value / 1024.0); }
-    void setParam3(int value) { drum.secondMix((float)value / 1024.0); }
-    void setParam4(int value) { drum.length((float)map(value, 0, 1024, 0, 1024)); }
+    void setParam1(int value) { drum.frequency(32.0f + value * 10.0f); }
+    void setParam2(int value) { drum.pitchMod(value / 1024.0f); }
+    void setParam3(int value) { drum.secondMix(value / 1024.0f); }
+    void setParam4(int value) { drum.length(value); }
     void setParam5(int value) {}
     void setParam6(int value) {}
 

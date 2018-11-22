@@ -54,7 +54,7 @@ class BoomChannel : public AudioChannel {
         pitchEnv.noteOn();
     }
     void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
-    void setParam2(int value) { dc.amplitude(((float)value) / 1024.0f); }
+    void setParam2(int value) { dc.amplitude(value / 1024.0f); }
     void setParam3(int value) { ampEnv.attack(map(value, 0, 1024, 0, 10240)); }
     void setParam4(int value) { ampEnv.decay(value * 20); }
     void setParam5(int value) { pitchEnv.attack(value); }

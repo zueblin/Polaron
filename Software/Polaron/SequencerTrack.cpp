@@ -62,9 +62,9 @@ void SequencerTrack::switchToPattern(uint8_t number) {
 
 void SequencerTrack::toggleMute() { state ^= _BV(MUTE_STATE_BIT); }
 
-void SequencerTrack::unMute() { state |= _BV(MUTE_STATE_BIT); }
+void SequencerTrack::mute() { state |= _BV(MUTE_STATE_BIT); }
 
-void SequencerTrack::mute() { state &= ~_BV(MUTE_STATE_BIT); }
+void SequencerTrack::unMute() { state &= ~_BV(MUTE_STATE_BIT); }
 
 bool SequencerTrack::isMuted() { return state & _BV(MUTE_STATE_BIT); }
 

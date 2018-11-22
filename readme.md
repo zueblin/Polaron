@@ -44,7 +44,15 @@ Parts needed:
 * 4 x SN74HC165N Shiftregister 
 * 2 x ALPS Potentiometer (RK09K1130AP5)
 * 2 x 2.2 uF SMD Capacitor (1206 housing)
-* 1 x Audio Jack (SJ-352X-SMT) 
+* 1 x Audio Jack (SJ-352X-SMT)
+
+FAQ
+---
+* Q: Is this an easy build? A: This is an intermediate project to build, its not particularly hard, but its not a good project if you've never soldered before. Most parts are easy to solder, but the LEDs are directly soldered onto the surface (SMD) of the PCB and you need to be careful not to overheat them. You'll also need a decent soldering iron to build this, with a fine tip.
+* Q: Is this a pro audio project? A: No, not exactly. The Polaron is more about a fun workflow than super hifi sound. 
+* Q: Can i buy a PCB / Parts Kit? A: This is currently under consideration, if your interested, please send me a mail.
+* Q: Can i buy a fully assembled Polaron? A: Not, not at the moment.
+
 
 License
 =======

@@ -272,7 +272,7 @@ void Sequencer::doSetTriggers() {
     bool aButtonIsPressed = false;
 
     for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
-        SequencerStep &step = tracks[selectedTrack].getCurrentPattern().steps[i];
+        SequencerStep &step = tracks[selectedTrack].getCurrentPattern().getStep(i);
         if (stepButtons[i].read()) {
             aButtonIsPressed = true;
             if (sourceStepIndex == -1) {
@@ -283,7 +283,7 @@ void Sequencer::doSetTriggers() {
             } else if (i != sourceStepIndex) {
                 // this is not the first button that is pressed down, so this is
                 // a target step for copy (from source step)
-                step.copyValuesFrom(tracks[selectedTrack].getCurrentPattern().steps[sourceStepIndex]);
+                step.copyValuesFrom(tracks[selectedTrack].getCurrentPattern().getStep(sourceStepIndex));
                 stepCopy = true;
             }
         }
@@ -313,7 +313,7 @@ void Sequencer::doSetTrackLength() {
         if (stepButtons[i].fell()) {
             tracks[selectedTrack].getCurrentPattern().trackLength = i + 1;
         }
-        stepLED(i) = colorForStepState(tracks[selectedTrack].getCurrentPattern().steps[i].state);
+        stepLED(i) = colorForStepState(tracks[selectedTrack].getCurrentPattern().getStep(i).state);
     }
     stepLED(tracks[selectedTrack].getCurrentPattern().trackLength - 1) = CRGB::Red;
     if (input1.isActive()) {
@@ -321,7 +321,7 @@ void Sequencer::doSetTrackLength() {
         nextStepTime = lastStepTime + stepLength;
     }
     if (input2.isActive()) {
-        swing = ((float)input2.getValue()) / 2048.0f;
+        tracks[selectedTrack].getCurrentPattern().offset = 16 - (input2.getValue() / 64);
     }
 }
 
@@ -338,10 +338,10 @@ void Sequencer::doSetTrackPLock() {
     }
     for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
         if (stepButtons[i].fell()) {
-            tracks[selectedTrack].getCurrentPattern().steps[i].toggleParameterLockRecord();
+            tracks[selectedTrack].getCurrentPattern().getStep(i).toggleParameterLockRecord();
             trackOrStepButtonPressed = true;
         }
-        stepLED(i) = colorForStepState(tracks[selectedTrack].getCurrentPattern().steps[i].state);
+        stepLED(i) = colorForStepState(tracks[selectedTrack].getCurrentPattern().getStep(i).state);
     }
     if (functionButtons[BUTTON_TOGGLE_PLOCK].rose()) {
         trackOrStepButtonPressed = false;
@@ -449,8 +449,14 @@ void Sequencer::doPatternOps() {
  */
 void Sequencer::doLeavePatternOps() {
     for (auto &track : tracks) {
-        if (nextPatternIndex >= 0 && (!SequencerTrack::anyPatternOpsArmed() || track.isPatternOpsArmed())) {
-            track.switchToPattern(nextPatternIndex);
+        if (nextPatternIndex >= 0) {
+            if (!SequencerTrack::anyPatternOpsArmed()) {
+                // the general, non-track specific pattern change, will also unmute all tracks
+                track.unMute();
+                track.switchToPattern(nextPatternIndex);
+            } else if (track.isPatternOpsArmed()) {
+                track.switchToPattern(nextPatternIndex);
+            }
         }
     }
     SequencerTrack::deactivateAllPatternOpsArms();

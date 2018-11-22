@@ -57,7 +57,7 @@ class DualSineChannel : public AudioChannel {
     void setParam4(int value) { envelope.decay(map(value, 0, 1024, 0, 10240)); }
     void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
     void setParam6(int value) {
-        float g = ((float)value) / 1024.0f;
+        float g = value / 1024.0f;
         mixer.gain(0, g);
         mixer.gain(1, 1.0 - g);
     }

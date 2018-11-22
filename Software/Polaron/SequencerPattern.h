@@ -32,11 +32,12 @@ class SequencerPattern {
    public:
     SequencerPattern();
 
+    uint8_t offset = 0;
     uint8_t currentStep;
     uint8_t trackLength;
 
-    SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
-    SequencerStep &getCurrentStep();
+    SequencerStep &getCurrentStep() { return steps[(offset + currentStep) % NUMBER_OF_STEPS_PER_PATTERN]; }
+    SequencerStep &getStep(uint8_t index) { return steps[(offset + index) % NUMBER_OF_STEPS_PER_PATTERN]; }
 
     void init(SequencerStepDefault &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
@@ -55,5 +56,8 @@ class SequencerPattern {
     void togglePLockMode();
 
     void turnOffPLockMode();
+
+   private:
+    SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
 };
 #endif
