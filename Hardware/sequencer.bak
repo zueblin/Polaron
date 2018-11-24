@@ -2716,9 +2716,9 @@ Text Label 15900 16200 0    60   ~ 0
 JOY_A
 Text Label 15900 16300 0    60   ~ 0
 JOY_B
-Text Label 12250 14250 0    60   ~ 0
-JOY_B
 Text Label 12250 15100 0    60   ~ 0
+JOY_B
+Text Label 12250 14250 0    60   ~ 0
 JOY_A
 $Comp
 L C_Small C1

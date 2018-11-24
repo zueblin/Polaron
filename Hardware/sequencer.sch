@@ -2753,11 +2753,11 @@ F 3 "" H 14900 14700 60  0000 C CNN
 	1    14900 14700
 	1    0    0    -1  
 $EndComp
-Text Label 11850 16600 0    60   ~ 0
+Text Label 11850 16450 0    60   ~ 0
 Audio1
 Text Label 13050 16200 2    60   ~ 0
 Audio1
-Text Label 11850 16450 0    60   ~ 0
+Text Label 11850 16600 0    60   ~ 0
 Audio2
 Text Label 13050 16450 2    60   ~ 0
 Audio2
