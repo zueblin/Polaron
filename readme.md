@@ -40,17 +40,23 @@ Hardware
 
 PCB is designed using KICAD 4.0.6
 
-Parts needed:
+Parts needed (Rev 1.2):
 * Teensy 3.6 32bit Microcontroller
-* 30 x WS2812b RGB LEDs
+* 30 x WS2812b RGB LEDs (or SK6812)
 * 30 x 6x6mm Pushbuttons
 * 30 x 270 ohm Resistors
 * 4 x SN74HC165N Shiftregister 
-* 2 x ALPS Potentiometer (RK09K1130AP5)
+* 2 x ALPS Potentiometer (RK09K1130A8G)
 * 2 x 2.2 uF SMD Capacitor (1206 housing)
 * 1 x Audio Jack (SJ-352X-SMT)
+* 1 x 48 Position / 2 Row IC DIP Socket (Mouser: 517-4848-6004-CP)
+* 2 x 20mm PCB Standoff with 3mm thread (Mouser: 534-24437)
 
 Check the Wiki for [Build Instructions](https://github.com/zueblin/Polaron/wiki/Building-the-Polaron)
+
+Known Errors: 
+PCB Rev 1.2
+* The Potentiometers need to be rotated 180 degress in the next revision, so that the marking on the pot point upwards in middle position and not downwards (this has no impact on the functionality of the Polaron)
 
 FAQ
 ---
