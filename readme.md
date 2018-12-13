@@ -50,7 +50,7 @@ Parts needed:
 * 2 x 2.2 uF SMD Capacitor (1206 housing)
 * 1 x Audio Jack (SJ-352X-SMT)
 
-Check the Wiki for [Build Instructions] (https://github.com/zueblin/Polaron/wiki/Building-the-Polaron)
+Check the Wiki for [Build Instructions](https://github.com/zueblin/Polaron/wiki/Building-the-Polaron)
 
 FAQ
 ---
