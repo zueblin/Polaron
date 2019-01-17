@@ -30,12 +30,21 @@ class AudioChannel {
     virtual AudioStream* getOutput1();
     virtual AudioStream* getOutput2();
     virtual void trigger();
+    // all param setters accept values between 0 and 1024 (typical range of analogRead)
     virtual void setParam1(int value);
     virtual void setParam2(int value);
     virtual void setParam3(int value);
     virtual void setParam4(int value);
     virtual void setParam5(int value);
     virtual void setParam6(int value);
+    void setVolume(int volumeArg) { volume = volumeArg / 512.0f; }
+    void setPan(int panArg) { pan = panArg / 1024.0f; }
+    float getOutput1Gain() { return volume * (1.0 - pan); }
+    float getOutput2Gain() { return volume * pan; }
+
+   private:
+    float volume = 1.0f;
+    float pan = 0.5f;
 };
 
 #endif

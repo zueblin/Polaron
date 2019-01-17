@@ -466,7 +466,20 @@ void Sequencer::doLeavePatternOps() {
 void Sequencer::doSetTrackSelection() {
     // check 4 track buttons to set selected track
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        if (trackButtons[i].read()) {
+            if (input1.isActive()) {
+                audioChannels[i]->setVolume(input1.getValue());
+                mixerL->gain(i, audioChannels[i]->getOutput1Gain());
+                mixerR->gain(i, audioChannels[i]->getOutput2Gain());
+            }
+            if (input2.isActive()) {
+                audioChannels[i]->setPan(input2.getValue());
+                mixerL->gain(i, audioChannels[i]->getOutput1Gain());
+                mixerR->gain(i, audioChannels[i]->getOutput2Gain());
+            }
+        }
         if (trackButtons[i].fell()) {
+            deactivateSensors();
             selectedTrack = i;
         }
         setDefaultTrackLight(i);

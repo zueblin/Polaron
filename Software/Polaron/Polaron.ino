@@ -111,6 +111,7 @@ void setup() {
     AudioMemory(70);
     // dacs1.analogReference(EXTERNAL);
 
+    /**
     mixer1.gain(0, 1.0f);
     mixer1.gain(1, 0.8f);
     mixer1.gain(2, 0.8f);
@@ -124,6 +125,7 @@ void setup() {
     mixer2.gain(3, 0.8f);
     mixer2.gain(4, 0.8f);
     mixer2.gain(5, 0.8f);
+    */
 
     sequencer.tracks[0].init(channel1Default);
     sequencer.tracks[1].init(channel2Default);
@@ -138,6 +140,8 @@ void setup() {
     sequencer.audioChannels[3] = &channel4;
     sequencer.audioChannels[4] = &channel5;
     sequencer.audioChannels[5] = &channel6;
+
+    sequencer.setMixers(&mixer1, &mixer2);
 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
     FastLED.setBrightness(10);

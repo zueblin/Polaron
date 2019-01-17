@@ -30,6 +30,7 @@
 #include "FastLED.h"
 #include "Sensor.h"
 #include "SequencerTrack.h"
+#include "mixer.h"
 
 #define SHIFT_IN_DATA_PIN 1
 
@@ -88,6 +89,16 @@ class Sequencer {
     SequencerTrack &getSelectedTrack() { return tracks[selectedTrack]; }
     void updateState();
 
+    // sets two 8 channel mixer objects. these are needed in order to be able to control gain / panorama of all AudioChannels
+    void setMixers(AudioMixer8 *mix1, AudioMixer8 *mix2) {
+        mixerL = mix1;
+        mixerR = mix2;
+        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+            mixerL->gain(i, audioChannels[i]->getOutput1Gain());
+            mixerR->gain(i, audioChannels[i]->getOutput2Gain());
+        }
+    }
+
     bool shouldStepMidiClock();
     bool shouldStepInternalClock();
     void tick();
@@ -103,6 +114,9 @@ class Sequencer {
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 
    private:
+    AudioMixer8 *mixerL;
+    AudioMixer8 *mixerR;
+
     uint32_t lastStepTime = 0;
     uint32_t nextStepTime = 0;
     uint16_t stepLength = 120;
