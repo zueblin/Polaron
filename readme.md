@@ -11,7 +11,7 @@ Main features:
 - different pattern length for each instrument track
 - midi sync
 - crunchy 12bit stereo outputs
-- open source hardware/software: if you miss a feature or are annoyed by a bug
+- open source hardware/software: if you miss a feature or are annoyed by a bug... change it!
 
 Disclaimer: This project is a work in progress. Features may change or not work, use at your own risk.
 
@@ -57,7 +57,7 @@ Known Issues:
 PCB Rev 1.2
 
 - The Potentiometers need to be rotated 180 degress in the next revision, so that the marking on the potentiometers point upwards (away from the player) in middle position and not downwards (this has no impact on the functionality of the Polaron)
-- In some situations, when connecting the polaron to a computer via usb and connecting the polaron audio output to an audio interface is connected again to the computer, a ground loop is created that introduces a very noticable noise/whine in the audio signal (it is caused by the LED PWM)
+- In some situations, when connecting the polaron to a computer via usb and connecting the polaron audio output to an audio interface that is connected to the computer (e.g via thunderbolt), a ground loop is created. This results in a very noticable noise/whine in the audio channel (which is caused by the LED PWM). Possible solution (untested): [Audio Ground Loop Noise Isolator](https://www.pjrc.com/store/audio_ground_isolator.html)
 
 ## FAQ
 
