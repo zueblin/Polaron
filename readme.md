@@ -21,6 +21,8 @@ Disclaimer: This project is a work in progress. Features may change or not work,
 
 ![Bottom](./Doc/Images/bottomview.jpg)
 
+![Profile](./Doc/Images/profileview.jpg)
+
 There's a short demo on vimeo:
 https://vimeo.com/302283771
 https://vimeo.com/305113707
