@@ -37,13 +37,13 @@ class AudioChannel {
     virtual void setParam4(int value);
     virtual void setParam5(int value);
     virtual void setParam6(int value);
-    void setVolume(int volumeArg) { volume = volumeArg / 512.0f; }
+    void setVolume(int volumeArg) { volume = volumeArg / 128.0f; }
     void setPan(int panArg) { pan = panArg / 1024.0f; }
     float getOutput1Gain() { return volume * (1.0 - pan); }
     float getOutput2Gain() { return volume * pan; }
 
    private:
-    float volume = 1.0f;
+    float volume = 2.0f;
     float pan = 0.5f;
 };
 

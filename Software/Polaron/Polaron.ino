@@ -61,7 +61,7 @@ DualSineChannel channel4(16, 2000);
 BroadbandNoiseChannel channel5;
 HatsChannel channel6;
 
-SequencerStepDefault channel1Default(300, 300, 10, 800, 10, 200);
+SequencerStepDefault channel1Default(300, 300, 1, 800, 10, 200);
 SequencerStepDefault channel2Default(500, 700, 1, 30, 10, 10);
 // SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
 SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);

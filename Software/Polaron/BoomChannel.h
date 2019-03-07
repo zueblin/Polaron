@@ -43,6 +43,7 @@ class BoomChannel : public AudioChannel {
         ampEnv.hold(0);
         ampEnv.decay(40);
         ampEnv.retriggers(0);
+        setVolume(500);
         // filter.resonance(0.8f);
         // filter.frequency(200.0f);
     }
@@ -55,10 +56,10 @@ class BoomChannel : public AudioChannel {
     }
     void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
     void setParam2(int value) { dc.amplitude(value / 1024.0f); }
-    void setParam3(int value) { ampEnv.attack(map(value, 0, 1024, 0, 10240)); }
-    void setParam4(int value) { ampEnv.decay(value * 20); }
-    void setParam5(int value) { pitchEnv.attack(value); }
-    void setParam6(int value) { pitchEnv.decay(map(value, 0, 1024, 0, 10240)); }
+    void setParam3(int value) { ampEnv.attack(value * 10); }
+    void setParam4(int value) { ampEnv.decay(value * 48); }
+    void setParam5(int value) { pitchEnv.attack(value * 4); }
+    void setParam6(int value) { pitchEnv.decay(value * 4); }
 
    private:
     int low = 35;
@@ -67,7 +68,7 @@ class BoomChannel : public AudioChannel {
     AudioSynthWaveformModulated osc;
     AudioEffectShapedEnvelope pitchEnv;
     AudioEffectShapedEnvelope ampEnv;
-    AudioFilterStateVariable filter;
+    //AudioFilterStateVariable filter;
     AudioConnection dcToPitchEnv;
     AudioConnection pitchEnvToOsc;
     AudioConnection oscToAmpEnv;
