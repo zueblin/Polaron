@@ -42,7 +42,7 @@ PCB is designed using KICAD 4.0.6
 
 Parts needed (Rev 1.2):
 
-- Teensy 3.6 32bit Microcontroller
+- Teensy 3.6 32bit Microcontroller (with Headers)
 - 30 x WS2812b RGB LEDs (or SK6812)
 - 30 x 6x6mm Pushbuttons
 - 30 x 270 ohm Resistors
