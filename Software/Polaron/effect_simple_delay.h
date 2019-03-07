@@ -48,35 +48,30 @@
 class AudioEffectSimpleDelay : public AudioStream
 {
 public:
-	AudioEffectSimpleDelay() : AudioStream(1, inputQueueArray) {
+	AudioEffectSimpleDelay(uint32_t maximumNumberOfSamples) : AudioStream(1, inputQueueArray) {
 		activemask = 0;
 		headindex = 0;
 		tailindex = 0;
 		maxblocks = 0;
 		memset(queue, 0, sizeof(queue));
-	}
-	void delay(uint8_t channel, float milliseconds) {
-		if (channel >= 8) return;
-		if (milliseconds < 0.0) milliseconds = 0.0;
-		uint32_t n = (milliseconds*(AUDIO_SAMPLE_RATE_EXACT/1000.0))+0.5;
+
 		uint32_t nmax = AUDIO_BLOCK_SAMPLES * (DELAY_QUEUE_SIZE-1);
-		if (n > nmax) n = nmax;
-		uint32_t blks = (n + (AUDIO_BLOCK_SAMPLES-1)) / AUDIO_BLOCK_SAMPLES + 1;
-		if (!(activemask & (1<<channel))) {
+        if (maximumNumberOfSamples < 0) maximumNumberOfSamples = 0;
+        if (maximumNumberOfSamples > nmax) maximumNumberOfSamples = nmax;
+		maxblocks = (maximumNumberOfSamples + (AUDIO_BLOCK_SAMPLES-1)) / AUDIO_BLOCK_SAMPLES + 1;
+        maxSamples = maximumNumberOfSamples;
+	}
+
+	void delay(uint8_t channel, uint32_t samples) {
+		if (channel >= 8) return;
+		if (samples < 0) samples = 0;
+        if (samples > maxSamples) samples = maxSamples;
+        if (!(activemask & (1<<channel))) {
 			// enabling a previously disabled channel
-			position[channel] = n;
-			if (blks > maxblocks) maxblocks = blks;
+			position[channel] = samples;
 			activemask |= (1<<channel);
 		} else {
-			if (n > position[channel]) {
-				// new delay is greater than previous setting
-				if (blks > maxblocks) maxblocks = blks;
-				position[channel] = n;
-			} else {
-				// new delay is less than previous setting
-				position[channel] = n;
-				// recompute_maxblocks();
-			}
+            position[channel] = samples;
 		}
 	}
 	void disable(uint8_t channel) {
@@ -84,22 +79,11 @@ public:
 		// diable this channel
 		activemask &= ~(1<<channel);
 		// recompute maxblocks for remaining enabled channels
-		recompute_maxblocks();
+		//recompute_maxblocks();
 	}
 	virtual void update(void);
 private:
-	void recompute_maxblocks(void) {
-		uint32_t max=0;
-		uint32_t channel = 0;
-		do {
-			if (activemask & (1<<channel)) {
-				uint32_t n = position[channel];
-				n = (n + (AUDIO_BLOCK_SAMPLES-1)) / AUDIO_BLOCK_SAMPLES + 1;
-				if (n > max) max = n;
-			}
-		} while(++channel < 8);
-		maxblocks = max;
-	}
+    uint32_t maxSamples; 
 	uint8_t activemask;   // which output channels are active
 	uint16_t headindex;    // head index (incoming) data in quueu
 	uint16_t tailindex;    // tail index (outgoing) data from queue

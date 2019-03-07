@@ -29,14 +29,11 @@
 class SimpleDrumChannel : public AudioChannel {
    public:
     SimpleDrumChannel(int lowFreq, int highFreq)
-        : drumToMix(drum, 0, mixer, 0), mixToDelay(mixer, 0, deelay, 0), delayToAmp(deelay, 0, amp, 0), ampToMix(amp, 0, mixer, 1) {
+        : deelay(1024), drumToMix(drum, 0, mixer, 0), mixToDelay(mixer, 0, deelay, 0), delayToAmp(deelay, 0, amp, 0), ampToMix(amp, 0, mixer, 1) {
         low = lowFreq;
         high = highFreq;
-        mixer.gain(0, 1.0f);
-        mixer.gain(1, 0.9f);
-        deelay.delay(0, 128.0f);
-        //deelay.delay(1, 256.0f);
-        // deelay.delay(1, 513.0f);
+        mixer.gain(0, 0.8f);
+        mixer.gain(1, 0.8f);
     }
     AudioStream *getOutput1() { return &mixer; }
     AudioStream *getOutput2() { return &mixer; }
@@ -46,7 +43,7 @@ class SimpleDrumChannel : public AudioChannel {
     void setParam2(int value) { drum.pitchMod(value / 1024.0f); }
     void setParam3(int value) { drum.secondMix(value / 1024.0f); }
     void setParam4(int value) { drum.length(value); }
-    void setParam5(int value) { deelay.delay(0, value / 8.0f); }
+    void setParam5(int value) { deelay.delay(0, value); }
     void setParam6(int value) { amp.gain(value / -1024.0f);}
 
    private:
