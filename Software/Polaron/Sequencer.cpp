@@ -517,9 +517,9 @@ void Sequencer::setFunctionButtonLights() {
     if ((hasActivePLockReceivers && (stepCount % 2) == 0) || (hasActivePLockReceivers && (input1.isActive() || input2.isActive()))) {
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
     }
-    functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::Black;
-    functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::Green : CRGB::Black;
-    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : CRGB::Black;
+    functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::CornflowerBlue : 0x000009;
+    functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::CornflowerBlue : 0x000009;
+    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::CornflowerBlue : 0x000009;
     // functionLED(BUTTON_TOGGLE_MUTE) = CRGB::Green;
     // functionLED(BUTTON_SET_TRACKLENGTH) = CRGB::Green;
     // functionLED(BUTTON_SET_PATTERN) = CRGB::Green;
