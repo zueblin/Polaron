@@ -24,10 +24,7 @@
 #include "FastLED.h"
 #include "Sequencer.h"
 #include "mixer.h"
-
 #include <Audio.h>
-// #define USB_MIDI_SERIAL
-// #include "MIDIUSB.h"
 
 #include "BoomChannel.h"
 #include "BroadbandNoiseChannel.h"
@@ -36,6 +33,7 @@
 #include "HatsChannel.h"
 #include "SimpleDrumChannel.h"
 #include "SimpleSineChannel.h"
+//#include "SimpleSampleChannel.h"
 
 //#define FASTLED_ALLOW_INTERRUPTS 0
 #define PULSE_WIDTH_USEC 5
@@ -54,6 +52,7 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 
 BoomChannel channel1(10, 200);
+//SimpleSampleChannel channel2;
 SimpleDrumChannel channel2(200, 6000);
 // SimpleSineChannel channel3(100, 2000);
 FMChannel channel3(0, 1024);
@@ -62,12 +61,11 @@ BroadbandNoiseChannel channel5;
 HatsChannel channel6;
 
 SequencerStepDefault channel1Default(300, 300, 1, 800, 10, 200);
-SequencerStepDefault channel2Default(500, 700, 1, 30, 10, 10);
-// SequencerStepDefault channel3Default(10, 10, 2, 700, 10, 10);
+SequencerStepDefault channel2Default(450, 700, 1, 30, 10, 10);
 SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);
 SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 512);
 SequencerStepDefault channel5Default(300, 300, 50, 50, 10, 512);
-SequencerStepDefault channel6Default(300, 300, 50, 128, 10, 10);
+SequencerStepDefault channel6Default(300, 500, 50, 128, 10, 10);
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
 AudioConnection patchCord9(*channel2.getOutput1(), 0, mixer1, 1);
@@ -84,8 +82,6 @@ AudioConnection patchCord19(*channel6.getOutput2(), 0, mixer2, 5);
 
 AudioConnection patchCord20(mixer1, 0, dacs1, 0);
 AudioConnection patchCord21(mixer2, 0, dacs1, 1);
-
-// GUItool: end automatically generated code
 
 static bool externalClockReceived = false;
 static bool externalSync = false;
@@ -110,22 +106,6 @@ void setup() {
 
     AudioMemory(70);
     // dacs1.analogReference(EXTERNAL);
-
-    /**
-    mixer1.gain(0, 1.0f);
-    mixer1.gain(1, 0.8f);
-    mixer1.gain(2, 0.8f);
-    mixer1.gain(3, 0.8f);
-    mixer1.gain(4, 0.8f);
-    mixer1.gain(5, 0.8f);
-
-    mixer2.gain(0, 1.0f);
-    mixer2.gain(1, 0.8f);
-    mixer2.gain(2, 0.8f);
-    mixer2.gain(3, 0.8f);
-    mixer2.gain(4, 0.8f);
-    mixer2.gain(5, 0.8f);
-    */
 
     sequencer.tracks[0].init(channel1Default);
     sequencer.tracks[1].init(channel2Default);
@@ -237,8 +217,6 @@ void inline updateAudio() {
 void loop() {
     FastLED.show();
     usbMIDI.read();
-    // long starttime = micros();
-
     FastLED.clearData();
     readButtonStates();
     sequencer.updateState();

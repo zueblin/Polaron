@@ -54,13 +54,13 @@ class HatsChannel : public AudioChannel {
         envelope.decay(5);
         // envelope.sustain(0)
 
-        mixer.gain(0, 0.5f);
-        mixer.gain(1, 0.5f);
-        mixer.gain(2, 0.5f);
-        mixer.gain(3, 0.5f);
-        mixer.gain(4, 0.5f);
-        mixer.gain(5, 0.5f);
-        mixer.gain(6, 0.5f);
+        mixer.gain(0, 0.7f);
+        mixer.gain(1, 0.7f);
+        mixer.gain(2, 0.7f);
+        mixer.gain(3, 0.7f);
+        mixer.gain(4, 0.7f);
+        mixer.gain(5, 0.7f);
+        mixer.gain(6, 0.7f);
         // mixer.gain(7, 0.0f);
 
         w1.begin(1.0, baseFreq, WAVEFORM_SQUARE);

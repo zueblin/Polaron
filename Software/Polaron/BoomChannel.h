@@ -23,18 +23,20 @@
 #include <Audio.h>
 #include "AudioChannel.h"
 #include "effect_shaped_envelope.h"
+#include "AudioSampleKickTransients.h"
+#include "AudioPlayPitchedMemory.h"
 
 #ifndef BoomChannel_h
 #define BoomChannel_h
 
 class BoomChannel : public AudioChannel {
    public:
-    BoomChannel(int lowFreq, int highFreq) : dcToPitchEnv(dc, pitchEnv), pitchEnvToOsc(pitchEnv, 0, osc, 0), oscToAmpEnv(osc, 0, ampEnv, 0) {
+    BoomChannel(int lowFreq, int highFreq) : dcToPitchEnv(dc, pitchEnv), pitchEnvToOsc(pitchEnv, 0, osc, 0), oscToAmpEnv(osc, 0, ampEnv, 0), ampToMixer(ampEnv,0, mixer, 0), clickToMixer(click, 0, mixer, 1) {
         low = lowFreq;
         high = highFreq;
         osc.begin(0);
         osc.amplitude(1.0f);
-        osc.frequencyModulation(4.0f);
+        osc.frequencyModulation(10.0f);
         pitchEnv.attack(4);
         pitchEnv.hold(0);
         pitchEnv.decay(40);
@@ -43,22 +45,28 @@ class BoomChannel : public AudioChannel {
         ampEnv.hold(0);
         ampEnv.decay(40);
         ampEnv.retriggers(0);
-        setVolume(500);
+
+        mixer.gain(0, 0.9f);
+        mixer.gain(1, 0.5f);
+        
+        setVolume(440);
+
         // filter.resonance(0.8f);
         // filter.frequency(200.0f);
     }
-    AudioStream *getOutput1() { return &ampEnv; }
-    AudioStream *getOutput2() { return &ampEnv; }
+    AudioStream *getOutput1() { return &mixer; }
+    AudioStream *getOutput2() { return &mixer; }
 
     void trigger() {
         ampEnv.noteOn();
         pitchEnv.noteOn();
+        click.play(AudioSampleTransient3, AudioSampleTransient3Length);
     }
     void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
     void setParam2(int value) { dc.amplitude(value / 1024.0f); }
-    void setParam3(int value) { ampEnv.attack(value * 10); }
+    void setParam3(int value) { click.frequency(value); }
     void setParam4(int value) { ampEnv.decay(value * 48); }
-    void setParam5(int value) { pitchEnv.attack(value * 4); }
+    void setParam5(int value) { mixer.gain(1, value / 1024.0f); }
     void setParam6(int value) { pitchEnv.decay(value * 4); }
 
    private:
@@ -66,12 +74,14 @@ class BoomChannel : public AudioChannel {
     int high = 880;
     AudioSynthWaveformDc dc;
     AudioSynthWaveformModulated osc;
+    AudioPlayPitchedMemory click;
     AudioEffectShapedEnvelope pitchEnv;
     AudioEffectShapedEnvelope ampEnv;
-    //AudioFilterStateVariable filter;
+    AudioMixer4 mixer;
     AudioConnection dcToPitchEnv;
     AudioConnection pitchEnvToOsc;
     AudioConnection oscToAmpEnv;
-    // AudioConnection filterToAmpEnv;
+    AudioConnection ampToMixer;
+    AudioConnection clickToMixer;
 };
 #endif
