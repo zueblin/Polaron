@@ -46,7 +46,7 @@ class BoomChannel : public AudioChannel {
         ampEnv.decay(40);
         ampEnv.retriggers(0);
 
-        mixer.gain(0, 0.9f);
+        mixer.gain(0, 0.8f);
         mixer.gain(1, 0.5f);
         // setVolume(440);
 

@@ -338,9 +338,11 @@ void Sequencer::doStartStop() {
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
             tracks[i].onStop();
         }
-        pulseCount = 0;
-        stepCount = 0;
+        
     } else {
+        // we reset midiClock pulse count to -1, so that it will jump to 0 with the first clock received.
+        pulseCount = -1;
+        stepCount = 0;
         triggerSounds = true;
         nextStepTime = millis() + stepLength;
     }

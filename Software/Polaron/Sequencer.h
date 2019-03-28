@@ -103,7 +103,7 @@ class Sequencer {
 
    private:
 
-    uint8_t pulseCount = 0;
+    
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 
     AudioMixer8 *mixerL;
@@ -113,6 +113,7 @@ class Sequencer {
     uint32_t nextStepTime = 0;
     uint16_t stepLength = 120;
     uint8_t stepCount = 0;
+    int8_t pulseCount = -1;
 
     bool midiClockReceived = false;
     bool isSyncingToMidiClock = false;

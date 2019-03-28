@@ -61,7 +61,7 @@ SequencerStepDefault channel1Default(280, 300, 512, 600, 400, 200);
 SequencerStepDefault channel2Default(450, 700, 1, 30, 10, 10);
 SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);
 SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 512);
-SequencerStepDefault channel5Default(300, 300, 0, 50, 10, 512);
+SequencerStepDefault channel5Default(300, 300, 0, 200, 10, 512);
 SequencerStepDefault channel6Default(300, 500, 50, 128, 10, 10);
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
