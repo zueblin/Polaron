@@ -59,7 +59,7 @@ Known Issues:
 PCB Rev 1.2
 
 - The Potentiometers need to be rotated 180 degress in the next revision, so that the marking on the potentiometers point upwards (away from the player) in middle position and not downwards (this has no impact on the functionality of the Polaron)
-- In some situations, when connecting the polaron to a computer via usb and connecting the polaron audio output to an audio interface that is connected to the computer (e.g via thunderbolt), a ground loop is created. This results in a very noticable noise/whine in the audio channel (which is caused by the LED PWM). Possible solution (untested): [Audio Ground Loop Noise Isolator](https://www.pjrc.com/store/audio_ground_isolator.html)
+- In some situations, when connecting the polaron to a computer via usb and connecting the polaron audio output to an audio interface that is connected to the computer (e.g via thunderbolt), a ground loop is created. This results in a very noticable noise/whine in the audio channel (which is caused by the LED PWM). Tested solution: [Audio Ground Loop Noise Isolator](https://www.pjrc.com/store/audio_ground_isolator.html)
 
 ## FAQ
 
