@@ -35,7 +35,6 @@
 #include "SimpleSineChannel.h"
 //#include "SimpleSampleChannel.h"
 
-//#define FASTLED_ALLOW_INTERRUPTS 0
 #define PULSE_WIDTH_USEC 5
 
 #define SHIFT_IN_PLOAD_PIN 0  // 2  // Connects to Parallel load pin the 165
@@ -43,8 +42,6 @@
 #define SHIFT_IN_CLOCK_PIN 2  // 5 // Connects to the Clock pin the 165
 // pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
-#define POTI_PIN_1 A8
-#define POTI_PIN_2 A9
 
 AudioOutputAnalogStereo dacs1;
 
@@ -60,11 +57,11 @@ DualSineChannel channel4(16, 2000);
 BroadbandNoiseChannel channel5;
 HatsChannel channel6;
 
-SequencerStepDefault channel1Default(300, 300, 1, 800, 10, 200);
+SequencerStepDefault channel1Default(280, 300, 512, 600, 400, 200);
 SequencerStepDefault channel2Default(450, 700, 1, 30, 10, 10);
 SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);
 SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 512);
-SequencerStepDefault channel5Default(300, 300, 50, 50, 10, 512);
+SequencerStepDefault channel5Default(300, 300, 0, 50, 10, 512);
 SequencerStepDefault channel6Default(300, 500, 50, 128, 10, 10);
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
@@ -83,21 +80,13 @@ AudioConnection patchCord19(*channel6.getOutput2(), 0, mixer2, 5);
 AudioConnection patchCord20(mixer1, 0, dacs1, 0);
 AudioConnection patchCord21(mixer2, 0, dacs1, 1);
 
-static bool externalClockReceived = false;
-static bool externalSync = false;
-
 Sequencer sequencer;
 
 void setup() {
-    // Serial.begin(9600);
-    // while (!Serial)
-    //{
-    //    ; // wait for serial port to connect. Needed for native USB
-    //}
-
     pinMode(SHIFT_IN_PLOAD_PIN, OUTPUT);
     pinMode(SHIFT_IN_CLOCK_PIN, OUTPUT);
     pinMode(SHIFT_IN_DATA_PIN, INPUT);
+
     // init input shift register
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
@@ -208,53 +197,19 @@ void readButtonStates() {
     readButtonState(sequencer.functionButtons[0]);
 }
 
-void inline updateAudio() {
-    sequencer.input1.update((uint16_t)analogRead(POTI_PIN_1));
-    sequencer.input2.update((uint16_t)analogRead(POTI_PIN_2));
-    sequencer.tick();
-}
-
 void loop() {
-    FastLED.show();
-    usbMIDI.read();
     FastLED.clearData();
+    // read all inputs
+    usbMIDI.read();
     readButtonStates();
+    // update the sequencer state
     sequencer.updateState();
-    if (sequencer.isRunning()) {
-        if (externalSync && externalClockReceived) {
-            externalClockReceived = false;
-            if (sequencer.shouldStepMidiClock()) {
-                updateAudio();
-            }
-        } else if (!externalSync && sequencer.shouldStepInternalClock()) {
-            updateAudio();
-        }
-    }
+    // show the current state
+    FastLED.show();
 }
 
 void onRealTimeSystem(uint8_t rtb) {
-    switch (rtb) {
-        case 0xF8:  // Clock
-            externalClockReceived = true;
-            break;
-        case 0xFA:  // Start
-            externalSync = true;
-            sequencer.start();
-            break;
-        case 0xFC:  // Stop
-            externalSync = false;
-            sequencer.stop();
-            break;
-        case 0xFB:  // Continue
-        case 0xFE:  // ActiveSensing
-        case 0xFF:  // SystemReset
-            break;
-        default:  // Invalid Real Time marker
-            break;
-    }
-    // Serial.print("OnRealTimeSystem");
-    // Serial.print(rtb, DEC);
-    // Serial.println();
+    sequencer.onMidiInput(rtb);
 }
 
 void debugAudioUsage() {

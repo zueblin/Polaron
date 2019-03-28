@@ -65,8 +65,6 @@ class SequencerStep {
     uint16_t parameter4;
     uint16_t parameter5;
     uint16_t parameter6;
-
-    uint8_t triggerPattern;
 };
 
 #endif

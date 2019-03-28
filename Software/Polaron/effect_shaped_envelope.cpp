@@ -36,8 +36,9 @@ void AudioEffectShapedEnvelope::noteOn(void) {
     phase_increment = (4294967296 / count);
     phase_accumulator = 0;
     triggerCount = maxRetriggers;
+    currentAmplitude = maxAmplitude;
     // analog style env: attack starts at the current env value and not necessarily at zero (avoids clicks)
-    calculateLinearTransformFactors((int16_t)currentEnvVal, 32767);
+    calculateLinearTransformFactors((int16_t)currentEnvVal, currentAmplitude);
     __enable_irq();
 }
 
@@ -70,14 +71,14 @@ void AudioEffectShapedEnvelope::update(void) {
                     state = STATE_HOLD;
                     phase_increment = (4294967296 / count);
                     phase_accumulator = 0;
-                    calculateLinearTransformFactors(32767, 32767);
+                    calculateLinearTransformFactors(currentAmplitude, currentAmplitude);
                     // Serial.println("HOLD");
                 } else {
                     state = STATE_DECAY;
                     count = decay_count;
                     phase_increment = (4294967296 / count);
                     phase_accumulator = 0;
-                    calculateLinearTransformFactors(32767, 0);
+                    calculateLinearTransformFactors(currentAmplitude, 0);
                     // Serial.println("DECAY");
                 }
                 continue;
@@ -86,16 +87,17 @@ void AudioEffectShapedEnvelope::update(void) {
                 count = decay_count;
                 phase_increment = (4294967296 / count);
                 phase_accumulator = 0;
-                calculateLinearTransformFactors(32767, 0);
+                calculateLinearTransformFactors(currentAmplitude, 0);
                 // Serial.println("DECAY");
                 continue;
             } else if (state == STATE_DECAY) {
                 if (triggerCount-- > 0) {
+                    currentAmplitude = currentAmplitude * rtDamp;
                     state = STATE_ATTACK;
                     count = attack_count;
                     phase_increment = (4294967296 / count);
                     phase_accumulator = 0;
-                    calculateLinearTransformFactors(0, 32767);
+                    calculateLinearTransformFactors(0, currentAmplitude);
                 } else {
                     state = STATE_IDLE;
                     // Serial.println("IDLE");

@@ -28,6 +28,9 @@
 #ifndef SimpleSampleChannel_h
 #define SimpleSampleChannel_h
 
+/*
+* A basic example for a channel that plays a pitched sample from memory.
+*/
 class SimpleSampleChannel : public AudioChannel {
    public:
     SimpleSampleChannel() {

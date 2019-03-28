@@ -55,6 +55,19 @@ class AudioEffectShapedEnvelope : public AudioStream {
     }
     void noteOn();
 
+    /*
+    * when the envelope retriggers, this factor is applied to decrease the max amplitude of env.
+    * (e.g 0.8 -> each retrigger is a bit lower in volume)
+    */
+    void damp(float factor) {
+        if (factor > 1.0f){
+            rtDamp = 1.0f;
+        } else if (factor < 0.0f){
+            rtDamp = 0.0f;
+        }
+        rtDamp = factor;
+    }
+
     void attack(int samples) {
         if (samples > 0 && samples < 65535) {
             attack_count = samples;
@@ -99,6 +112,9 @@ class AudioEffectShapedEnvelope : public AudioStream {
     uint16_t maxRetriggers = 0;
     uint16_t triggerCount;
 
+    uint16_t maxAmplitude = 32767;
+    uint16_t currentAmplitude = 32767;
+
     // settings
     uint16_t attack_count;
     uint16_t hold_count;
@@ -109,6 +125,8 @@ class AudioEffectShapedEnvelope : public AudioStream {
 
     int32_t interpolatedVal = 0;
     int32_t currentEnvVal = 0;
+
+    float rtDamp = 0.9f;
 
     float lt_mult = 0.0f;
     float lt_add = 0.0f;

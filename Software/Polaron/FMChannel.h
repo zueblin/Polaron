@@ -39,7 +39,7 @@ class FMChannel : public AudioChannel {
         fmEnvelope.decay(5);
 
         envelope.attack(1);
-        envelope.hold(0);
+        envelope.hold(5);
         envelope.decay(5);
 
         carrierOsc.amplitude(1.0);
@@ -52,11 +52,11 @@ class FMChannel : public AudioChannel {
         envelope.noteOn();
         fmEnvelope.noteOn();
     }
-    void setParam1(int value) { carrierOsc.frequency((float)map(value, 0, 1024, low, high)); }
-    void setParam2(int value) { modulatorOsc.frequency((float)map(value, 0, 1024, low, high)); }
-    void setParam3(int value) { envelope.attack(value >> 2); }
-    void setParam4(int value) { envelope.decay(value * 4); }
-    void setParam5(int value) { envelope.retriggers(map(value, 0, 1024, 0, 12)); }
+    void setParam1(int value) { carrierOsc.frequency(32.0f + (float)map(value, 0, 1024, low, high)); }
+    void setParam2(int value) { modulatorOsc.frequency(2.0f * value); }
+    void setParam3(int value) { envelope.attack(value); }
+    void setParam4(int value) { envelope.decay(value * 6); }
+    void setParam5(int value) { envelope.retriggers(value >> 4); }
     void setParam6(int value) { fmEnvelope.decay(value * 16); }
 
    private:

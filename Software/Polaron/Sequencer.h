@@ -33,6 +33,8 @@
 #include "mixer.h"
 
 #define SHIFT_IN_DATA_PIN 1
+#define POTI_PIN_1 A8
+#define POTI_PIN_2 A9
 
 #define NUMBER_OF_INSTRUMENTTRACKS 6
 
@@ -84,9 +86,7 @@ class Sequencer {
     // with several arrays.
     CRGB leds[NUM_LEDS];
 
-    bool isRunning() { return running; }
-    uint8_t getSelectedTrackIndex() { return selectedTrack; }
-    SequencerTrack &getSelectedTrack() { return tracks[selectedTrack]; }
+    // main method. after reading inputs, this will update the state of the sequencer
     void updateState();
 
     // sets two 8 channel mixer objects. these are needed in order to be able to control gain / panorama of all AudioChannels
@@ -99,30 +99,25 @@ class Sequencer {
         }
     }
 
-    bool shouldStepMidiClock();
-    bool shouldStepInternalClock();
-    void tick();
-    void start();
-    void stop();
+    void onMidiInput(uint8_t rtb);
 
-    void deactivateSensors() {
-        input1.deactivate();
-        input2.deactivate();
-    };
+   private:
 
     uint8_t pulseCount = 0;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 
-   private:
     AudioMixer8 *mixerL;
     AudioMixer8 *mixerR;
 
     uint32_t lastStepTime = 0;
     uint32_t nextStepTime = 0;
     uint16_t stepLength = 120;
-    // uint16_t modulatedStepLength = 20;
     uint8_t stepCount = 0;
-    float swing = 0.5;
+
+    bool midiClockReceived = false;
+    bool isSyncingToMidiClock = false;
+
+    bool triggerSounds = false;
 
     // currently selected track
     uint8_t selectedTrack = 0;
@@ -143,6 +138,9 @@ class Sequencer {
 
     FunctionMode calculateFunctionMode();
 
+    void doStep();
+    void doTriggerSounds();
+
     void doSetTriggers();
     void doSetTrackLength();
     void doSetTrackPLock();
@@ -157,7 +155,19 @@ class Sequencer {
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
 
+    bool shouldStepMidiClock();
+    bool shouldStepInternalClock();
+    bool shouldStep();
+
     CRGB colorForStepState(uint8_t state);
+
+    void start();
+    void stop();
+
+    void deactivateSensors() {
+        input1.deactivate();
+        input2.deactivate();
+    };
 };
 
 #endif /* Sequencer_h */

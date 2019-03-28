@@ -48,11 +48,8 @@ class BoomChannel : public AudioChannel {
 
         mixer.gain(0, 0.9f);
         mixer.gain(1, 0.5f);
-        
-        setVolume(440);
+        // setVolume(440);
 
-        // filter.resonance(0.8f);
-        // filter.frequency(200.0f);
     }
     AudioStream *getOutput1() { return &mixer; }
     AudioStream *getOutput2() { return &mixer; }

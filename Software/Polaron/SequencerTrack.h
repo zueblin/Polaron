@@ -72,6 +72,7 @@ class SequencerTrack {
     uint8_t state;
 
     // we use a static variable to store state of all tracks, making it easy to get global information like if any of the tracks is armed
+    // patternOps = is track armed for pattern switching
     static uint8_t patternOpsArmState;
 };
 

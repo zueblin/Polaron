@@ -44,8 +44,9 @@ class BroadbandNoiseChannel : public AudioChannel {
         noise.amplitude(0.6f);
 
         envelope.attack(3);
-        envelope.hold(0);
+        envelope.hold(5);
         envelope.decay(5);
+        envelope.damp(0.8f);
         // envelope.sustain(0)
 
         mixer.gain(0, 0.5f);
@@ -75,8 +76,8 @@ class BroadbandNoiseChannel : public AudioChannel {
         w2.frequency(value);
         w3.frequency(value * 1.1);
     }
-    void setParam3(int value) { envelope.hold(value); }
-    void setParam4(int value) { envelope.decay(5.0 + (float)map(value, 0, 1024, 0, 65536)); }
+    void setParam3(int value) { envelope.retriggers(value / 32); }
+    void setParam4(int value) { envelope.decay(5 + ((value * value) >> 4)); }
     void setParam5(int value) {
         float mappedValue = (float)map(value, 0, 1024, 2000, 10000);
         filter.setHighpass(0, mappedValue * 1.1, 0.700);
@@ -84,6 +85,7 @@ class BroadbandNoiseChannel : public AudioChannel {
         filter.setHighpass(2, mappedValue * 0.9, 0.700);
     }
     void setParam6(int value) {
+        // mix between whitenoise and the osc's
         float g = value / 1024.0f;
         mixer.gain(0, g);
         mixer.gain(1, g);

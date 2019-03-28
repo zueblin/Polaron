@@ -49,33 +49,11 @@ Sequencer::Sequencer() {
     }
 }
 
-bool Sequencer::shouldStepMidiClock() {
-    bool result = (pulseCount == 0);
-    if (pulseCount++ >= 5) {
-        pulseCount = 0;
-    }
-    return result;
-}
-
-bool Sequencer::shouldStepInternalClock() {
-    if (millis() >= nextStepTime) {
-        lastStepTime = nextStepTime;
-        nextStepTime += stepLength;
-        return true;
-    } else {
-        return false;
-    }
-}
-
-void Sequencer::tick() {
-    // modulatedStepLength = (stepCount++ % 2 == 0) ? stepLength + (swing * stepLength) : stepLength - (swing * stepLength);
-    // Serial.println(modulatedStepLength);
-    stepCount++;
+void Sequencer::doTriggerSounds() {
+    input1.update((uint16_t)analogRead(POTI_PIN_1));
+    input2.update((uint16_t)analogRead(POTI_PIN_2)); 
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-        // checks if the bit at position of the current_step is set to 1 in
-        // the step on/off integer
         SequencerStep &step = tracks[i].getCurrentStep();
-
         if (step.isParameterLockOn()) {
             switch (pLockParamSet) {
                 case PLockParamSet::SET1:
@@ -116,9 +94,20 @@ void Sequencer::tick() {
             audioChannels[i]->setParam6(step.parameter6);
             audioChannels[i]->trigger();
         }
-        // advance one step;
+        
+    }
+    triggerSounds = false;
+}
+
+/*
+* Increments the current step by one on all tracks.
+*/
+void Sequencer::doStep() {
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         tracks[i].doStep();
     }
+    triggerSounds = true;
+    stepCount++;
 }
 
 void Sequencer::start() {
@@ -130,23 +119,6 @@ void Sequencer::start() {
 void Sequencer::stop() {
     if (running) {
         doStartStop();
-    }
-}
-
-CRGB Sequencer::colorForStepState(uint8_t state) {
-    switch (state) {
-        case 1:
-            // trigger on / plock rec off
-            return CRGB::CornflowerBlue;
-        case 2:
-            // trigger off / plock rec on
-            return CRGB::Green;
-        case 3:
-            // trigger on / plock rec on
-            return CRGB::DarkOrange;
-        default:
-            // trigger off / plock rec off
-            return CRGB::Black;
     }
 }
 
@@ -207,6 +179,20 @@ void Sequencer::updateState() {
     }
 
     setFunctionButtonLights();
+
+    if (running) {
+        // check if we should step (internal clock / midi / triggers etc)
+        if (shouldStep()){
+            doStep();
+        }
+        // check if we should trigger the sounds. This is independent from doStep, since right after the sequencer is started
+        // it does not step, but still trigger the sounds. The event sequence when starting looks like this:
+        // 0              1              2              4         
+        // Trigger....StepTrigger....StepTrigger....StepTrigger....
+        if (triggerSounds){
+            doTriggerSounds();
+        }
+    }
 
     // indicate current step
     if (running) {
@@ -300,12 +286,10 @@ void Sequencer::doSetTriggers() {
         sourceStepIndex = -1;
         stepCopy = false;
     }
-    // Serial.print("oldest Step Press:");
-    // Serial.println(oldestStepPress);
 }
 
 /*
- * Set track length mode. Step button presses set the track length.
+ * Set track length mode. Step button presses set the track length. Also handles changing the internal clock tempo and rotating patterns.
  */
 void Sequencer::doSetTrackLength() {
     functionLED(BUTTON_SET_TRACKLENGTH) = CRGB::CornflowerBlue;
@@ -348,20 +332,16 @@ void Sequencer::doSetTrackPLock() {
     }
 }
 
-/*
- * Starts / stops the
- */
 void Sequencer::doStartStop() {
     running = !running;
     if (!running) {
-        // reset current step to 0 (it will start with zero if it is at
-        // tracklength -1) whenever the sequencer is started
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
             tracks[i].onStop();
         }
         pulseCount = 0;
         stepCount = 0;
     } else {
+        triggerSounds = true;
         nextStepTime = millis() + stepLength;
     }
 }
@@ -382,13 +362,15 @@ void Sequencer::doToggleTrackMuteArm() {
         } else if (tracks[i].isMuted() && tracks[i].isArmed()) {
             trackLED(i) = CRGB::CornflowerBlue;
             trackLED(i).nscale8(ledFader);
-            // TODO: this is copy pasted from doSetTrackSelection
         } else {
             setDefaultTrackLight(i);
         }
     }
 }
 
+/*
+ * Pattern Ops: Operations related to patterns: arm / dearm switching patterns / copy paste.
+ */
 void Sequencer::doPatternOps() {
     functionLED(BUTTON_SET_PATTERN) = CRGB::CornflowerBlue;
     ledFader++;
@@ -445,7 +427,7 @@ void Sequencer::doPatternOps() {
 }
 
 /*
- * Set track length mode. Step button presses set the track length.
+ * Leave Pattern mode (activate queued change)
  */
 void Sequencer::doLeavePatternOps() {
     for (auto &track : tracks) {
@@ -464,8 +446,8 @@ void Sequencer::doLeavePatternOps() {
 }
 
 void Sequencer::doSetTrackSelection() {
-    // check 4 track buttons to set selected track
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        // while trackbuttons are pressed, input1 changes the volume of the track, input2 the panorama
         if (trackButtons[i].read()) {
             if (input1.isActive()) {
                 audioChannels[i]->setVolume(input1.getValue());
@@ -478,6 +460,7 @@ void Sequencer::doSetTrackSelection() {
                 mixerR->gain(i, audioChannels[i]->getOutput2Gain());
             }
         }
+        // on trackbutton release, change selected track
         if (trackButtons[i].fell()) {
             deactivateSensors();
             selectedTrack = i;
@@ -520,7 +503,78 @@ void Sequencer::setFunctionButtonLights() {
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::CornflowerBlue;
     functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::Green : CRGB::CornflowerBlue;
     functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : CRGB::CornflowerBlue;
-    // functionLED(BUTTON_TOGGLE_MUTE) = CRGB::Green;
-    // functionLED(BUTTON_SET_TRACKLENGTH) = CRGB::Green;
-    // functionLED(BUTTON_SET_PATTERN) = CRGB::Green;
+}
+
+void Sequencer::onMidiInput(uint8_t rtb) {
+    switch (rtb) {
+        case 0xF8:  // Clock
+            midiClockReceived = true;
+            break;
+        case 0xFA:  // Start
+            isSyncingToMidiClock = true;
+            start();
+            break;
+        case 0xFC:  // Stop
+            isSyncingToMidiClock = false;
+            stop();
+            break;
+        //case 0xFB:  // Continue
+        //case 0xFE:  // ActiveSensing
+        //case 0xFF:  // SystemReset
+        //    break;
+        default:  // Invalid Real Time marker
+            break;
+    }
+}
+
+/*
+* Midiclock sends 24 pulses per quarter -> 6 pulses for a 16th 
+*/
+bool Sequencer::shouldStepMidiClock() {
+    if (pulseCount++ >= 5) {
+        pulseCount = 0;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Sequencer::shouldStepInternalClock() {
+    if (millis() >= nextStepTime) {
+        lastStepTime = nextStepTime;
+        nextStepTime += stepLength;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*
+* Checks if the conditions are met to advance one step, 
+* considering internal clock / midiclock / trigger input
+*/
+bool Sequencer::shouldStep(){
+    if (isSyncingToMidiClock && midiClockReceived) {
+        midiClockReceived = false;
+        return shouldStepMidiClock();
+    } else {
+        return !isSyncingToMidiClock && shouldStepInternalClock();
+    }
+}
+
+CRGB Sequencer::colorForStepState(uint8_t state) {
+    switch (state) {
+        case 1:
+            // trigger on / plock rec off
+            return CRGB::CornflowerBlue;
+        case 2:
+            // trigger off / plock rec on
+            return CRGB::Green;
+        case 3:
+            // trigger on / plock rec on
+            return CRGB::DarkOrange;
+        default:
+            // trigger off / plock rec off
+            return CRGB::Black;
+    }
 }

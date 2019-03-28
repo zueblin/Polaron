@@ -27,7 +27,7 @@
 #define PLOCK_REC_STATE 1
 
 SequencerStep::SequencerStep()
-    : state(0), parameter1(512u), parameter2(512u), parameter3(512u), parameter4(512u), parameter5(512u), parameter6(512u), triggerPattern(0b00000001) {}
+    : state(0), parameter1(512u), parameter2(512u), parameter3(512u), parameter4(512u), parameter5(512u), parameter6(512u) {}
 
 void SequencerStep::init(SequencerStepDefault &defaultValues) {
     state = 0;
@@ -74,5 +74,4 @@ void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
     parameter4 = sourceStep.parameter4;
     parameter5 = sourceStep.parameter5;
     parameter6 = sourceStep.parameter6;
-    triggerPattern = sourceStep.triggerPattern;
 }
