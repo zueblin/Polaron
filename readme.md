@@ -55,7 +55,7 @@ Parts needed (Rev 1.2):
 
 Check the Wiki for [Build Instructions](https://github.com/zueblin/Polaron/wiki/Building-the-Polaron)
 
-Known Issues:
+## Known Issues:
 PCB Rev 1.2
 
 - The Potentiometers need to be rotated 180 degress in the next revision, so that the marking on the potentiometers point upwards (away from the player) in middle position and not downwards (this has no impact on the functionality of the Polaron)
@@ -65,7 +65,9 @@ PCB Rev 1.2
 
 - Q: Is this an easy build? A: This is an intermediate project to build, its not particularly hard, but its not a good project if you've never soldered before. Most parts are easy to solder, but the LEDs are directly soldered onto the surface (SMD) of the PCB and you need to be careful not to overheat them. You'll also need a decent soldering iron to build this, with a fine tip.
 - Q: Is this a pro audio project? A: No, not exactly. The Polaron is more about a fun workflow than super hifi sound.
-- Q: Can i buy a PCB / Parts Kit? A: This is currently under consideration, if your interested, please send me a mail.
+- Q: Does it work with a Teensy 3.5? A: PJRC forum member drjohn reports successfully running the Polaron with a Teensy 3.5.
+- Q: Can i buy a PCB / Part Kit? A: Yes, i currently have Rev 1.2 PCBs at 20 USD incl. untracked international shipping and part kits (PCB and all parts, EXCLUDING the teensy itself) at 60 USD incl. untracked international shipping. Add 5 USD for tracked shipping. Please send me a mail, if interested.
+- Q: Is there a manual? A: Yes, please check the [Project WIKI](https://github.com/zueblin/Polaron/wiki) for build instructions and operating manual. If you still have questions / suggestions, please send me a mail.
 - Q: Can i buy a fully assembled Polaron? A: Not, not at the moment.
 
 # License
