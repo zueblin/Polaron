@@ -120,7 +120,6 @@ class HatsChannel : public AudioChannel {
     // float ratio7 = 10.0;
     // float ratio2 = 2.0;
 
-    AudioMixer8 mixer;
     AudioSynthWaveform w1;
     AudioSynthWaveform w2;
     AudioSynthWaveform w3;
@@ -128,9 +127,10 @@ class HatsChannel : public AudioChannel {
     AudioSynthWaveform w5;
     AudioSynthWaveform w6;
     AudioSynthWaveform w7;
-    // AudioSynthWaveform w8;
+    AudioMixer8 mixer;
     AudioFilterBiquad filter;
     AudioEffectShapedEnvelope envelope;
+
     AudioConnection w1m;
     AudioConnection w2m;
     AudioConnection w3m;
@@ -138,7 +138,6 @@ class HatsChannel : public AudioChannel {
     AudioConnection w5m;
     AudioConnection w6m;
     AudioConnection w7m;
-    // AudioConnection w8m;
     AudioConnection mixerFilter;
     AudioConnection filterEnv;
 };

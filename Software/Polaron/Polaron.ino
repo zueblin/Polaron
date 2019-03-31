@@ -43,11 +43,6 @@
 // pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
 
-AudioOutputAnalogStereo dacs1;
-
-AudioMixer8 mixer1;
-AudioMixer8 mixer2;
-
 BoomChannel channel1(10, 200);
 //SimpleSampleChannel channel2;
 SimpleDrumChannel channel2(200, 6000);
@@ -56,6 +51,10 @@ FMChannel channel3(0, 1024);
 DualSineChannel channel4(16, 2000);
 BroadbandNoiseChannel channel5;
 HatsChannel channel6;
+
+AudioMixer8 mixer1;
+AudioMixer8 mixer2;
+AudioOutputAnalogStereo dacs1;
 
 SequencerStepDefault channel1Default(280, 300, 512, 600, 400, 200);
 SequencerStepDefault channel2Default(450, 700, 1, 30, 10, 10);

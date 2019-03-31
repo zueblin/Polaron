@@ -93,17 +93,16 @@ class BroadbandNoiseChannel : public AudioChannel {
     }
 
    private:
-    AudioMixer4 mixer;
     AudioSynthWaveform w1;
     AudioSynthWaveform w2;
     AudioSynthWaveform w3;
-    AudioSynthNoiseWhite noise;
-
     AudioEffectDigitalCombine mult1;
     AudioEffectDigitalCombine mult2;
-
+    AudioSynthNoiseWhite noise;
+    AudioMixer4 mixer;
     AudioFilterBiquad filter;
     AudioEffectShapedEnvelope envelope;
+    
     AudioConnection w1m;
     AudioConnection w2m;
     AudioConnection w3m;

@@ -63,9 +63,10 @@ class FMChannel : public AudioChannel {
     int low = 35;
     int high = 880;
     AudioSynthWaveformSine modulatorOsc;
+    AudioEffectShapedEnvelope fmEnvelope;
     AudioSynthWaveformSineModulated carrierOsc;
     AudioEffectShapedEnvelope envelope;
-    AudioEffectShapedEnvelope fmEnvelope;
+    
     AudioConnection fmEnvPatchCord;
     AudioConnection fmOutPatchCord;
     AudioConnection envPatchCord;

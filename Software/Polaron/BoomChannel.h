@@ -70,10 +70,10 @@ class BoomChannel : public AudioChannel {
     int low = 35;
     int high = 880;
     AudioSynthWaveformDc dc;
-    AudioSynthWaveformModulated osc;
-    AudioPlayPitchedMemory click;
     AudioEffectShapedEnvelope pitchEnv;
+    AudioSynthWaveformModulated osc;
     AudioEffectShapedEnvelope ampEnv;
+    AudioPlayPitchedMemory click;
     AudioMixer4 mixer;
     AudioConnection dcToPitchEnv;
     AudioConnection pitchEnvToOsc;
