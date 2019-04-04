@@ -50,8 +50,6 @@ Sequencer::Sequencer() {
 }
 
 void Sequencer::doTriggerSounds() {
-    input1.update((uint16_t)analogRead(POTI_PIN_1));
-    input2.update((uint16_t)analogRead(POTI_PIN_2)); 
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         SequencerStep &step = tracks[i].getCurrentStep();
         if (step.isParameterLockOn()) {
@@ -107,7 +105,6 @@ void Sequencer::doStep() {
         tracks[i].doStep();
     }
     triggerSounds = true;
-    stepCount++;
 }
 
 void Sequencer::start() {
@@ -123,6 +120,10 @@ void Sequencer::stop() {
 }
 
 void Sequencer::updateState() {
+
+    input1.update((uint16_t)analogRead(POTI_PIN_1));
+    input2.update((uint16_t)analogRead(POTI_PIN_2)); 
+
     hasActivePLockReceivers = false;
 
     if (functionButtons[BUTTON_SET_PARAMSET_1].rose()) {
@@ -143,6 +144,9 @@ void Sequencer::updateState() {
             break;
         case FunctionMode::SET_TRACK_LENGTH:
             doSetTrackLength();
+            break;
+        case FunctionMode::LEAVE_SET_TRACK_LENGTH:
+            doLeaveSetTrackLength();
             break;
         case FunctionMode::TOGGLE_PLOCKS:
             doSetTrackPLock();
@@ -178,11 +182,17 @@ void Sequencer::updateState() {
         doSetTriggers();
     }
 
-    setFunctionButtonLights();
 
+
+    bool step = shouldStep();
+    if (step) {
+        stepCount++;
+        input1.tick();
+        input2.tick();
+    }
     if (running) {
         // check if we should step (internal clock / midi / triggers etc)
-        if (shouldStep()){
+        if (step){
             doStep();
         }
         // check if we should trigger the sounds. This is independent from doStep, since right after the sequencer is started
@@ -193,6 +203,8 @@ void Sequencer::updateState() {
             doTriggerSounds();
         }
     }
+
+    setFunctionButtonLights();
 
     // indicate current step
     if (running) {
@@ -292,6 +304,10 @@ void Sequencer::doSetTriggers() {
  * Set track length mode. Step button presses set the track length. Also handles changing the internal clock tempo and rotating patterns.
  */
 void Sequencer::doSetTrackLength() {
+    if (functionButtons[BUTTON_SET_TRACKLENGTH].rose()) {
+        deactivateSensors();
+    }
+
     functionLED(BUTTON_SET_TRACKLENGTH) = CRGB::CornflowerBlue;
     for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
         if (stepButtons[i].fell()) {
@@ -301,12 +317,17 @@ void Sequencer::doSetTrackLength() {
     }
     stepLED(tracks[selectedTrack].getCurrentPattern().trackLength - 1) = CRGB::Red;
     if (input1.isActive()) {
+        //Serial.println("setting tempo");
         stepLength = map(input1.getValue(), 0, 1024, 512, 32);
         nextStepTime = lastStepTime + stepLength;
     }
     if (input2.isActive()) {
         tracks[selectedTrack].getCurrentPattern().offset = 16 - (input2.getValue() / 64);
     }
+}
+
+void Sequencer::doLeaveSetTrackLength(){
+    deactivateSensors();
 }
 
 /*
@@ -334,10 +355,16 @@ void Sequencer::doSetTrackPLock() {
 
 void Sequencer::doStartStop() {
     running = !running;
+
+    input1.deactivate();
+    input2.deactivate();
+    
     if (!running) {
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
             tracks[i].onStop();
         }
+        pulseCount = -1;
+        stepCount = 0;
         
     } else {
         // we reset midiClock pulse count to -1, so that it will jump to 0 with the first clock received.
@@ -498,7 +525,7 @@ void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
 }
 
 void Sequencer::setFunctionButtonLights() {
-    functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : CRGB::Black;
+    functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : ((stepCount >> 1) % 2 == 0 ? CRGB::Black : CRGB::Green);
     if ((hasActivePLockReceivers && (stepCount % 2) == 0) || (hasActivePLockReceivers && (input1.isActive() || input2.isActive()))) {
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
     }

@@ -32,38 +32,41 @@
 #ifndef Sensor_h
 #define Sensor_h
 
-#define SENSITIVITY 6
+// a threshold: Sensor value needs to change more than this, in order to activate the sensor.
+#define SENSITIVITY 15
+// assuming that the update is called only when stepping, a hold time of 16 update equals one bar..
 #define HOLD_TIME 16
 
 class Sensor {
    public:
     Sensor(){};
     void init(uint16_t value) {
-        for (auto &v : memory) {
-            v = value;
-        }
-        index = 0;
+        currentValue = value;
     }
-    void update(uint16_t value) {
-        sum = 0;
-        for (auto &v : memory) {
-            sum += v;
-        }
-        // divide by 4
-        sum = sum >> 2;
 
-        if (abs(sum - value) > SENSITIVITY) {
-            currentHoldTime = HOLD_TIME;
-        }
+    void tick(){
         if (currentHoldTime > 0) {
             currentHoldTime--;
+            //if (currentHoldTime == 0){
+            //    Serial.println("button deactivated");
+            //}
         }
-        // & 0x3 is a mod 4 operation
-        index = (index + 1) & 0x3;
-        memory[index] = value;
-        //
     }
-    uint16_t getValue() { return memory[index]; }
+
+    void update(uint16_t value) {
+        change = abs(currentValue - value);
+
+        if (change > SENSITIVITY) {
+            //if (currentHoldTime == 0){
+            //    Serial.print("button activated");
+            //    Serial.println(abs(sum - value));
+            //}
+            
+            currentHoldTime = HOLD_TIME;
+            currentValue = value;
+        }
+    }
+    uint16_t getValue() { return currentValue; }
     bool isActive() { return currentHoldTime > 0; }
     void deactivate() {
         currentHoldTime = 0;
@@ -72,10 +75,10 @@ class Sensor {
 
    private:
     int32_t sum = 0;
+    int32_t change = 0;
     uint16_t currentHoldTime = 0;
     uint8_t index = 0;
-    // TODO: do we really need memory/averaging? does it improve behaviour?
-    uint16_t memory[4];
+    uint16_t currentValue;
 };
 
 #endif

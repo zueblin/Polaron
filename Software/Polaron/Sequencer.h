@@ -61,6 +61,7 @@
 enum class FunctionMode {
     START_STOP,
     SET_TRACK_LENGTH,
+    LEAVE_SET_TRACK_LENGTH,
     TOGGLE_PLOCKS,
     LEAVE_TOGGLE_PLOCKS,
     TOGGLE_MUTES,
@@ -144,6 +145,7 @@ class Sequencer {
 
     void doSetTriggers();
     void doSetTrackLength();
+    void doLeaveSetTrackLength();
     void doSetTrackPLock();
     void doStartStop();
     void doToggleTrackMuteArm();
