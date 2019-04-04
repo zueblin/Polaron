@@ -50,8 +50,12 @@ bool SequencerStep::isTriggerOn() {
 }
 
 void SequencerStep::toggleParameterLockRecord() {
-    // sets the plock bit
+    // toggle the plock bit
     state ^= _BV(PLOCK_REC_STATE);
+    // if you turn on plock for a step, we also make sure a trigger is set (no steps with plock on, but no trigger)
+    if (isParameterLockOn()){
+        state |= _BV(TRIGGER_STATE);
+    }
 }
 
 void SequencerStep::setParameterLockRecordOn() {
