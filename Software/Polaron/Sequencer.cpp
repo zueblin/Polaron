@@ -476,8 +476,17 @@ void Sequencer::doLeavePatternOps() {
 
 void Sequencer::doSetTrackSelection() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-        // while trackbuttons are pressed, input1 changes the volume of the track, input2 the panorama
-        if (trackButtons[i].read()) {
+        if (trackButtons[i].rose()) {
+            deactivateSensors();
+        }
+        // on trackbutton release, change selected track
+        if (trackButtons[i].fell()) {
+            deactivateSensors();
+            selectedTrack = i;
+        }
+        setDefaultTrackLight(i);
+        // while trackbuttons are pressed, input1 changes the volume of the track, input2 the panorama (only when not in plock mode)
+        if (!hasActivePLockReceivers && trackButtons[i].read()) {
             if (input1.isActive()) {
                 audioChannels[i]->setVolume(input1.getValue());
                 mixerL->gain(i, audioChannels[i]->getOutput1Gain());
@@ -489,12 +498,6 @@ void Sequencer::doSetTrackSelection() {
                 mixerR->gain(i, audioChannels[i]->getOutput2Gain());
             }
         }
-        // on trackbutton release, change selected track
-        if (trackButtons[i].fell()) {
-            deactivateSensors();
-            selectedTrack = i;
-        }
-        setDefaultTrackLight(i);
     }
 }
 

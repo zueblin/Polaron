@@ -60,11 +60,11 @@ class BoomChannel : public AudioChannel {
         click.play(AudioSampleTransient3, AudioSampleTransient3Length);
     }
     void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
-    void setParam2(int value) { dc.amplitude(value / 1024.0f); }
-    void setParam3(int value) { click.frequency(value); }
-    void setParam4(int value) { ampEnv.decay(value * 48); }
-    void setParam5(int value) { mixer.gain(1, value / 1024.0f); }
-    void setParam6(int value) { pitchEnv.decay(value * 4); }
+    void setParam2(int value) { ampEnv.decay(value * 48);  }
+    void setParam3(int value) { dc.amplitude(value / 1024.0f);  }
+    void setParam4(int value) { pitchEnv.decay(value * 4); }
+    void setParam5(int value) { click.frequency(value); }
+    void setParam6(int value) { mixer.gain(1, value / 1024.0f); }
 
    private:
     int low = 35;
