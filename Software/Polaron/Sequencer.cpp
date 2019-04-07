@@ -527,8 +527,12 @@ void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
 
 void Sequencer::setFunctionButtonLights() {
     functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : clockMode == ClockMode::TRIGGER ? CRGB::CornflowerBlue : ((stepCount >> 1) % 2 == 0 ? CRGB::Black : CRGB::Green);
-    if ((hasActivePLockReceivers && (stepCount % 2) == 0) || (hasActivePLockReceivers && (input1.isActive() || input2.isActive()))) {
-        functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
+    if (hasActivePLockReceivers) {
+        if (input1.isActive() || input2.isActive()){
+            functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::Red;
+        } else {
+            functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
+        }
     }
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::CornflowerBlue;
     functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::Green : CRGB::CornflowerBlue;
@@ -583,7 +587,7 @@ bool Sequencer::shouldStepInternalClock() {
 
 bool Sequencer::shouldStepTriggerInput(){
     uint8_t triggerSignal = digitalRead(TRIGGER_IN_PIN);
-    //Serial.print(triggerSignal);
+    // Serial.print(triggerSignal);
     bool result = false;
     if (previousTriggerSignal == 1 && triggerSignal == 0){
         result = true;
