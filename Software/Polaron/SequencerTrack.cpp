@@ -41,7 +41,7 @@ void SequencerTrack::init(SequencerStepDefault &defaultValues) {
     }
 }
 
-uint8_t SequencerTrack::doStep() { return patterns[currentPattern].doStep(); }
+SequencerStep & SequencerTrack::doStep() { return patterns[currentPattern].doStep(); }
 
 void SequencerTrack::onStop() {
     for (auto &pattern : patterns) {
@@ -56,7 +56,7 @@ SequencerPattern &SequencerTrack::getCurrentPattern() { return patterns[currentP
 uint8_t SequencerTrack::getCurrentPatternIndex() { return currentPattern; }
 
 void SequencerTrack::switchToPattern(uint8_t number) {
-    patterns[number].currentStep = patterns[currentPattern].currentStep;
+    patterns[number].setCurrentStepIndex(patterns[currentPattern].getCurrentStepIndex());
     currentPattern = number;
 }
 

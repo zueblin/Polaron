@@ -33,18 +33,21 @@ class SequencerPattern {
     SequencerPattern();
 
     uint8_t offset = 0;
-    uint8_t currentStep;
+    
     uint8_t trackLength;
 
-    SequencerStep &getCurrentStep() { return steps[(offset + currentStep) % NUMBER_OF_STEPS_PER_PATTERN]; }
-    SequencerStep &getStep(uint8_t index) { return steps[(offset + index) % NUMBER_OF_STEPS_PER_PATTERN]; }
+    SequencerStep & getCurrentStep() { return steps[(offset + currentStep) % NUMBER_OF_STEPS_PER_PATTERN]; }
+    SequencerStep & getStep(uint8_t index) { return steps[(offset + index) % NUMBER_OF_STEPS_PER_PATTERN]; }
+    int8_t getCurrentStepIndex() {return currentStep % NUMBER_OF_STEPS_PER_PATTERN;}
+    void setCurrentStepIndex(uint8_t index){
+       currentStep = index % NUMBER_OF_STEPS_PER_PATTERN;
+    }
 
     void init(SequencerStepDefault &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
 
-    // does a Step and returns 1 if the new step is a trigger, 0 if it is not a
-    // trigger
-    uint8_t doStep();
+    // does a Step and returns the new step
+    SequencerStep & doStep();
 
     void onStop();
 
@@ -58,6 +61,7 @@ class SequencerPattern {
     void turnOffPLockMode();
 
    private:
+    int8_t currentStep = 16;
     SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
 };
 #endif

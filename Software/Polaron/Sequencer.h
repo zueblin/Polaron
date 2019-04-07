@@ -33,6 +33,8 @@
 #include "mixer.h"
 
 #define SHIFT_IN_DATA_PIN 1
+#define TRIGGER_IN_PIN 33
+
 #define POTI_PIN_1 A8
 #define POTI_PIN_2 A9
 
@@ -72,6 +74,8 @@ enum class FunctionMode {
 };
 enum class PLockParamSet { SET1, SET2, SET3 };
 
+enum class ClockMode { INTERNAL_CLOCK, MIDI_CLOCK, TRIGGER };
+
 class Sequencer {
    public:
     Sequencer();
@@ -106,6 +110,8 @@ class Sequencer {
 
     
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
+    
+    ClockMode clockMode = ClockMode::INTERNAL_CLOCK;
 
     AudioMixer8 *mixerL;
     AudioMixer8 *mixerR;
@@ -117,9 +123,11 @@ class Sequencer {
     int8_t pulseCount = -1;
 
     bool midiClockReceived = false;
-    bool isSyncingToMidiClock = false;
+    
+    //bool triggerSounds = false;
 
-    bool triggerSounds = false;
+    uint8_t previousTriggerSignal = 1;
+
 
     // currently selected track
     uint8_t selectedTrack = 0;
@@ -141,7 +149,6 @@ class Sequencer {
     FunctionMode calculateFunctionMode();
 
     void doStep();
-    void doTriggerSounds();
 
     void doSetTriggers();
     void doSetTrackLength();
@@ -160,6 +167,7 @@ class Sequencer {
 
     bool shouldStepMidiClock();
     bool shouldStepInternalClock();
+    bool shouldStepTriggerInput();
     bool shouldStep();
 
     CRGB colorForStepState(uint8_t state);

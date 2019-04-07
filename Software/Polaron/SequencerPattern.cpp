@@ -22,7 +22,7 @@
 
 #include "SequencerPattern.h"
 
-SequencerPattern::SequencerPattern() : currentStep(0), trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
+SequencerPattern::SequencerPattern() : trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
 
 void SequencerPattern::init(SequencerStepDefault &defaultValues) {
     for (auto &step : steps) {
@@ -30,11 +30,11 @@ void SequencerPattern::init(SequencerStepDefault &defaultValues) {
     }
 }
 
-uint8_t SequencerPattern::doStep() {
+SequencerStep & SequencerPattern::doStep() {
     if (++currentStep >= trackLength) {
         currentStep = 0;
     }
-    return steps[currentStep].state;
+    return steps[currentStep];
 }
 
 void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern) {
@@ -76,4 +76,4 @@ void SequencerPattern::togglePLockMode() {
     }
 }
 
-void SequencerPattern::onStop() { currentStep = 0; }
+void SequencerPattern::onStop() { currentStep = 16; }

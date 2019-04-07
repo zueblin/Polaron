@@ -40,7 +40,7 @@ class SequencerTrack {
     // does a Step and returns 1 if the new step is a trigger, 0 if it is not a
     // trigger
     void init(SequencerStepDefault &defaultValues);
-    uint8_t doStep();
+    SequencerStep & doStep();
     void onStop();
 
     // control muting of the whole track

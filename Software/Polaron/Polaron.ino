@@ -86,6 +86,9 @@ void setup() {
     pinMode(SHIFT_IN_CLOCK_PIN, OUTPUT);
     pinMode(SHIFT_IN_DATA_PIN, INPUT);
 
+    pinMode(TRIGGER_IN_PIN, INPUT_PULLUP);
+
+
     // init input shift register
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
