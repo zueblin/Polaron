@@ -31,9 +31,7 @@
 
 class BoomChannel : public AudioChannel {
    public:
-    BoomChannel(int lowFreq, int highFreq) : dcToPitchEnv(dc, pitchEnv), pitchEnvToOsc(pitchEnv, 0, osc, 0), oscToAmpEnv(osc, 0, ampEnv, 0), ampToMixer(ampEnv,0, mixer, 0), clickToMixer(click, 0, mixer, 1) {
-        low = lowFreq;
-        high = highFreq;
+    BoomChannel() : dcToPitchEnv(dc, pitchEnv), pitchEnvToOsc(pitchEnv, 0, osc, 0), oscToAmpEnv(osc, 0, ampEnv, 0), ampToMixer(ampEnv,0, mixer, 0), clickToMixer(click, 0, mixer, 1) {
         osc.begin(0);
         osc.amplitude(1.0f);
         osc.frequencyModulation(10.0f);
@@ -59,16 +57,19 @@ class BoomChannel : public AudioChannel {
         pitchEnv.noteOn();
         click.play(AudioSampleTransient3, AudioSampleTransient3Length);
     }
-    void setParam1(int value) { osc.frequency(map(value, 0, 1024, low, high)); }
+    
+    void setParam1(int value) { 
+        // this function starts to raise slowly, then goes up to about 820 hz
+        float v = 0.009 * value; 
+        osc.frequency(35.0 + (v*v*v) ); 
+    } 
     void setParam2(int value) { ampEnv.decay(value * 48);  }
-    void setParam3(int value) { dc.amplitude(value / 1024.0f);  }
-    void setParam4(int value) { pitchEnv.decay(value * 4); }
+    void setParam3(int value) { dc.amplitude(-1.0 + (value / 512.0f));  }
+    void setParam4(int value) { pitchEnv.decay(value * 8); }
     void setParam5(int value) { click.frequency(value); }
     void setParam6(int value) { mixer.gain(1, value / 1024.0f); }
 
    private:
-    int low = 35;
-    int high = 880;
     AudioSynthWaveformDc dc;
     AudioEffectShapedEnvelope pitchEnv;
     AudioSynthWaveformModulated osc;

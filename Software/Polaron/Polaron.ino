@@ -43,7 +43,7 @@
 // pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
 
-BoomChannel channel1(10, 200);
+BoomChannel channel1;
 //SimpleSampleChannel channel2;
 SimpleDrumChannel channel2(200, 6000);
 // SimpleSineChannel channel3(100, 2000);

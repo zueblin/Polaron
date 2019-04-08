@@ -102,7 +102,7 @@ class HatsChannel : public AudioChannel {
         filter.setHighpass(2, mappedValue, 0.700);
     }
     void setParam3(int value) { envelope.attack(value); }
-    void setParam4(int value) { envelope.decay(5.0 + (float)map(value, 0, 1024, 0, 65536)); }
+    void setParam4(int value) { envelope.decay(5.0 + value * 64.0); }
     void setParam5(int value) { ratioFactor1 = 0.5 + value / 1024.0f; }
     void setParam6(int value) { ratioFactor2 = 0.5 + value / 1024.0f; }
 
@@ -115,6 +115,9 @@ class HatsChannel : public AudioChannel {
     float ratio5 = 6.79;
     float ratio6 = 8.21;
 
+    // 3 params for frequency control is too much: 
+    // TODO why not scan through an array with predefined, good sounding ratios? 
+    // Maybe with interpolation between slots? 
     float ratioFactor1 = 1.0;
     float ratioFactor2 = 1.0;
     // float ratio7 = 10.0;
