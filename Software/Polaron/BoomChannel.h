@@ -61,12 +61,12 @@ class BoomChannel : public AudioChannel {
     void setParam1(int value) { 
         // this function starts to raise slowly, then goes up to about 820 hz
         float v = 0.009 * value; 
-        osc.frequency(35.0 + (v*v*v) ); 
+        osc.frequency(35.0 + (v*v*v) );
     } 
-    void setParam2(int value) { ampEnv.decay(value * 48);  }
-    void setParam3(int value) { dc.amplitude(-1.0 + (value / 512.0f));  }
+    void setParam2(int value) { ampEnv.decay(value * 48); }
+    void setParam3(int value) { dc.amplitude(-1.0 + (value / 512.0f)); }
     void setParam4(int value) { pitchEnv.decay(value * 8); }
-    void setParam5(int value) { click.frequency(value); }
+    void setParam5(int value) { click.frequency(10.0f + value); }
     void setParam6(int value) { mixer.gain(1, value / 1024.0f); }
 
    private:

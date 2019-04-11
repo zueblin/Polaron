@@ -56,7 +56,7 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 AudioOutputAnalogStereo dacs1;
 
-SequencerStepDefault channel1Default(280, 300, 512, 600, 400, 200);
+SequencerStepDefault channel1Default(280, 660, 740, 875, 900, 150);
 SequencerStepDefault channel2Default(450, 700, 1, 30, 10, 10);
 SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);
 SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 512);

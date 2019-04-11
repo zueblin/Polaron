@@ -87,6 +87,25 @@ void Sequencer::doStep() {
             }
         }
         if (!tracks[i].isMuted() && step.isTriggerOn()) {
+
+
+/*          
+            Serial.print("Track ");
+            Serial.print(i);
+            Serial.print(": [P1]:");
+            Serial.print(step.parameter1);
+            Serial.print(" [P2]:");
+            Serial.print(step.parameter2);
+            Serial.print(" [P3]:");
+            Serial.print(step.parameter3);
+            Serial.print(" [P4]:");
+            Serial.print(step.parameter4);
+            Serial.print(" [P5]:");
+            Serial.print(step.parameter5);
+            Serial.print(" [P6]:");
+            Serial.println(step.parameter6);
+ */
+
             audioChannels[i]->setParam1(step.parameter1);
             audioChannels[i]->setParam2(step.parameter2);
             audioChannels[i]->setParam3(step.parameter3);
