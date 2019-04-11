@@ -206,13 +206,6 @@ void Sequencer::updateState() {
         if (step){
             doStep();
         }
-        // check if we should trigger the sounds. This is independent from doStep, since right after the sequencer is started
-        // it does not step, but still trigger the sounds. The event sequence when starting looks like this:
-        // 0              1              2              4         
-        // Trigger....StepTrigger....StepTrigger....StepTrigger....
-        //if (triggerSounds){
-        //    
-        //}
     }
 
     setFunctionButtonLights();
