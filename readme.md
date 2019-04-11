@@ -45,11 +45,11 @@ Parts needed (Rev 1.2):
 
 - Teensy 3.6 32bit Microcontroller (with Headers)
 - 30 x WS2812b RGB LEDs (or SK6812)
-- 30 x 6x6mm Pushbuttons
-- 30 x 270 ohm Resistors
-- 4 x SN74HC165N Shiftregister
+- 30 x 6x6mm Pushbuttons (ideally 4.3mm height, 100gf) (Mouser: 688-SKHHAJ)
+- 30 x 270 ohm Resistors (Mouser: 603-MF0207FTE52-270R)
+- 4 x SN74HC165N Shiftregister (Mouser: 595-SN74HC165N)
 - 2 x ALPS Potentiometer (RK09K1130A8G)
-- 2 x 2.2 uF SMD Capacitor (1206 housing)
+- 2 x 2.2 uF SMD Capacitor (1206 housing, Mouser: 963-TMK316BJ225KL-T)
 - 1 x Audio Jack (SJ-352X-SMT)
 - 1 x 48 Position / 2 Row IC DIP Socket (Mouser: 517-4848-6004-CP)
 - 2 x 20mm PCB Standoff with 3mm thread (Mouser: 534-24437)
