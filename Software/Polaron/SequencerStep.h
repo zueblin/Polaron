@@ -23,6 +23,7 @@
 #ifndef SequencerStep_h
 #define SequencerStep_h
 
+#include "FastLED.h"
 #include <inttypes.h>
 
 class SequencerStepDefault {
@@ -55,9 +56,10 @@ class SequencerStep {
     void setParameterLockRecordOff();
     bool isParameterLockOn();
     void copyValuesFrom(SequencerStep sourceStep);
-    void init(SequencerStepDefault &defaultValues);
+    void init(SequencerStepDefault &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState);
 
-    uint8_t state;
+    //uint8_t getState();
+    CRGB getColor();
 
     uint16_t parameter1;
     uint16_t parameter2;
@@ -65,6 +67,14 @@ class SequencerStep {
     uint16_t parameter4;
     uint16_t parameter5;
     uint16_t parameter6;
+    
+   private:
+    uint8_t stepIndex;
+    uint16_t *triggerState;
+    uint16_t *pLockArmState;
+    
+
+
 };
 
 #endif

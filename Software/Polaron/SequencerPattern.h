@@ -35,6 +35,7 @@ class SequencerPattern {
     uint8_t offset = 0;
     
     uint8_t trackLength;
+    bool autoMutate = false;
 
     SequencerStep & getCurrentStep() { return steps[(offset + currentStep) % NUMBER_OF_STEPS_PER_PATTERN]; }
     SequencerStep & getStep(uint8_t index) { return steps[(offset + index) % NUMBER_OF_STEPS_PER_PATTERN]; }
@@ -60,8 +61,15 @@ class SequencerPattern {
 
     void turnOffPLockMode();
 
+    // all steps store their 1bit states in the following two 16bit ints.
+    // because of this, functions like togglePLockMode become very simple and do not need to iterate through all steps.
+    uint16_t triggerState = 0;
+
    private:
     int8_t currentStep = 16;
+    
+    uint16_t pLockArmState = 0;
+
     SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
 };
 #endif

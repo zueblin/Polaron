@@ -294,7 +294,7 @@ void Sequencer::doSetTriggers() {
             // toggle the step on/off
             step.toggleTriggerState();
         }
-        stepLED(i) = colorForStepState(step.state);
+        stepLED(i) = step.getColor();
     }
     if (!aButtonIsPressed) {
         // reset values needed for the copy operation as soon as no step buttons
@@ -317,7 +317,7 @@ void Sequencer::doSetTrackLength() {
         if (stepButtons[i].fell()) {
             tracks[selectedTrack].getCurrentPattern().trackLength = i + 1;
         }
-        stepLED(i) = colorForStepState(tracks[selectedTrack].getCurrentPattern().getStep(i).state);
+        stepLED(i) = tracks[selectedTrack].getCurrentPattern().getStep(i).getColor();
     }
     stepLED(tracks[selectedTrack].getCurrentPattern().trackLength - 1) = CRGB::Red;
     if (input1.isActive()) {
@@ -331,8 +331,15 @@ void Sequencer::doSetTrackLength() {
             clockMode = ClockMode::TRIGGER;
         }
     }
+
     if (input2.isActive()) {
         tracks[selectedTrack].getCurrentPattern().offset = 16 - (input2.getValue() / 64);
+    }
+
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        if (trackButtons[i].fell()) {
+            tracks[i].getCurrentPattern().autoMutate = !tracks[i].getCurrentPattern().autoMutate;
+        }
     }
 }
 
@@ -356,7 +363,7 @@ void Sequencer::doSetTrackPLock() {
             tracks[selectedTrack].getCurrentPattern().getStep(i).toggleParameterLockRecord();
             trackOrStepButtonPressed = true;
         }
-        stepLED(i) = colorForStepState(tracks[selectedTrack].getCurrentPattern().getStep(i).state);
+        stepLED(i) = tracks[selectedTrack].getCurrentPattern().getStep(i).getColor();
     }
     if (functionButtons[BUTTON_TOGGLE_PLOCK].rose()) {
         trackOrStepButtonPressed = false;
@@ -451,7 +458,16 @@ void Sequencer::doPatternOps() {
         if (stepButtons[i].fell() && !patternCopy) {
             nextPatternIndex = i;
         }
-        stepLED(i) = i == currentPatternIndex ? CRGB::Red : CRGB::Black;
+
+        boolean patternUsed = false;
+        for (int t = 0; t < NUMBER_OF_INSTRUMENTTRACKS; t++) {
+            if (tracks[t].patterns[i].triggerState > 0){
+                patternUsed = true;
+                break;
+            }
+        }
+
+        stepLED(i) = (i == currentPatternIndex) ? CRGB::Red : patternUsed ? CRGB::Yellow : CRGB::Black;
     }
     if (!aButtonIsPressed) {
         // reset values needed for the copy operation as soon as no step buttons
