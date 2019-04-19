@@ -56,12 +56,14 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 AudioOutputAnalogStereo dacs1;
 
-SequencerStepDefault channel1Default(280, 660, 740, 875, 900, 150);
-SequencerStepDefault channel2Default(450, 700, 1, 30, 10, 10);
-SequencerStepDefault channel3Default(300, 300, 50, 50, 10, 10);
-SequencerStepDefault channel4Default(300, 300, 50, 50, 10, 512);
-SequencerStepDefault channel5Default(300, 300, 0, 200, 10, 512);
-SequencerStepDefault channel6Default(300, 500, 50, 128, 10, 10);
+SequencerStepDefault channelDefaults[6] = {
+    SequencerStepDefault(280, 660, 740, 875, 900, 150),
+    SequencerStepDefault(450, 700, 1, 30, 10, 10),
+    SequencerStepDefault(300, 300, 50, 50, 10, 10),
+    SequencerStepDefault(300, 300, 50, 50, 10, 512),
+    SequencerStepDefault(300, 300, 0, 200, 10, 512),
+    SequencerStepDefault(300, 500, 50, 128, 10, 10)
+};
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
 AudioConnection patchCord9(*channel2.getOutput1(), 0, mixer1, 1);
@@ -98,12 +100,9 @@ void setup() {
     AudioMemory(70);
     // dacs1.analogReference(EXTERNAL);
 
-    sequencer.tracks[0].init(channel1Default);
-    sequencer.tracks[1].init(channel2Default);
-    sequencer.tracks[2].init(channel3Default);
-    sequencer.tracks[3].init(channel4Default);
-    sequencer.tracks[4].init(channel5Default);
-    sequencer.tracks[5].init(channel6Default);
+    for (int i = 0; i < 6; i++){
+        sequencer.tracks[i].init(channelDefaults[i]);
+    }
 
     sequencer.audioChannels[0] = &channel1;
     sequencer.audioChannels[1] = &channel2;
@@ -132,6 +131,42 @@ void setup() {
         sequencer.leds[i] = CRGB::Red;
         FastLED.show();
         delay(20);
+    }
+
+    // detect diagnostic mode button press (-> debounce needs a few rounds..)
+    for (int i = 0; i < 10; i++){
+        readButtonStates();
+        delay(10);
+    }
+    
+    // diagnostic mode: lights up all LEDs. Pot 1+2 change the color of the LEDS. Pressing any Button will turn off the corresponding LED.
+    if (sequencer.trackButtons[5].read()){
+        CRGB color = CRGB::White;
+        while(true){
+            readButtonStates();
+            //color.setHSV(analogRead(POTI_PIN_1)>>2,analogRead(POTI_PIN_2)>>2,255);
+            uint8_t hue = ((analogRead(POTI_PIN_1)>>3) + (analogRead(POTI_PIN_2)>>3));
+            color.setHue(hue);
+            for (int i = 0; i < 16; i++) {
+                sequencer.leds[i] = sequencer.stepButtons[i].read() ? CRGB::Black : color;
+            }
+            for (int i = 0; i < 8; i++) {
+                sequencer.leds[16+i] = sequencer.functionButtons[i].read() ? CRGB::Black : color;
+            }
+            for (int i = 0; i < 6; i++) {
+                sequencer.leds[24+i] = sequencer.trackButtons[i].read() ? CRGB::Black : color;
+                if (sequencer.trackButtons[i].rose()){
+                    sequencer.audioChannels[i]->setParam1(channelDefaults[i].parameter1);
+                    sequencer.audioChannels[i]->setParam2(channelDefaults[i].parameter2);
+                    sequencer.audioChannels[i]->setParam3(channelDefaults[i].parameter3);
+                    sequencer.audioChannels[i]->setParam4(channelDefaults[i].parameter4);
+                    sequencer.audioChannels[i]->setParam5(channelDefaults[i].parameter5);
+                    sequencer.audioChannels[i]->setParam6(channelDefaults[i].parameter6);
+                    sequencer.audioChannels[i]->trigger();
+                }
+            }
+            FastLED.show();
+        }
     }
 
     sequencer.input1.init(analogRead(POTI_PIN_1));
