@@ -114,7 +114,7 @@ void setup() {
     sequencer.setMixers(&mixer1, &mixer2);
 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(sequencer.leds, NUM_LEDS);
-    FastLED.setBrightness(10);
+    FastLED.setBrightness(5);
 
     for (int i = 0; i < NUM_LEDS; i++) {
         for (int j = 0; j < NUM_LEDS; j++) {
