@@ -53,6 +53,8 @@
 #define BUTTON_SET_TRACKLENGTH 6
 #define BUTTON_SET_PATTERN 7
 
+
+
 // led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_TRACKBUTTONS + NUMBER_OF_STEPBUTTONS
 
@@ -70,6 +72,7 @@ enum class FunctionMode {
     LEAVE_TOGGLE_MUTES,
     PATTERN_OPS,
     LEAVE_PATTERN_OPS,
+    SET_TEMPO,
     DEFAULT_MODE
 };
 enum class PLockParamSet { SET1, SET2, SET3 };
@@ -118,16 +121,19 @@ class Sequencer {
 
     uint32_t lastStepTime = 0;
     uint32_t nextStepTime = 0;
-    uint16_t stepLength = 120;
+    uint32_t stepLength = 120000;
+    uint32_t modulatedStepLength = 120000;
     uint8_t stepCount = 0;
     int8_t pulseCount = -1;
 
+    const int16_t buttonTempoChangeMap[6] = {12000,6000,3000,-3000,-6000,-12000};
+    int8_t buttonTempoFlashMap[6] = {0,0,0,0,0,0};
+    float swing = 0.0;
+    int16_t swingMillis = 0;
+
     bool midiClockReceived = false;
-    
-    //bool triggerSounds = false;
 
     uint8_t previousTriggerSignal = 1;
-
 
     // currently selected track
     uint8_t selectedTrack = 0;
@@ -146,6 +152,9 @@ class Sequencer {
     bool running = false;
     bool trackOrStepButtonPressed = false;
 
+    FunctionMode previousFunctionMode = FunctionMode::DEFAULT_MODE;
+    FunctionMode functionMode = FunctionMode::DEFAULT_MODE;
+
     FunctionMode calculateFunctionMode();
 
     void doStep();
@@ -161,6 +170,7 @@ class Sequencer {
     void doSetTrackSelection();
     void doPatternOps();
     void doLeavePatternOps();
+    void doSetTempo();
 
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
@@ -174,6 +184,7 @@ class Sequencer {
 
     void start();
     void stop();
+    void updateNextStepTime();
 
     void deactivateSensors() {
         input1.deactivate();
