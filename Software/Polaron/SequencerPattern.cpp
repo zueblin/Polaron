@@ -37,7 +37,7 @@ SequencerStep & SequencerPattern::doStep() {
             triggerState ^= triggerState << 2;
         }
     }
-    return steps[currentStep];
+    return getCurrentStep();
 }
 
 void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern) {
