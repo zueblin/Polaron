@@ -113,8 +113,8 @@ void Sequencer::doStep() {
             audioChannels[i]->setParam5(step.parameter5);
             audioChannels[i]->setParam6(step.parameter6);
             audioChannels[i]->trigger();
+           
         }
-        
     }
 }
 
@@ -127,6 +127,22 @@ void Sequencer::start() {
 void Sequencer::stop() {
     if (running) {
         doStartStop();
+    }
+}
+
+void Sequencer::doStartStop() {
+    running = !running;
+
+    //input1.deactivate();
+    //input2.deactivate();
+    
+    if (!running) {
+        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+            tracks[i].onStop();
+        }
+        clock.onStop();
+    } else {
+        clock.onStart();
     }
 }
 
@@ -199,11 +215,9 @@ void Sequencer::updateState() {
         doSetTriggers();
     }
 
-
-
-    bool step = shouldStep();
+    // update clock and see if its time for the next step.
+    bool step = clock.update();
     if (step) {
-        stepCount++;
         input1.tick();
         input2.tick();
     }
@@ -335,7 +349,7 @@ void Sequencer::doSetTrackLength() {
 
 
     if (input2.isActive()) {
-        tracks[selectedTrack].getCurrentPattern().offset = 16 - (input2.getValue() / 64);
+        tracks[selectedTrack].getCurrentPattern().rotate(16 - (input2.getValue() / 64));
     }
 
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
@@ -369,29 +383,6 @@ void Sequencer::doSetTrackPLock() {
     }
     if (functionButtons[BUTTON_TOGGLE_PLOCK].rose()) {
         trackOrStepButtonPressed = false;
-    }
-}
-
-void Sequencer::doStartStop() {
-    running = !running;
-
-    //input1.deactivate();
-    //input2.deactivate();
-    
-    if (!running) {
-        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-            tracks[i].onStop();
-        }
-        pulseCount = 5;
-        stepCount = 0;
-        
-    } else {
-        // we reset midiClock pulse count to 5, so that it will jump to 0 with the first clock received.
-        pulseCount = 5;
-        stepCount = 0;
-        // triggerSounds = true;
-        //lastStepTime = millis() - stepLength;
-        nextStepTime = micros();
     }
 }
 
@@ -542,31 +533,20 @@ void Sequencer::doSetTempo(){
         //Serial.println("setting tempo");
         int rawValue = input1.getValue();
         if (rawValue > 50){
-            if (clockMode == ClockMode::TRIGGER){
-                lastStepTime = micros();
-            }
-            stepLength = map(rawValue, 0, 1024, 512000, 32000);
-            nextStepTime = lastStepTime + stepLength;
-            clockMode = ClockMode::INTERNAL_CLOCK;
+            clock.setClockMode(ClockMode::INTERNAL_CLOCK);
+            clock.setStepLength(map(rawValue, 0, 1024, 512000, 32000));
         } else {
-            clockMode = ClockMode::TRIGGER;
+            clock.setClockMode(ClockMode::TRIGGER);
         }
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::Red;
     }
     if (input2.isActive()) {
-        swing = 0.25 * input2.getValue() / 1024.0;
+        clock.setSwing(0.25 * input2.getValue() / 1024.0);
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::Red;
     }
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         if (trackButtons[i].rose()){
-            stepLength += buttonTempoChangeMap[i];
-            if (stepLength < 32000){
-                stepLength = 32000;
-            }
-            if (stepLength > 1024000){
-                stepLength = 1024000;
-            }
-            nextStepTime = lastStepTime + stepLength;
+            clock.changeStepLength(buttonTempoChangeMap[i]);
             buttonTempoFlashMap[i] = 32;
         }
 
@@ -606,7 +586,7 @@ void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
 }
 
 void Sequencer::setFunctionButtonLights() {
-    functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : clockMode == ClockMode::TRIGGER ? CRGB::CornflowerBlue : ((stepCount >> 1) % 2 == 0 ? CRGB::Black : CRGB::Green);
+    functionLED(BUTTON_STARTSTOP) = running ? CRGB::Green : clock.getClockMode() == ClockMode::TRIGGER ? CRGB::CornflowerBlue : ((clock.getStepCount() >> 1) % 2 == 0 ? CRGB::Black : CRGB::Green);
     if (hasActivePLockReceivers) {
         if (input1.isActive() || input2.isActive()){
             functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::Red;
@@ -623,14 +603,14 @@ void Sequencer::setFunctionButtonLights() {
 void Sequencer::onMidiInput(uint8_t rtb) {
     switch (rtb) {
         case 0xF8:  // Clock
-            midiClockReceived = true;
+            clock.notifyMidiClockReceived();
             break;
         case 0xFA:  // Start
-            clockMode = ClockMode::MIDI_CLOCK;
+            clock.setClockMode(ClockMode::MIDI_CLOCK);
             start();
             break;
         case 0xFC:  // Stop
-            clockMode = ClockMode::INTERNAL_CLOCK;
+            clock.setClockMode(ClockMode::INTERNAL_CLOCK);
             stop();
             break;
         //case 0xFB:  // Continue
@@ -639,70 +619,6 @@ void Sequencer::onMidiInput(uint8_t rtb) {
         //    break;
         default:  // Invalid Real Time marker
             break;
-    }
-}
-
-/*
-* Midiclock sends 24 pulses per quarter -> 6 pulses for a 16th 
-*/
-bool Sequencer::shouldStepMidiClock() {
-    if (midiClockReceived == true){
-        midiClockReceived = false;
-        if (pulseCount++ >= 5) {
-            pulseCount = 0;
-            return true;
-        }
-    } 
-    return false;
-}
-
-bool Sequencer::shouldStepInternalClock() {
-    if (micros() >= nextStepTime + swingMillis) {
-        lastStepTime = nextStepTime;
-        nextStepTime += stepLength;
-        swingMillis = (stepCount % 2 == 1) ? 0 : stepLength * swing;
-        return true;
-    } else {
-        return false;
-    }
-}
-
-void Sequencer::updateNextStepTime(){
-    int swingAmt = stepLength * swing;
-    if (stepCount % 2 == 1){
-        swingAmt *= -1;
-    }
-    nextStepTime = lastStepTime + stepLength + swingAmt;
-}
-
-bool Sequencer::shouldStepTriggerInput(){
-    uint8_t triggerSignal = digitalRead(TRIGGER_IN_PIN);
-    // Serial.print(triggerSignal);
-    bool result = false;
-    if (previousTriggerSignal == 1 && triggerSignal == 0){
-        result = true;
-    } 
-    previousTriggerSignal = triggerSignal;
-    return result;
-}
-
-
-
-/*
-* Checks if the conditions are met to advance one step, 
-* considering internal clock / midiclock / trigger input
-*/
-bool Sequencer::shouldStep(){
-    switch (clockMode)
-    {
-        case ClockMode::INTERNAL_CLOCK:
-            return shouldStepInternalClock();
-        case ClockMode::MIDI_CLOCK:
-            return shouldStepMidiClock();
-        case ClockMode::TRIGGER:
-            return shouldStepTriggerInput();
-        default:
-            return false;
     }
 }
 

@@ -31,6 +31,7 @@
 #include "Sensor.h"
 #include "SequencerTrack.h"
 #include "mixer.h"
+#include "Clock.h"
 
 #define SHIFT_IN_DATA_PIN 1
 #define TRIGGER_IN_PIN 33
@@ -77,8 +78,6 @@ enum class FunctionMode {
 };
 enum class PLockParamSet { SET1, SET2, SET3 };
 
-enum class ClockMode { INTERNAL_CLOCK, MIDI_CLOCK, TRIGGER };
-
 class Sequencer {
    public:
     Sequencer();
@@ -111,31 +110,15 @@ class Sequencer {
 
    private:
 
-    
+    Clock clock;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
-    
-    ClockMode clockMode = ClockMode::INTERNAL_CLOCK;
 
     AudioMixer8 *mixerL;
     AudioMixer8 *mixerR;
 
-    uint32_t lastStepTime = 0;
-    uint32_t nextStepTime = 0;
-    uint32_t stepLength = 120000;
-    uint32_t modulatedStepLength = 120000;
-    uint8_t stepCount = 0;
-    int8_t pulseCount = -1;
-
-    const int16_t buttonTempoChangeMap[6] = {12000,6000,3000,-3000,-6000,-12000};
+    const float buttonTempoChangeMap[6] = {1.1,1.01,1.001,0.999,0.99,0.9};
     int8_t buttonTempoFlashMap[6] = {0,0,0,0,0,0};
-    float swing = 0.0;
-    int16_t swingMillis = 0;
-
-    bool midiClockReceived = false;
-
-    uint8_t previousTriggerSignal = 1;
-
-    // currently selected track
+    
     uint8_t selectedTrack = 0;
     uint8_t ledFader = 0;
 
@@ -175,16 +158,10 @@ class Sequencer {
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
 
-    bool shouldStepMidiClock();
-    bool shouldStepInternalClock();
-    bool shouldStepTriggerInput();
-    bool shouldStep();
-
     CRGB colorForStepState(uint8_t state);
 
     void start();
     void stop();
-    void updateNextStepTime();
 
     void deactivateSensors() {
         input1.deactivate();
