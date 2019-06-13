@@ -20,6 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
 #include "Bounce2.h"
 #include "FastLED.h"
 #include "Sequencer.h"
@@ -83,12 +86,15 @@ AudioConnection patchCord21(mixer2, 0, dacs1, 1);
 
 Sequencer sequencer;
 
+bool triggerInputFell = false;
+
 void setup() {
     pinMode(SHIFT_IN_PLOAD_PIN, OUTPUT);
     pinMode(SHIFT_IN_CLOCK_PIN, OUTPUT);
     pinMode(SHIFT_IN_DATA_PIN, INPUT);
 
     pinMode(TRIGGER_IN_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(TRIGGER_IN_PIN), onTriggerInputFell, FALLING); // interrrupt 1 is data ready
 
 
     // init input shift register
@@ -239,6 +245,12 @@ void loop() {
     // read all inputs
     usbMIDI.read();
     readButtonStates();
+    cli();
+    if (triggerInputFell) {
+      sequencer.onTriggerReceived();
+      triggerInputFell = false;
+    }
+    sei();
     // update the sequencer state
     sequencer.updateState();
     // show the current state
@@ -247,6 +259,12 @@ void loop() {
 
 void onRealTimeSystem(uint8_t rtb) {
     sequencer.onMidiInput(rtb);
+}
+
+void onTriggerInputFell(){
+    cli();
+    triggerInputFell = true;
+    sei();
 }
 
 void debugAudioUsage() {

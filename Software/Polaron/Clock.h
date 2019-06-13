@@ -25,8 +25,6 @@
 #include <stdint.h>
 #include "Arduino.h"
 
-#define TRIGGER_IN_PIN 33
-
 enum class ClockMode { INTERNAL_CLOCK, MIDI_CLOCK, TRIGGER };
 
 class Clock {
@@ -39,6 +37,7 @@ class Clock {
     void changeStepLength(float factor);
     void setStepLength(uint32_t newStepLength);
     void setClockMode(ClockMode newClockMode);
+    void onTriggerReceived(){triggerReceived = true;};
     bool update();
     
     uint8_t getStepCount(){return stepCount;}
@@ -49,6 +48,7 @@ class Clock {
     bool shouldStepMidiClock();
     bool shouldStepInternalClock();
     bool shouldStepTriggerInput();
+    bool midiClockStepped = false;
     
     
     ClockMode clockMode;
@@ -59,9 +59,10 @@ class Clock {
     
     int8_t pulseCount = -1;
     float swing = 0.0;
-    int16_t swingMillis = 0;
+    uint32_t swingAbsolute = 0;
     bool midiClockReceived = false;
     uint8_t previousTriggerSignal = 1;
+    bool triggerReceived = false;
 
 };
 

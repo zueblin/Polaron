@@ -107,6 +107,7 @@ class Sequencer {
     }
 
     void onMidiInput(uint8_t rtb);
+    void onTriggerReceived(){clock.onTriggerReceived();};
 
    private:
 
@@ -116,8 +117,12 @@ class Sequencer {
     AudioMixer8 *mixerL;
     AudioMixer8 *mixerR;
 
+    // defines the tempochanges in percent when using the track buttons to adjust the tempochanges
     const float buttonTempoChangeMap[6] = {1.1,1.01,1.001,0.999,0.99,0.9};
+    // counters used to track led button flashing 
     int8_t buttonTempoFlashMap[6] = {0,0,0,0,0,0};
+    // counters used to track the note-off signal after note-on 
+    int8_t triggers[6] = {0,0,0,0,0,0};
     
     uint8_t selectedTrack = 0;
     uint8_t ledFader = 0;

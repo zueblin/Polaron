@@ -113,36 +113,50 @@ void Sequencer::doStep() {
             audioChannels[i]->setParam5(step.parameter5);
             audioChannels[i]->setParam6(step.parameter6);
             audioChannels[i]->trigger();
-           
+            usbMIDI.sendControlChange(12, (uint8_t)(step.parameter1 >> 3), i+1);
+            usbMIDI.sendControlChange(13, (uint8_t)(step.parameter2 >> 3), i+1);
+            usbMIDI.sendControlChange(14, (uint8_t)(step.parameter3 >> 3), i+1);
+            usbMIDI.sendControlChange(15, (uint8_t)(step.parameter4 >> 3), i+1);
+            //Serial.println((uint8_t)(step.parameter5 >> 3));
+            usbMIDI.sendControlChange(16, (uint8_t)(step.parameter5 >> 3), i+1);
+            usbMIDI.sendControlChange(17, (uint8_t)(step.parameter6 >> 3), i+1);
+            usbMIDI.sendNoteOn(60+i, 100, i+1);
+            triggers[i]=1;
+        } else {
+            if (triggers[i] > 0){
+                triggers[i]--;
+                if (triggers[i] == 0){
+                    usbMIDI.sendNoteOff(60+i, 0, i+1);    
+                }
+            }
         }
+        
+        
     }
 }
 
 void Sequencer::start() {
     if (!running) {
-        doStartStop();
+        running = true;
+        clock.onStart();
     }
 }
 
 void Sequencer::stop() {
     if (running) {
-        doStartStop();
-    }
-}
-
-void Sequencer::doStartStop() {
-    running = !running;
-
-    //input1.deactivate();
-    //input2.deactivate();
-    
-    if (!running) {
+        running = false;
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
             tracks[i].onStop();
         }
         clock.onStop();
+    }
+}
+
+void Sequencer::doStartStop() {
+    if (running){
+        stop();
     } else {
-        clock.onStart();
+        start();
     }
 }
 
@@ -150,6 +164,17 @@ void Sequencer::updateState() {
 
     input1.update((uint16_t)analogRead(POTI_PIN_1));
     input2.update((uint16_t)analogRead(POTI_PIN_2)); 
+
+    if (!running){
+        int offset = pLockParamSet == PLockParamSet::SET1 ? 0 : pLockParamSet == PLockParamSet::SET2 ? 2 : 4;
+        if (input1.isActive()){
+            usbMIDI.sendControlChange(12 + offset, input1.getValue() >> 3, selectedTrack+1, 0);
+        }
+        if (input2.isActive()){
+            usbMIDI.sendControlChange(13 + offset, input1.getValue() >> 3, selectedTrack+1, 0);
+        }
+    }
+
 
     hasActivePLockReceivers = false;
 
@@ -541,7 +566,7 @@ void Sequencer::doSetTempo(){
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::Red;
     }
     if (input2.isActive()) {
-        clock.setSwing(0.25 * input2.getValue() / 1024.0);
+        clock.setSwing(0.50 * input2.getValue() / 1024.0);
         functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::Red;
     }
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
