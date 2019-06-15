@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <sstream>
 #include "Sequencer.h"
 
 #define MUTE_DIM_FACTOR 20
@@ -224,6 +225,12 @@ void Sequencer::updateState() {
         case FunctionMode::SET_TEMPO:
             doSetTempo();
             break;
+        case FunctionMode::SAVE_PROJECT:
+            doSaveMode();
+            break;
+        case FunctionMode::LOAD_PROJECT:
+            doLoadMode();
+            break;
         default:
             break;
     }
@@ -234,7 +241,11 @@ void Sequencer::updateState() {
         doSetTrackSelection();
     }
 
-    if (functionMode != FunctionMode::SET_TRACK_LENGTH && functionMode != FunctionMode::TOGGLE_PLOCKS && functionMode != FunctionMode::PATTERN_OPS) {
+    if (functionMode != FunctionMode::SET_TRACK_LENGTH && 
+        functionMode != FunctionMode::TOGGLE_PLOCKS && 
+        functionMode != FunctionMode::PATTERN_OPS && 
+        functionMode != FunctionMode::LOAD_PROJECT && 
+        functionMode != FunctionMode::SAVE_PROJECT) {
         // if not in set_length, plock or set pattern mode, handle step button
         // presses as normal trigger presses.
         doSetTriggers();
@@ -271,6 +282,14 @@ FunctionMode Sequencer::calculateFunctionMode() {
     // START STOP
     if (functionButtons[BUTTON_STARTSTOP].rose()) {
         return FunctionMode::START_STOP;
+    }
+
+    if (!running && functionButtons[BUTTON_SET_PARAMSET_1].read()){
+        if (functionButtons[BUTTON_SET_PARAMSET_2].read()){
+            return FunctionMode::SAVE_PROJECT;
+        } else {
+            return FunctionMode::LOAD_PROJECT;
+        }
     }
 
     // PLOCKS
@@ -385,7 +404,6 @@ void Sequencer::doSetTrackLength() {
 }
 
 void Sequencer::doLeaveSetTrackLength(){
-    //deactivateSensors();
 }
 
 /*
@@ -583,6 +601,27 @@ void Sequencer::doSetTempo(){
         }
     }
 }
+
+void Sequencer::doSaveMode(){
+    for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++){
+        if (stepButtons[i].rose()){
+            char* s = new char[20];
+            sprintf(s, "/project%i.txt", i);
+            persistence.save(s, this);
+            return;
+        }
+    }
+};
+void Sequencer::doLoadMode(){    
+    for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++){
+        if (stepButtons[i].rose()){
+            char* s = new char[20];
+            sprintf(s, "/project%i.txt", i);
+            persistence.load(s, this);
+            return;
+        }
+    }
+};
 
 void Sequencer::doUpdateMutes() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {

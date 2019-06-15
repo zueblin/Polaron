@@ -32,6 +32,7 @@
 #include "SequencerTrack.h"
 #include "mixer.h"
 #include "Clock.h"
+#include "ProjectPersistence.h"
 
 #define SHIFT_IN_DATA_PIN 1
 #define TRIGGER_IN_PIN 33
@@ -40,7 +41,6 @@
 #define POTI_PIN_2 A9
 
 #define NUMBER_OF_INSTRUMENTTRACKS 6
-
 #define NUMBER_OF_FUNCTIONBUTTONS 8
 #define NUMBER_OF_TRACKBUTTONS 6
 #define NUMBER_OF_STEPBUTTONS 16
@@ -74,7 +74,9 @@ enum class FunctionMode {
     PATTERN_OPS,
     LEAVE_PATTERN_OPS,
     SET_TEMPO,
-    DEFAULT_MODE
+    DEFAULT_MODE,
+    LOAD_PROJECT,
+    SAVE_PROJECT
 };
 enum class PLockParamSet { SET1, SET2, SET3 };
 
@@ -88,6 +90,8 @@ class Sequencer {
     AudioChannel *audioChannels[NUMBER_OF_INSTRUMENTTRACKS];
     Sensor input1;
     Sensor input2;
+
+    ProjectPersistence persistence;
 
     // All leds are in the same array, since i could not get the lib to work
     // with several arrays.
@@ -108,6 +112,7 @@ class Sequencer {
 
     void onMidiInput(uint8_t rtb);
     void onTriggerReceived(){clock.onTriggerReceived();};
+    boolean isRunning(){return running;};
 
    private:
 
@@ -159,6 +164,8 @@ class Sequencer {
     void doPatternOps();
     void doLeavePatternOps();
     void doSetTempo();
+    void doSaveMode();
+    void doLoadMode();
 
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
