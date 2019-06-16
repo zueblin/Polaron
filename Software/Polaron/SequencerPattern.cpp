@@ -43,6 +43,8 @@ SequencerStep & SequencerPattern::doStep() {
 void SequencerPattern::copyValuesFrom(SequencerPattern sourcePattern) {
     trackLength = sourcePattern.trackLength;
     offset = sourcePattern.offset;
+    triggerState = sourcePattern.triggerState;
+    pLockArmState = sourcePattern.pLockArmState;
     for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
         steps[i].copyValuesFrom(sourcePattern.steps[i]);
     }
