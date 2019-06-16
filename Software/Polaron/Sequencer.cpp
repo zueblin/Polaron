@@ -45,8 +45,8 @@ Sequencer::Sequencer() {
         leds[i] = CRGB::Black;
     }
 
-    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-        tracks[i].setTrackNum(i);
+    for (uint8_t i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        tracks[i].initPatternOpsArmState(i, &patternOpsArmState);
     }
 }
 
@@ -484,7 +484,7 @@ void Sequencer::doPatternOps() {
                 // this is not the first button that is pressed down, so this is
                 // a target step for copy (from source step)
                 for (auto &track : tracks) {
-                    if (!SequencerTrack::anyPatternOpsArmed() || track.isPatternOpsArmed()) {
+                    if (!anyPatternOpsArmed() || track.isPatternOpsArmed()) {
                         track.patterns[i].copyValuesFrom(track.patterns[sourcePatternIndex]);
                         stepLED(i) = CRGB::Red;
                     }
@@ -524,7 +524,7 @@ void Sequencer::doPatternOps() {
 void Sequencer::doLeavePatternOps() {
     for (auto &track : tracks) {
         if (nextPatternIndex >= 0) {
-            if (!SequencerTrack::anyPatternOpsArmed()) {
+            if (!anyPatternOpsArmed()) {
                 // the general, non-track specific pattern change, will also unmute all tracks
                 track.unMute();
                 track.switchToPattern(nextPatternIndex);
@@ -533,7 +533,7 @@ void Sequencer::doLeavePatternOps() {
             }
         }
     }
-    SequencerTrack::deactivateAllPatternOpsArms();
+    deactivateAllPatternOpsArms();
     nextPatternIndex = -1;
 }
 

@@ -61,6 +61,13 @@ void SequencerStep::toggleParameterLockRecord() {
     }
 }
 
+void SequencerStep::setTriggerOn(){
+    *triggerState |= _BV(stepIndex);
+}
+void SequencerStep::setTriggerOff(){
+    *triggerState &= ~_BV(stepIndex);
+}
+
 void SequencerStep::setParameterLockRecordOn() {
     // sets the plock bit
     *pLockArmState |= _BV(stepIndex);
@@ -75,10 +82,14 @@ bool SequencerStep::isParameterLockOn() { return *pLockArmState & _BV(stepIndex)
 
 void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
     if (sourceStep.isTriggerOn()){
-        *triggerState |= _BV(stepIndex);
+        setTriggerOn();
+    } else {
+        setTriggerOff();
     }
     if (sourceStep.isParameterLockOn()){
-        *pLockArmState |= _BV(stepIndex);
+        setParameterLockRecordOn();
+    } else {
+        setParameterLockRecordOff();
     }
     //state = sourceStep.state;
     parameter1 = sourceStep.parameter1;

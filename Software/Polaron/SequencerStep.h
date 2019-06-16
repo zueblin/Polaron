@@ -50,6 +50,8 @@ class SequencerStep {
 
     void toggleTriggerState();
     bool isTriggerOn();
+    void setTriggerOn();
+    void setTriggerOff();
 
     void toggleParameterLockRecord();
     void setParameterLockRecordOn();
