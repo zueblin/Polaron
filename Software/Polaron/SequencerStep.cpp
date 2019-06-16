@@ -61,6 +61,13 @@ void SequencerStep::toggleParameterLockRecord() {
     }
 }
 
+void SequencerStep::setTriggerOn(){
+    *triggerState |= _BV(stepIndex);
+}
+void SequencerStep::setTriggerOff(){
+    *triggerState &= ~_BV(stepIndex);
+}
+
 void SequencerStep::setParameterLockRecordOn() {
     // sets the plock bit
     *pLockArmState |= _BV(stepIndex);
@@ -74,6 +81,16 @@ void SequencerStep::setParameterLockRecordOff() {
 bool SequencerStep::isParameterLockOn() { return *pLockArmState & _BV(stepIndex); }
 
 void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
+    if (sourceStep.isTriggerOn()){
+        setTriggerOn();
+    } else {
+        setTriggerOff();
+    }
+    if (sourceStep.isParameterLockOn()){
+        setParameterLockRecordOn();
+    } else {
+        setParameterLockRecordOff();
+    }
     //state = sourceStep.state;
     parameter1 = sourceStep.parameter1;
     parameter2 = sourceStep.parameter2;
@@ -82,6 +99,20 @@ void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
     parameter5 = sourceStep.parameter5;
     parameter6 = sourceStep.parameter6;
 }
+
+/*
+uint8_t SequencerStep::getState(){
+    u_int8_t state = 0;
+    state += 
+    if (isTriggerOn()){
+        state += 1;
+    }
+    if (isParameterLockOn()){
+        state += 2;
+    }
+    return state;
+}
+*/
 
 
 CRGB SequencerStep::getColor() {

@@ -31,14 +31,16 @@
 // bit=1:toggle mute state on next update
 #define MUTE_ARM_STATE_BIT 1
 
-uint8_t SequencerTrack::patternOpsArmState = 0;
-
 SequencerTrack::SequencerTrack() : currentPattern(0), state(0) {}
 
 void SequencerTrack::init(SequencerStepDefault &defaultValues) {
     for (auto &pattern : patterns) {
         pattern.init(defaultValues);
     }
+}
+void SequencerTrack::initPatternOpsArmState(uint8_t trackIdx, uint8_t *patternOpsArmSt) {
+    trackIndex = trackIdx;
+    patternOpsArmState = patternOpsArmSt;
 }
 
 SequencerStep & SequencerTrack::doStep() { return patterns[currentPattern].doStep(); }

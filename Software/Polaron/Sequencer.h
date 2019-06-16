@@ -108,6 +108,8 @@ class Sequencer {
 
     void onMidiInput(uint8_t rtb);
     void onTriggerReceived(){clock.onTriggerReceived();};
+    bool anyPatternOpsArmed() { return patternOpsArmState > 0; }
+    void deactivateAllPatternOpsArms() { patternOpsArmState = 0; }
 
    private:
 
@@ -126,6 +128,8 @@ class Sequencer {
     
     uint8_t selectedTrack = 0;
     uint8_t ledFader = 0;
+
+    uint8_t patternOpsArmState = 0;
 
     // tracks state of step copy operation
     int8_t sourceStepIndex = -1;
