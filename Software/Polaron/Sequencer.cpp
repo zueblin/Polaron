@@ -236,8 +236,8 @@ void Sequencer::updateState() {
     }
 
     if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS && functionMode != FunctionMode::SET_TEMPO) {
-        // if mute button is not pressed down, handle pressing track buttons as
-        // normal track selection.
+        // for all modes that do not use the track buttons in a special (non track selection) way
+        // do default track selection
         doSetTrackSelection();
     }
 
@@ -246,8 +246,8 @@ void Sequencer::updateState() {
         functionMode != FunctionMode::PATTERN_OPS && 
         functionMode != FunctionMode::LOAD_PROJECT && 
         functionMode != FunctionMode::SAVE_PROJECT) {
-        // if not in set_length, plock or set pattern mode, handle step button
-        // presses as normal trigger presses.
+        // for all modes that do not use the step buttons in a non standart way,
+        // handle step button presses
         doSetTriggers();
     }
 
