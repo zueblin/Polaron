@@ -284,14 +284,6 @@ FunctionMode Sequencer::calculateFunctionMode() {
         return FunctionMode::START_STOP;
     }
 
-    if (!running && functionButtons[BUTTON_SET_PARAMSET_1].read()){
-        if (functionButtons[BUTTON_SET_PARAMSET_2].read()){
-            return FunctionMode::SAVE_PROJECT;
-        } else {
-            return FunctionMode::LOAD_PROJECT;
-        }
-    }
-
     // PLOCKS
     if (functionButtons[BUTTON_TOGGLE_PLOCK].read()) {
         return FunctionMode::TOGGLE_PLOCKS;
@@ -322,8 +314,15 @@ FunctionMode Sequencer::calculateFunctionMode() {
 
     // SWITCH PATTERN
     if (functionButtons[BUTTON_SET_PATTERN].read()) {
+        if (!running && functionButtons[BUTTON_SET_PARAMSET_1].read()){
+            return FunctionMode::LOAD_PROJECT;
+        }
+        if (!running && functionButtons[BUTTON_SET_PARAMSET_2].read()){
+            return FunctionMode::SAVE_PROJECT;
+        }
         return FunctionMode::PATTERN_OPS;
     }
+
     // SWITCH PATTERN
     if (functionButtons[BUTTON_SET_PATTERN].fell()) {
         return FunctionMode::LEAVE_PATTERN_OPS;
@@ -605,21 +604,24 @@ void Sequencer::doSetTempo(){
 void Sequencer::doSaveMode(){
     for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++){
         if (stepButtons[i].rose()){
-            char* s = new char[20];
-            sprintf(s, "/project%i.txt", i);
-            persistence.save(s, this);
+            persistence.save(i, this);
             return;
         }
     }
+    for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
+        stepLED(i) = persistence.isActive(i) ? CRGB::Red : persistence.exists(i) ? CRGB::Yellow : CRGB::Black;
+    }
+    //stepLED(persistence.i)
 };
 void Sequencer::doLoadMode(){    
     for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++){
         if (stepButtons[i].rose()){
-            char* s = new char[20];
-            sprintf(s, "/project%i.txt", i);
-            persistence.load(s, this);
+            persistence.load(i, this);
             return;
         }
+    }
+    for (int i = 0; i < NUMBER_OF_STEPBUTTONS; i++) {
+        stepLED(i) = persistence.isActive(i) ? CRGB::Red : persistence.exists(i) ? CRGB::Yellow : CRGB::Black;
     }
 };
 

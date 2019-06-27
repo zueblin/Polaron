@@ -2,6 +2,9 @@
 #include "ProjectPersistence.h"
 #include "ArduinoJson-v6.11.0.h"
 #include "Sequencer.h"
+#include "Arduino.h"
+
+#define PROJECTSLOTS 16
 
 void ProjectPersistence::init(){
     int attempts = 4;
@@ -12,12 +15,26 @@ void ProjectPersistence::init(){
     }
     if (sdCardInitialized){
         Serial.println(F("SD lib initialized"));
+        updateProjectList();
     } else {
         Serial.println(F("Failed to initialize SD library, giving up"));
     }
 }
 
-void ProjectPersistence::save(const char *filename, Sequencer * sequencer){
+void ProjectPersistence::updateProjectList(){
+    existingProjects = 0;
+    for (int i = 0; i < PROJECTSLOTS; i++){
+        char* filename = new char[20];
+        sprintf(filename, "/project%i.txt", i);
+        if (SD.exists(filename)){
+            existingProjects |= _BV(i);
+        }
+    }
+}
+
+void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
+    char* filename = new char[20];
+    sprintf(filename, "/project%i.txt", projectNum);
     // Delete existing file, otherwise the configuration is appended to the file
     SD.remove(filename);
 
@@ -63,10 +80,13 @@ void ProjectPersistence::save(const char *filename, Sequencer * sequencer){
     file.print("]}");
     // Close the file
     file.close();
+    updateProjectList();
     Serial.println(F("Finished save"));
 };
 
-void ProjectPersistence::load(const char *filename, Sequencer * sequencer){
+void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
+    char* filename = new char[20];
+    sprintf(filename, "/project%i.txt", projectNum);
     // Open file for writing
     File file = SD.open(filename, FILE_READ);
     if (!file) {
@@ -121,12 +141,16 @@ void ProjectPersistence::load(const char *filename, Sequencer * sequencer){
 
     // Close the file
     file.close();
+    activeProject = 0 | _BV(projectNum);
     Serial.println(F("Finished load"));
 };
 
-void ProjectPersistence::exists(const char *filename){
-        // Open file for writing
-        return SD.exists(filename);
+boolean ProjectPersistence::exists(int projectNum){
+        return existingProjects & _BV(projectNum);
+};
+
+boolean ProjectPersistence::isActive(int projectNum){
+        return activeProject & _BV(projectNum);
 };
 
 
