@@ -25,6 +25,7 @@
 
 #include <inttypes.h>
 #include "SequencerStep.h"
+#include "ParameterSet.h"
 
 #define NUMBER_OF_STEPS_PER_PATTERN 16
 
@@ -42,7 +43,7 @@ class SequencerPattern {
        currentStep = index % NUMBER_OF_STEPS_PER_PATTERN;
     }
 
-    void init(SequencerStepDefault &defaultValues);
+    void init(ParameterSet &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
 
     // does a Step and returns the new step

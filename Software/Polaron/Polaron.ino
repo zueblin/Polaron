@@ -29,6 +29,7 @@
 #include "mixer.h"
 #include <Audio.h>
 
+#include "ParameterSet.h"
 #include "BoomChannel.h"
 #include "BroadbandNoiseChannel.h"
 #include "DualSineChannel.h"
@@ -59,13 +60,13 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 AudioOutputAnalogStereo dacs1;
 
-SequencerStepDefault channelDefaults[6] = {
-    SequencerStepDefault(280, 660, 740, 875, 900, 150),
-    SequencerStepDefault(450, 700, 1, 30, 10, 10),
-    SequencerStepDefault(300, 300, 50, 50, 10, 10),
-    SequencerStepDefault(300, 300, 50, 50, 10, 512),
-    SequencerStepDefault(300, 300, 0, 200, 10, 512),
-    SequencerStepDefault(300, 500, 50, 128, 10, 10)
+ParameterSet channelDefaults[6] = {
+    ParameterSet(280, 660, 740, 875, 900, 150),
+    ParameterSet(450, 700, 1, 30, 10, 10),
+    ParameterSet(300, 300, 50, 50, 10, 10),
+    ParameterSet(300, 300, 50, 50, 10, 512),
+    ParameterSet(300, 300, 0, 200, 10, 512),
+    ParameterSet(300, 500, 50, 128, 10, 10)
 };
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
@@ -263,109 +264,6 @@ void loop() {
     // show the current state
     FastLED.show();
 }
-
-/*
-void save(const char *filename){
-    // Delete existing file, otherwise the configuration is appended to the file
-    SD.remove(filename);
-
-    // Open file for writing
-    File file = SD.open(filename, FILE_WRITE);
-    if (!file) {
-        Serial.println(F("Failed to create file"));
-        return;
-    }
-      // Allocate a temporary JsonDocument
-    // Don't forget to change the capacity to match your requirements.
-    // Use arduinojson.org/assistant to compute the capacity.
-    StaticJsonDocument<60000> doc;
-    SequencerStep sequencerStep;
-    SequencerPattern sequencerPattern;
-    JsonArray tracks = doc.createNestedArray("tracks");
-    for (int t = 0; t < NUMBER_OF_INSTRUMENTTRACKS; t++){
-        JsonObject track = tracks.createNestedObject();
-        JsonArray patterns = track.createNestedArray("patterns");
-        for (int p = 0; p < NUMBER_OF_PATTERNS/2; p++){
-            JsonObject pattern = patterns.createNestedObject();
-            sequencerPattern = sequencer.tracks[t].patterns[p];
-            pattern["triggerState"] = sequencerPattern.triggerState;
-            pattern["pLockArmState"] = sequencerPattern.pLockArmState;
-            pattern["offset"] = sequencerPattern.offset;
-            JsonArray steps = pattern.createNestedArray("steps");
-            for (int s = 0; s < NUMBER_OF_STEPS_PER_PATTERN; s++){
-                JsonObject step = steps.createNestedObject();
-                JsonArray stepParams = step.createNestedArray("params");
-                sequencerStep = sequencer.tracks[t].patterns[p].steps[s];
-                stepParams.add(sequencerStep.parameter1);
-                stepParams.add(sequencerStep.parameter2);
-                stepParams.add(sequencerStep.parameter3);
-                stepParams.add(sequencerStep.parameter4);
-                stepParams.add(sequencerStep.parameter5);
-                stepParams.add(sequencerStep.parameter6);
-            }
-        }
-    }
-
-    //serializeJsonPretty(doc, Serial);
-
-    // Serialize JSON to file
-    if (serializeJson(doc, file) == 0) {
-        Serial.println(F("Failed to write to file"));
-    }
-
-    // Close the file
-    file.close();
-}
-
-void load(const char *filename){
-    // Open file for writing
-    File file = SD.open(filename, FILE_READ);
-    if (!file) {
-        Serial.println(F("Failed to read file"));
-        return;
-    }
-      // Allocate a temporary JsonDocument
-    // Don't forget to change the capacity to match your requirements.
-    // Use arduinojson.org/assistant to compute the capacity.
-    StaticJsonDocument<100000> doc;
-    
-    DeserializationError err = deserializeJson(doc, file);
-    // Parse succeeded?
-    if (err) {
-      Serial.print(F("deserializeJson() returned "));
-      Serial.println(err.c_str());
-      return;
-    }
-
-    JsonArray tracks = doc["tracks"];
-    for (int t = 0; t < NUMBER_OF_INSTRUMENTTRACKS; t++){
-        JsonObject track = tracks[t];
-        JsonArray patterns = track["patterns"];
-        for (int p = 0; p < NUMBER_OF_PATTERNS/2; p++){
-            JsonObject pattern = patterns[p];
-            SequencerPattern & sequencerPattern = sequencer.tracks[t].patterns[p];
-            sequencerPattern.triggerState = pattern["triggerState"];
-            sequencerPattern.pLockArmState = pattern["pLockArmState"];
-            sequencerPattern.offset = pattern["offset"];
-            JsonArray steps = pattern["steps"];
-            for (int s = 0; s < NUMBER_OF_STEPS_PER_PATTERN; s++){
-                JsonObject step = steps[s];
-                JsonArray stepParams = step["params"];
-                SequencerStep & sequencerStep = sequencer.tracks[t].patterns[p].steps[s];
-                sequencerStep.parameter1 = stepParams[0];
-                sequencerStep.parameter2 = stepParams[1];
-                sequencerStep.parameter3 = stepParams[2];
-                sequencerStep.parameter4 = stepParams[3];
-                sequencerStep.parameter5 = stepParams[4];
-                sequencerStep.parameter6 = stepParams[5];
-            }
-        }
-    }
-
-    // Close the file
-    file.close();
-}
-*/
 
 void onRealTimeSystem(uint8_t rtb) {
     sequencer.onMidiInput(rtb);

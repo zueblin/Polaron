@@ -143,6 +143,7 @@ class Sequencer {
     // tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
     int8_t nextPatternIndex = -1;
+
     bool patternCopy = false;
     bool hasActivePLockReceivers = false;
 

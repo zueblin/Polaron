@@ -25,6 +25,7 @@
 
 #include <inttypes.h>
 #include "Arduino.h"
+#include "ParameterSet.h"
 #include "SequencerPattern.h"
 #include "SequencerStep.h"
 
@@ -34,12 +35,13 @@ class SequencerTrack {
    public:
     SequencerTrack();
     SequencerPattern &getCurrentPattern();
+    SequencerPattern &getUndoBufferPattern(){return undoPattern;};
     uint8_t getCurrentPatternIndex();
     SequencerStep &getCurrentStep();
 
     // does a Step and returns 1 if the new step is a trigger, 0 if it is not a
     // trigger
-    void init(SequencerStepDefault &defaultValues);
+    void init(ParameterSet &defaultValues);
     void initPatternOpsArmState(uint8_t trackIdx, uint8_t *patternOpsArmSt);
     SequencerStep & doStep();
     void onStop();
@@ -59,6 +61,7 @@ class SequencerTrack {
     void switchToPattern(uint8_t number);
 
     SequencerPattern patterns[NUMBER_OF_PATTERNS];
+    SequencerPattern undoPattern;
 
    private:
     uint8_t trackIndex;

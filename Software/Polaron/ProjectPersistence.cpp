@@ -2,6 +2,7 @@
 #include "ProjectPersistence.h"
 #include "ArduinoJson-v6.11.0.h"
 #include "Sequencer.h"
+#include "ParameterSet.h"
 #include "Arduino.h"
 
 #define PROJECTSLOTS 16
@@ -62,12 +63,13 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
                 JsonObject step = steps.createNestedObject();
                 JsonArray stepParams = step.createNestedArray("params");
                 SequencerStep & sequencerStep = sequencerPattern.steps[s];
-                stepParams.add(sequencerStep.parameter1);
-                stepParams.add(sequencerStep.parameter2);
-                stepParams.add(sequencerStep.parameter3);
-                stepParams.add(sequencerStep.parameter4);
-                stepParams.add(sequencerStep.parameter5);
-                stepParams.add(sequencerStep.parameter6);
+                ParameterSet & params = sequencerStep.params;
+                stepParams.add(params.parameter1);
+                stepParams.add(params.parameter2);
+                stepParams.add(params.parameter3);
+                stepParams.add(params.parameter4);
+                stepParams.add(params.parameter5);
+                stepParams.add(params.parameter6);
             }
         }
         if (serializeJson(trackDoc, file) == 0) {
@@ -126,12 +128,13 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
                 //Serial.print(":");
                 JsonArray stepParams = step["params"];
                 SequencerStep & sequencerStep = sequencerPattern.steps[s];
-                sequencerStep.parameter1 = stepParams[0];
-                sequencerStep.parameter2 = stepParams[1];
-                sequencerStep.parameter3 = stepParams[2];
-                sequencerStep.parameter4 = stepParams[3];
-                sequencerStep.parameter5 = stepParams[4];
-                sequencerStep.parameter6 = stepParams[5];
+                ParameterSet & params = sequencerStep.params;
+                params.parameter1 = stepParams[0];
+                params.parameter2 = stepParams[1];
+                params.parameter3 = stepParams[2];
+                params.parameter4 = stepParams[3];
+                params.parameter5 = stepParams[4];
+                params.parameter6 = stepParams[5];
                 s++;
             }
             p++;

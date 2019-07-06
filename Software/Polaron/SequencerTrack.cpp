@@ -33,10 +33,11 @@
 
 SequencerTrack::SequencerTrack() : currentPattern(0), state(0) {}
 
-void SequencerTrack::init(SequencerStepDefault &defaultValues) {
+void SequencerTrack::init(ParameterSet &defaultValues) {
     for (auto &pattern : patterns) {
         pattern.init(defaultValues);
     }
+    undoPattern.init(defaultValues);
 }
 void SequencerTrack::initPatternOpsArmState(uint8_t trackIdx, uint8_t *patternOpsArmSt) {
     trackIndex = trackIdx;
