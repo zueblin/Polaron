@@ -1,4 +1,4 @@
-update=Donnerstag, 27. September 2018 'u34' 08:34:07
+update=Donnerstag, 28. März 2019 'u14' 15:14:36
 version=1
 last_client=kicad
 [pcbnew]
@@ -36,3 +36,5 @@ LibName4=Adafruit-Thumbjoystick/libraries/Adafruit Mini Analog Thumbstick
 LibName5=conn
 LibName6=SJ-3523-SMT-TR/SJ-3523-SMT-TR
 LibName7=device
+LibName8=diode
+LibName9=Transistor_BJT/Transistor_BJT
