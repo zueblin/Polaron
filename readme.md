@@ -17,6 +17,8 @@ Disclaimer: This project is a work in progress. Features may change or not work,
 
 ![Sideview](./Doc/Images/sideview.jpg)
 
+![Parts](./Doc/Images/parts.jpg)
+
 ![Top](./Doc/Images/topview.jpg)
 
 ![Bottom](./Doc/Images/bottomview.jpg)
