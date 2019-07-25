@@ -194,45 +194,62 @@ void Sequencer::updateState() {
     functionMode = calculateFunctionMode();
     if (functionMode != previousFunctionMode) {
         deactivateSensors();
-        //bool shiftpressedFn = functionMode != FunctionMode::PATTERN_OPS && functionButtons[BUTTON_SET_PATTERN].read();
-        //Serial.println(shiftpressedFn);
+        shiftPressedModeChange = functionMode != FunctionMode::PATTERN_OPS && functionButtons[BUTTON_SET_PATTERN].read();
+        Serial.println(shiftPressedModeChange);
+        
     }
 
     switch (functionMode) {
         case FunctionMode::START_STOP:
+            // Serial.println("START_STOP");
             doStartStop();
             break;
         case FunctionMode::SET_TRACK_LENGTH:
+            // Serial.println("SET_TRACK_LENGTH");
             doSetTrackLength();
             break;
         case FunctionMode::LEAVE_SET_TRACK_LENGTH:
+            // Serial.println("LEAVE_SET_TRACK_LENGTH");
             doLeaveSetTrackLength();
             break;
         case FunctionMode::TOGGLE_PLOCKS:
+            // Serial.println("TOGGLE_PLOCKS");
             doSetTrackPLock();
             break;
         case FunctionMode::LEAVE_TOGGLE_PLOCKS:
-            doTurnOffPlockMode();
+            Serial.println("LEAVE_TOGGLE_PLOCKS");
+            doTurnOffPlockMode(false);
+            break;
+        case FunctionMode::LEAVE_TOGGLE_PLOCKS_UNDO:
+            Serial.println("LEAVE_TOGGLE_PLOCKS_UNDO");
+            doTurnOffPlockMode(true);
             break;
         case FunctionMode::TOGGLE_MUTES:
+            // Serial.println("TOGGLE_MUTES");
             doToggleTrackMuteArm();
             break;
         case FunctionMode::LEAVE_TOGGLE_MUTES:
+            // Serial.println("LEAVE_TOGGLE_MUTES");
             doUpdateMutes();
             break;
         case FunctionMode::PATTERN_OPS:
+            // Serial.println("PATTERN_OPS");
             doPatternOps();
             break;
         case FunctionMode::LEAVE_PATTERN_OPS:
+            // Serial.println("LEAVE_PATTERN_OPS");
             doLeavePatternOps();
             break;
         case FunctionMode::SET_TEMPO:
+            // Serial.println("SET_TEMPO");
             doSetTempo();
             break;
         case FunctionMode::SAVE_PROJECT:
+            // Serial.println("SAVE_PROJECT");
             doSaveMode();
             break;
         case FunctionMode::LOAD_PROJECT:
+            // Serial.println("LOAD_PROJECT");
             doLoadMode();
             break;
         default:
@@ -288,22 +305,38 @@ FunctionMode Sequencer::calculateFunctionMode() {
         return FunctionMode::START_STOP;
     }
 
-    // SWITCH PATTERN
+    // PATTERN CHANGE OR SHIFT MODES
     if (functionButtons[BUTTON_SET_PATTERN].read()) {
+        if (!running && functionButtons[BUTTON_SET_PARAMSET_1].rose()){
+            return FunctionMode::LOAD_PROJECT;
+        }
+        if (!running && functionButtons[BUTTON_SET_PARAMSET_2].rose()){
+            return FunctionMode::SAVE_PROJECT;
+        }
+        if (functionButtons[BUTTON_SET_TRACKLENGTH].rose()){
+            return FunctionMode::SET_TEMPO;
+        }
+        if (functionButtons[BUTTON_TOGGLE_PLOCK].rose()) {
+            return FunctionMode::TOGGLE_PLOCKS;
+        }
+        if (!shiftPressedModeChange){
+            return FunctionMode::PATTERN_OPS;
+        }
+    }
+
+    if (shiftPressedModeChange){
         if (!running && functionButtons[BUTTON_SET_PARAMSET_1].read()){
             return FunctionMode::LOAD_PROJECT;
         }
         if (!running && functionButtons[BUTTON_SET_PARAMSET_2].read()){
             return FunctionMode::SAVE_PROJECT;
         }
-        // SET TEMPO
         if (functionButtons[BUTTON_SET_TRACKLENGTH].read()){
             return FunctionMode::SET_TEMPO;
         }
-        if (functionButtons[BUTTON_TOGGLE_PLOCK].fell()) {
-            return FunctionMode::LEAVE_TOGGLE_PLOCKS;
+        if (previousFunctionMode == FunctionMode::TOGGLE_PLOCKS && functionButtons[BUTTON_TOGGLE_PLOCK].fell()) {
+            return FunctionMode::LEAVE_TOGGLE_PLOCKS_UNDO;
         }
-        return FunctionMode::PATTERN_OPS;
     }
 
     // PLOCKS
@@ -417,8 +450,9 @@ void Sequencer::doLeaveSetTrackLength(){
  * Toggles plock mode of all steps in a track
  */
 void Sequencer::doSetTrackPLock() {
-    if (functionButtons[BUTTON_TOGGLE_PLOCK].rose()){
+    if (!shiftPressedModeChange && functionButtons[BUTTON_TOGGLE_PLOCK].rose()){
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+            Serial.println("set undo pattern");
             tracks[i].getUndoBufferPattern().copyValuesFrom(tracks[i].getCurrentPattern());
         }
     }
@@ -644,10 +678,10 @@ void Sequencer::doUpdateMutes() {
     }
 }
 
-void Sequencer::doTurnOffPlockMode() {
-
+void Sequencer::doTurnOffPlockMode(bool undo) {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-        if (functionButtons[BUTTON_SET_PATTERN].read()){
+        if (undo == true){
+            Serial.println("restore from undo pattern");
             tracks[i].getCurrentPattern().copyValuesFrom(tracks[i].getUndoBufferPattern());
         }
         tracks[i].getCurrentPattern().turnOffPLockMode();

@@ -69,6 +69,7 @@ enum class FunctionMode {
     LEAVE_SET_TRACK_LENGTH,
     TOGGLE_PLOCKS,
     LEAVE_TOGGLE_PLOCKS,
+    LEAVE_TOGGLE_PLOCKS_UNDO,
     TOGGLE_MUTES,
     LEAVE_TOGGLE_MUTES,
     PATTERN_OPS,
@@ -152,6 +153,7 @@ class Sequencer {
 
     FunctionMode previousFunctionMode = FunctionMode::DEFAULT_MODE;
     FunctionMode functionMode = FunctionMode::DEFAULT_MODE;
+    bool shiftPressedModeChange = false;
 
     FunctionMode calculateFunctionMode();
 
@@ -164,7 +166,7 @@ class Sequencer {
     void doStartStop();
     void doToggleTrackMuteArm();
     void doUpdateMutes();
-    void doTurnOffPlockMode();
+    void doTurnOffPlockMode(bool undo);
     void doSetTrackSelection();
     void doPatternOps();
     void doLeavePatternOps();
