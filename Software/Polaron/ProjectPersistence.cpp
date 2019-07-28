@@ -50,6 +50,8 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
     for (int t = 0; t < NUMBER_OF_INSTRUMENTTRACKS; t++){
         StaticJsonDocument<40000> trackDoc;
         JsonObject track = trackDoc.to<JsonObject>();
+        track["output1Gain"] = sequencer->audioChannels[t]->getOutput1Gain();
+        track["output2Gain"] = sequencer->audioChannels[t]->getOutput2Gain();
         JsonArray patterns = track.createNestedArray("patterns");
         for (int p = 0; p < NUMBER_OF_PATTERNS; p++){
             JsonObject pattern = patterns.createNestedObject();
@@ -108,7 +110,9 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
             Serial.println(err.c_str());
             return;
         }
+        sequencer->setChannelGain(t, trackDoc["output1Gain"] | 0.5, trackDoc["output2Gain"] | 0.5);
         JsonArray patterns = trackDoc["patterns"];
+
         //Serial.print("track");
         //Serial.println(t);
         p = 0;

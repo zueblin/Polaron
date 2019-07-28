@@ -88,24 +88,6 @@ void Sequencer::doStep() {
             }
         }
         if (!tracks[i].isMuted() && step.isTriggerOn()) {
-
-
-/*          
-            Serial.print("Track ");
-            Serial.print(i);
-            Serial.print(": [P1]:");
-            Serial.print(step.parameter1);
-            Serial.print(" [P2]:");
-            Serial.print(step.parameter2);
-            Serial.print(" [P3]:");
-            Serial.print(step.parameter3);
-            Serial.print(" [P4]:");
-            Serial.print(step.parameter4);
-            Serial.print(" [P5]:");
-            Serial.print(step.parameter5);
-            Serial.print(" [P6]:");
-            Serial.println(step.parameter6);
- */
             ParameterSet & stepParams = step.params;
             audioChannels[i]->setParam1(stepParams.parameter1);
             audioChannels[i]->setParam2(stepParams.parameter2);
@@ -115,23 +97,28 @@ void Sequencer::doStep() {
             audioChannels[i]->setParam6(stepParams.parameter6);
 
             audioChannels[i]->trigger();
-            usbMIDI.sendControlChange(12, (uint8_t)(stepParams.parameter1 >> 3), i+1);
-            usbMIDI.sendControlChange(13, (uint8_t)(stepParams.parameter2 >> 3), i+1);
-            usbMIDI.sendControlChange(14, (uint8_t)(stepParams.parameter3 >> 3), i+1);
-            usbMIDI.sendControlChange(15, (uint8_t)(stepParams.parameter4 >> 3), i+1);
-            //Serial.println((uint8_t)(stepParams.parameter5 >> 3));
-            usbMIDI.sendControlChange(16, (uint8_t)(stepParams.parameter5 >> 3), i+1);
-            usbMIDI.sendControlChange(17, (uint8_t)(stepParams.parameter6 >> 3), i+1);
-            usbMIDI.sendNoteOn(60+i, 100, i+1);
-            triggers[i]=1;
-        } else {
-            if (triggers[i] > 0){
-                triggers[i]--;
-                if (triggers[i] == 0){
-                    usbMIDI.sendNoteOff(60+i, 0, i+1);    
+            #ifdef SEND_MIDI_OUTPUT
+                usbMIDI.sendControlChange(12, (uint8_t)(stepParams.parameter1 >> 3), i+1);
+                usbMIDI.sendControlChange(13, (uint8_t)(stepParams.parameter2 >> 3), i+1);
+                usbMIDI.sendControlChange(14, (uint8_t)(stepParams.parameter3 >> 3), i+1);
+                usbMIDI.sendControlChange(15, (uint8_t)(stepParams.parameter4 >> 3), i+1);
+                //Serial.println((uint8_t)(stepParams.parameter5 >> 3));
+                usbMIDI.sendControlChange(16, (uint8_t)(stepParams.parameter5 >> 3), i+1);
+                usbMIDI.sendControlChange(17, (uint8_t)(stepParams.parameter6 >> 3), i+1);
+                usbMIDI.sendNoteOn(60+i, 100, i+1);
+                triggers[i]=1;
+            #endif
+        } 
+        #ifdef SEND_MIDI_OUTPUT
+            else {
+                if (triggers[i] > 0){
+                    triggers[i]--;
+                    if (triggers[i] == 0){
+                        usbMIDI.sendNoteOff(60+i, 0, i+1);    
+                    }
                 }
             }
-        }
+        #endif
         
         
     }
@@ -167,15 +154,17 @@ void Sequencer::updateState() {
     input1.update((uint16_t)analogRead(POTI_PIN_1));
     input2.update((uint16_t)analogRead(POTI_PIN_2)); 
 
-    if (!running){
-        int offset = pLockParamSet == PLockParamSet::SET1 ? 0 : pLockParamSet == PLockParamSet::SET2 ? 2 : 4;
-        if (input1.isActive()){
-            usbMIDI.sendControlChange(12 + offset, input1.getValue() >> 3, selectedTrack+1, 0);
+    #ifdef SEND_MIDI_OUTPUT
+        if (!running){
+            int offset = pLockParamSet == PLockParamSet::SET1 ? 0 : pLockParamSet == PLockParamSet::SET2 ? 2 : 4;
+            if (input1.isActive()){
+                usbMIDI.sendControlChange(12 + offset, input1.getValue() >> 3, selectedTrack+1, 0);
+            }
+            if (input2.isActive()){
+                usbMIDI.sendControlChange(13 + offset, input1.getValue() >> 3, selectedTrack+1, 0);
+            }
         }
-        if (input2.isActive()){
-            usbMIDI.sendControlChange(13 + offset, input1.getValue() >> 3, selectedTrack+1, 0);
-        }
-    }
+    #endif
 
 
     hasActivePLockReceivers = false;
@@ -195,61 +184,46 @@ void Sequencer::updateState() {
     if (functionMode != previousFunctionMode) {
         deactivateSensors();
         shiftPressedModeChange = functionMode != FunctionMode::PATTERN_OPS && functionButtons[BUTTON_SET_PATTERN].read();
-        Serial.println(shiftPressedModeChange);
-        
     }
 
     switch (functionMode) {
         case FunctionMode::START_STOP:
-            // Serial.println("START_STOP");
             doStartStop();
             break;
         case FunctionMode::SET_TRACK_LENGTH:
-            // Serial.println("SET_TRACK_LENGTH");
             doSetTrackLength();
             break;
         case FunctionMode::LEAVE_SET_TRACK_LENGTH:
-            // Serial.println("LEAVE_SET_TRACK_LENGTH");
             doLeaveSetTrackLength();
             break;
         case FunctionMode::TOGGLE_PLOCKS:
-            // Serial.println("TOGGLE_PLOCKS");
             doSetTrackPLock();
             break;
         case FunctionMode::LEAVE_TOGGLE_PLOCKS:
-            Serial.println("LEAVE_TOGGLE_PLOCKS");
             doTurnOffPlockMode(false);
             break;
         case FunctionMode::LEAVE_TOGGLE_PLOCKS_UNDO:
-            Serial.println("LEAVE_TOGGLE_PLOCKS_UNDO");
             doTurnOffPlockMode(true);
             break;
         case FunctionMode::TOGGLE_MUTES:
-            // Serial.println("TOGGLE_MUTES");
             doToggleTrackMuteArm();
             break;
         case FunctionMode::LEAVE_TOGGLE_MUTES:
-            // Serial.println("LEAVE_TOGGLE_MUTES");
             doUpdateMutes();
             break;
         case FunctionMode::PATTERN_OPS:
-            // Serial.println("PATTERN_OPS");
             doPatternOps();
             break;
         case FunctionMode::LEAVE_PATTERN_OPS:
-            // Serial.println("LEAVE_PATTERN_OPS");
             doLeavePatternOps();
             break;
         case FunctionMode::SET_TEMPO:
-            // Serial.println("SET_TEMPO");
             doSetTempo();
             break;
         case FunctionMode::SAVE_PROJECT:
-            // Serial.println("SAVE_PROJECT");
             doSaveMode();
             break;
         case FunctionMode::LOAD_PROJECT:
-            // Serial.println("LOAD_PROJECT");
             doLoadMode();
             break;
         default:
@@ -305,7 +279,7 @@ FunctionMode Sequencer::calculateFunctionMode() {
         return FunctionMode::START_STOP;
     }
 
-    // PATTERN CHANGE OR SHIFT MODES
+    // PATTERN CHANGE OR ENTERING OTHER SHIFT MODES
     if (functionButtons[BUTTON_SET_PATTERN].read()) {
         if (!running && functionButtons[BUTTON_SET_PARAMSET_1].rose()){
             return FunctionMode::LOAD_PROJECT;
@@ -417,9 +391,6 @@ void Sequencer::doSetTriggers() {
  * Set track length mode. Step button presses set the track length. Also handles changing the internal clock tempo and rotating patterns.
  */
 void Sequencer::doSetTrackLength() {
-    if (functionButtons[BUTTON_SET_TRACKLENGTH].rose()) {
-        //deactivateSensors();
-    }
 
     functionLED(BUTTON_SET_TRACKLENGTH) = CRGB::CornflowerBlue;
 
@@ -452,7 +423,7 @@ void Sequencer::doLeaveSetTrackLength(){
 void Sequencer::doSetTrackPLock() {
     if (!shiftPressedModeChange && functionButtons[BUTTON_TOGGLE_PLOCK].rose()){
         for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-            Serial.println("set undo pattern");
+            // Serial.println("set undo pattern");
             tracks[i].getUndoBufferPattern().copyValuesFrom(tracks[i].getCurrentPattern());
         }
     }
@@ -589,32 +560,22 @@ void Sequencer::doSetTrackSelection() {
             deactivateSensors();
             selectedTrack = i;
         }
-        // on trackbutton release, change selected track
-        //if (trackButtons[i].fell()) {
-        //    deactivateSensors();
-        //    selectedTrack = i;
-        //}
         setDefaultTrackLight(i);
         // while trackbuttons are pressed, input1 changes the volume of the track, input2 the panorama (only when not in plock mode)
         if (!hasActivePLockReceivers && trackButtons[i].read()) {
             if (input1.isActive()) {
                 audioChannels[i]->setVolume(input1.getValue());
-                mixerL->gain(i, audioChannels[i]->getOutput1Gain());
-                mixerR->gain(i, audioChannels[i]->getOutput2Gain());
+                setChannelGain(i, audioChannels[i]->getOutput1Gain(), audioChannels[i]->getOutput2Gain());
             }
             if (input2.isActive()) {
                 audioChannels[i]->setPan(input2.getValue());
-                mixerL->gain(i, audioChannels[i]->getOutput1Gain());
-                mixerR->gain(i, audioChannels[i]->getOutput2Gain());
+                setChannelGain(i, audioChannels[i]->getOutput1Gain(), audioChannels[i]->getOutput2Gain());
             }
         }
     }
 }
 
 void Sequencer::doSetTempo(){
-    //if (functionButtons[BUTTON_SET_PATTERN].rose()){
-    //    deactivateSensors();
-    //}
     functionLED(BUTTON_SET_PATTERN) = CRGB::DarkOrange;
     functionLED(BUTTON_SET_TRACKLENGTH) = CRGB::DarkOrange;
 
@@ -681,7 +642,7 @@ void Sequencer::doUpdateMutes() {
 void Sequencer::doTurnOffPlockMode(bool undo) {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         if (undo == true){
-            Serial.println("restore from undo pattern");
+            //Serial.println("restore from undo pattern");
             tracks[i].getCurrentPattern().copyValuesFrom(tracks[i].getUndoBufferPattern());
         }
         tracks[i].getCurrentPattern().turnOffPLockMode();
