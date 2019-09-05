@@ -1,4 +1,7 @@
 # Software
+## Firmware v1.1.0
+* Store/Load projects from Micro SD card
+
 ## Firmware v1.0.0
 * 16 step sequencer
 * 6 instrument tracks
