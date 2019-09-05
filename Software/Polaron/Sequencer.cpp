@@ -200,10 +200,7 @@ void Sequencer::updateState() {
             doSetTrackPLock();
             break;
         case FunctionMode::LEAVE_TOGGLE_PLOCKS:
-            doTurnOffPlockMode(false);
-            break;
-        case FunctionMode::LEAVE_TOGGLE_PLOCKS_UNDO:
-            doTurnOffPlockMode(true);
+            doTurnOffPlockMode();
             break;
         case FunctionMode::TOGGLE_MUTES:
             doToggleTrackMuteArm();
@@ -307,9 +304,6 @@ FunctionMode Sequencer::calculateFunctionMode() {
         }
         if (functionButtons[BUTTON_SET_TRACKLENGTH].read()){
             return FunctionMode::SET_TEMPO;
-        }
-        if (previousFunctionMode == FunctionMode::TOGGLE_PLOCKS && functionButtons[BUTTON_TOGGLE_PLOCK].fell()) {
-            return FunctionMode::LEAVE_TOGGLE_PLOCKS_UNDO;
         }
     }
 
@@ -421,12 +415,6 @@ void Sequencer::doLeaveSetTrackLength(){
  * Toggles plock mode of all steps in a track
  */
 void Sequencer::doSetTrackPLock() {
-    if (!shiftPressedModeChange && functionButtons[BUTTON_TOGGLE_PLOCK].rose()){
-        for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-            // Serial.println("set undo pattern");
-            tracks[i].getUndoBufferPattern().copyValuesFrom(tracks[i].getCurrentPattern());
-        }
-    }
     functionLED(BUTTON_TOGGLE_PLOCK) = CRGB::DarkOrange;
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         if (trackButtons[i].fell()) {
@@ -639,12 +627,8 @@ void Sequencer::doUpdateMutes() {
     }
 }
 
-void Sequencer::doTurnOffPlockMode(bool undo) {
+void Sequencer::doTurnOffPlockMode() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
-        if (undo == true){
-            //Serial.println("restore from undo pattern");
-            tracks[i].getCurrentPattern().copyValuesFrom(tracks[i].getUndoBufferPattern());
-        }
         tracks[i].getCurrentPattern().turnOffPLockMode();
     }
 }

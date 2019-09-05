@@ -45,8 +45,18 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
         Serial.println(F("Failed to create file"));
         return;
     }
+    file.print("{\"global\":");
+    StaticJsonDocument<200> clockDoc;
+    JsonObject clock = clockDoc.to<JsonObject>();
+    clock["stepLength"] = sequencer->clock.getStepLength();
+    clock["swing"] = sequencer->clock.getSwing();
+    if (serializeJson(clockDoc, file) == 0) {
+        Serial.println(F("Failed to write to file"));
+    }
+    file.print(",");
+
     // we serialize track by track in order to save memory.
-    file.print("{\"tracks\":[");
+    file.print("\"tracks\":[");
     for (int t = 0; t < NUMBER_OF_INSTRUMENTTRACKS; t++){
         StaticJsonDocument<40000> trackDoc;
         JsonObject track = trackDoc.to<JsonObject>();
@@ -60,6 +70,7 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
             pattern["pLockArmState"] = sequencerPattern.pLockArmState;
             pattern["offset"] = sequencerPattern.offset;
             pattern["trackLength"] = sequencerPattern.trackLength;
+            pattern["autoMutate"] = sequencerPattern.autoMutate;
             JsonArray steps = pattern.createNestedArray("steps");
             for (int s = 0; s < NUMBER_OF_STEPS_PER_PATTERN; s++){
                 JsonObject step = steps.createNestedObject();
@@ -97,6 +108,20 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
         Serial.println(F("Failed to read file"));
         return;
     }
+    if (file.find("\"global\":")){
+        StaticJsonDocument<200> clockDoc;
+        DeserializationError err = deserializeJson(clockDoc, file);
+        if (err) {
+            Serial.print(F("deserializeJson() returned "));
+            Serial.println(err.c_str());
+            return;
+        }
+        sequencer->clock.setStepLength(clockDoc["stepLength"]);
+        sequencer->clock.setSwing(clockDoc["swing"]);
+    } else {
+        file.seek(0);
+    };
+
     file.find("\"tracks\":[");
     int t = 0;
     int p = 0;
@@ -120,10 +145,11 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
             //Serial.print("pattern");
             //Serial.println(p);
             SequencerPattern & sequencerPattern = sequencer->tracks[t].patterns[p];
-            sequencerPattern.triggerState = pattern["triggerState"];
-            sequencerPattern.pLockArmState = pattern["pLockArmState"];
-            sequencerPattern.offset = pattern["offset"];
-            sequencerPattern.trackLength = pattern["trackLength"];
+            sequencerPattern.triggerState = pattern["triggerState"] | 0;
+            sequencerPattern.pLockArmState = pattern["pLockArmState"] | 0;
+            sequencerPattern.offset = pattern["offset"] | 0;
+            sequencerPattern.trackLength = pattern["trackLength"] | 16;
+            sequencerPattern.autoMutate = pattern["autoMutate"] | false;
             JsonArray steps = pattern["steps"];
             s = 0;
             for (JsonObject step : steps){

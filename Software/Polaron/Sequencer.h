@@ -70,7 +70,6 @@ enum class FunctionMode {
     LEAVE_SET_TRACK_LENGTH,
     TOGGLE_PLOCKS,
     LEAVE_TOGGLE_PLOCKS,
-    LEAVE_TOGGLE_PLOCKS_UNDO,
     TOGGLE_MUTES,
     LEAVE_TOGGLE_MUTES,
     PATTERN_OPS,
@@ -122,10 +121,9 @@ class Sequencer {
     boolean isRunning(){return running;};
     bool anyPatternOpsArmed() { return patternOpsArmState > 0; }
     void deactivateAllPatternOpsArms() { patternOpsArmState = 0; }
+    Clock clock;
 
    private:
-
-    Clock clock;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 
     AudioMixer8 *mixerL;
@@ -172,7 +170,7 @@ class Sequencer {
     void doStartStop();
     void doToggleTrackMuteArm();
     void doUpdateMutes();
-    void doTurnOffPlockMode(bool undo);
+    void doTurnOffPlockMode();
     void doSetTrackSelection();
     void doPatternOps();
     void doLeavePatternOps();

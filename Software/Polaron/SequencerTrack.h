@@ -35,7 +35,6 @@ class SequencerTrack {
    public:
     SequencerTrack();
     SequencerPattern &getCurrentPattern();
-    SequencerPattern &getUndoBufferPattern(){return undoPattern;};
     uint8_t getCurrentPatternIndex();
     SequencerStep &getCurrentStep();
 
@@ -61,7 +60,6 @@ class SequencerTrack {
     void switchToPattern(uint8_t number);
 
     SequencerPattern patterns[NUMBER_OF_PATTERNS];
-    SequencerPattern undoPattern;
 
    private:
     uint8_t trackIndex;
