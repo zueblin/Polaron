@@ -32,6 +32,7 @@
 #include "SequencerTrack.h"
 #include "mixer.h"
 #include "Clock.h"
+#include "ProjectPersistence.h"
 
 #define SHIFT_IN_DATA_PIN 1
 #define TRIGGER_IN_PIN 33
@@ -40,7 +41,6 @@
 #define POTI_PIN_2 A9
 
 #define NUMBER_OF_INSTRUMENTTRACKS 6
-
 #define NUMBER_OF_FUNCTIONBUTTONS 8
 #define NUMBER_OF_TRACKBUTTONS 6
 #define NUMBER_OF_STEPBUTTONS 16
@@ -54,7 +54,8 @@
 #define BUTTON_SET_TRACKLENGTH 6
 #define BUTTON_SET_PATTERN 7
 
-
+// experimental feature: output triggers / track params as midi
+// #define SEND_MIDI_OUTPUT
 
 // led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_TRACKBUTTONS + NUMBER_OF_STEPBUTTONS
@@ -74,7 +75,9 @@ enum class FunctionMode {
     PATTERN_OPS,
     LEAVE_PATTERN_OPS,
     SET_TEMPO,
-    DEFAULT_MODE
+    DEFAULT_MODE,
+    LOAD_PROJECT,
+    SAVE_PROJECT
 };
 enum class PLockParamSet { SET1, SET2, SET3 };
 
@@ -88,6 +91,8 @@ class Sequencer {
     AudioChannel *audioChannels[NUMBER_OF_INSTRUMENTTRACKS];
     Sensor input1;
     Sensor input2;
+
+    ProjectPersistence persistence;
 
     // All leds are in the same array, since i could not get the lib to work
     // with several arrays.
@@ -106,14 +111,19 @@ class Sequencer {
         }
     }
 
+    void setChannelGain(uint8_t channel, float output1Gain, float output2Gain){
+        mixerL->gain(channel, output1Gain);
+        mixerR->gain(channel, output2Gain);
+    }
+
     void onMidiInput(uint8_t rtb);
     void onTriggerReceived(){clock.onTriggerReceived();};
+    boolean isRunning(){return running;};
     bool anyPatternOpsArmed() { return patternOpsArmState > 0; }
     void deactivateAllPatternOpsArms() { patternOpsArmState = 0; }
+    Clock clock;
 
    private:
-
-    Clock clock;
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
 
     AudioMixer8 *mixerL;
@@ -138,6 +148,7 @@ class Sequencer {
     // tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
     int8_t nextPatternIndex = -1;
+
     bool patternCopy = false;
     bool hasActivePLockReceivers = false;
 
@@ -146,6 +157,7 @@ class Sequencer {
 
     FunctionMode previousFunctionMode = FunctionMode::DEFAULT_MODE;
     FunctionMode functionMode = FunctionMode::DEFAULT_MODE;
+    bool shiftPressedModeChange = false;
 
     FunctionMode calculateFunctionMode();
 
@@ -163,6 +175,8 @@ class Sequencer {
     void doPatternOps();
     void doLeavePatternOps();
     void doSetTempo();
+    void doSaveMode();
+    void doLoadMode();
 
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();

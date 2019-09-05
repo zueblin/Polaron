@@ -31,11 +31,15 @@ class Clock {
    public:
 
     void setSwing(float newSwing){swing = newSwing;};
+    float getSwing(){return swing;};
+    
     void onStart();
     void onStop();
     void notifyMidiClockReceived(){midiClockReceived = true;}
     void changeStepLength(float factor);
     void setStepLength(uint32_t newStepLength);
+    uint32_t getStepLength(){return stepLength;};
+
     void setClockMode(ClockMode newClockMode);
     void onTriggerReceived(){triggerReceived = true;};
     bool update();

@@ -25,6 +25,7 @@
 
 #include <inttypes.h>
 #include "Arduino.h"
+#include "ParameterSet.h"
 #include "SequencerPattern.h"
 #include "SequencerStep.h"
 
@@ -39,7 +40,7 @@ class SequencerTrack {
 
     // does a Step and returns 1 if the new step is a trigger, 0 if it is not a
     // trigger
-    void init(SequencerStepDefault &defaultValues);
+    void init(ParameterSet &defaultValues);
     void initPatternOpsArmState(uint8_t trackIdx, uint8_t *patternOpsArmSt);
     SequencerStep & doStep();
     void onStop();

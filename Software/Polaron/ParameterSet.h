@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Thomas Zueblin
+// Copyright (c) 2019 Thomas Zueblin
 //
 // Author: Thomas Zueblin (thomas.zueblin@gmail.com)
 //
@@ -20,41 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef SequencerStep_h
-#define SequencerStep_h
+#ifndef ParameterSet_h
+#define ParameterSet_h
 
-#include "FastLED.h"
-#include <inttypes.h>
-#include "ParameterSet.h"
-
-class SequencerStep {
+class ParameterSet {
    public:
-    SequencerStep();
+    ParameterSet(){
 
-    void toggleTriggerState();
-    bool isTriggerOn();
-    void setTriggerOn();
-    void setTriggerOff();
+    };
 
-    void toggleParameterLockRecord();
-    void setParameterLockRecordOn();
-    void setParameterLockRecordOff();
-    bool isParameterLockOn();
-    void copyValuesFrom(SequencerStep sourceStep);
-    void init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState);
+    ParameterSet(uint16_t p1, uint16_t p2, uint16_t p3, uint16_t p4, uint16_t p5, uint16_t p6) {
+        parameter1 = p1;
+        parameter2 = p2;
+        parameter3 = p3;
+        parameter4 = p4;
+        parameter5 = p5;
+        parameter6 = p6;
+    };
 
-    //uint8_t getState();
-    CRGB getColor();
-
-    ParameterSet params;
-    
-   private:
-    uint8_t stepIndex;
-    uint16_t *triggerState;
-    uint16_t *pLockArmState;
-    
-
-
+    uint16_t parameter1;
+    uint16_t parameter2;
+    uint16_t parameter3;
+    uint16_t parameter4;
+    uint16_t parameter5;
+    uint16_t parameter6;
 };
 
 #endif

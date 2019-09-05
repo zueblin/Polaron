@@ -29,6 +29,7 @@
 #include "mixer.h"
 #include <Audio.h>
 
+#include "ParameterSet.h"
 #include "BoomChannel.h"
 #include "BroadbandNoiseChannel.h"
 #include "DualSineChannel.h"
@@ -59,13 +60,13 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 AudioOutputAnalogStereo dacs1;
 
-SequencerStepDefault channelDefaults[6] = {
-    SequencerStepDefault(280, 660, 740, 875, 900, 150),
-    SequencerStepDefault(450, 700, 1, 30, 10, 10),
-    SequencerStepDefault(300, 300, 50, 50, 10, 10),
-    SequencerStepDefault(300, 300, 50, 50, 10, 512),
-    SequencerStepDefault(300, 300, 0, 200, 10, 512),
-    SequencerStepDefault(300, 500, 50, 128, 10, 10)
+ParameterSet channelDefaults[6] = {
+    ParameterSet(280, 660, 740, 875, 900, 150),
+    ParameterSet(450, 700, 1, 30, 10, 10),
+    ParameterSet(300, 300, 50, 50, 10, 10),
+    ParameterSet(300, 300, 50, 50, 10, 512),
+    ParameterSet(300, 300, 0, 200, 10, 512),
+    ParameterSet(300, 500, 50, 128, 10, 10)
 };
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
@@ -180,6 +181,13 @@ void setup() {
 
     sequencer.leds[0] = CRGB::Black;
     FastLED.show();
+
+    sequencer.persistence.init();
+
+    //while (!SD.begin(BUILTIN_SDCARD)) {
+    //  Serial.println(F("Failed to initialize SD library"));
+    //  delay(1000);
+    //}
 }
 
 inline void readButtonState(Bounce &button) {
