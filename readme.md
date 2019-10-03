@@ -73,7 +73,7 @@ PCB Rev 1.4
 - Q: Is there a manual? A: Yes, please check the [Project WIKI](https://github.com/zueblin/Polaron/wiki) for build instructions and operating manual. If you still have questions / suggestions, please send me a mail.
 - Q: Does the polaron fit into a euro-rack? A: No, not really (PCB size is 15.7cm x 11.6cm). Polaron builder N.Shaver has experimented with a 3D printable eurorack case for the polaron which he shares on [Thingiverse](https://www.thingiverse.com/thing:3830556)
 - Q: Can i buy a PCB? A: Yes, i currently have PCBs at 25 USD incl. untracked international shipping. Add 5 USD for tracked shipping. Please send me a mail, if interested.
-- Q: Can i buy a part-kit? A: Yes, i currently have part kits (PCB + all parts, EXCLUDING the teensy itself) at 60 USD incl. untracked international shipping. Add 5 USD for tracked shipping. Please send me a mail, if interested.
+- Q: Can i buy a part-kit? A: Currently out of stock. ~~Yes, i currently have part kits (PCB + all parts, EXCLUDING the teensy itself) at 60 USD incl. untracked international shipping. Add 5 USD for tracked shipping. Please send me a mail, if interested.~~
 - Q: Can i buy a fully assembled Polaron? A: Not, not at the moment.
 
 # License
