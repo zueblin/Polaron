@@ -24,6 +24,8 @@ Disclaimer: This project is a work in progress. Features may change or not work,
 
 There's a short demo on vimeo:
 
+https://www.youtube.com/watch?v=JC_pZTxMb0c
+
 https://vimeo.com/302283771
 
 https://vimeo.com/305113707
