@@ -41,6 +41,10 @@
 
 #include "USBHost_t36.h"
 
+// allows teensy to become a usb host and receive midi from connected slave devices (normally teensy is a usb slave)
+// in order to use this feature you need a special cable: https://www.pjrc.com/store/cable_usb_host_t36.html
+// #define ENABLE_USBHOST
+
 #define PULSE_WIDTH_USEC 5
 
 #define SHIFT_IN_PLOAD_PIN 0  // 2  // Connects to Parallel load pin the 165
@@ -49,8 +53,10 @@
 // pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
 
-USBHost myusb;
-MIDIDevice midi1(myusb);
+#ifdef ENABLE_USBHOST
+USBHost usbHost;
+MIDIDevice usbHostMIDI(usbHost);
+#endif
 
 BoomChannel channel1;
 //SimpleSampleChannel channel2;
@@ -107,10 +113,13 @@ void setup() {
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
 
-    myusb.begin();
-    midi1.setHandleRealTimeSystem(onRealTimeSystem);
-    
+    #ifdef ENABLE_USBHOST
+    usbHost.begin();
+    usbHostMIDI.setHandleRealTimeSystem(onRealTimeSystem);
+    #endif
+
     usbMIDI.setHandleRealTimeSystem(onRealTimeSystem);
+
 
     AudioMemory(70);
     // dacs1.analogReference(EXTERNAL);
@@ -259,9 +268,12 @@ void readButtonStates() {
 void loop() {
     FastLED.clearData();
     // read all inputs
+    #ifdef ENABLE_USBHOST
+    usbHost.Task();
+    usbHostMIDI.read();
+    #endif
     usbMIDI.read();
-    myusb.Task();
-    midi1.read();
+
 
     readButtonStates();
     cli();
@@ -277,8 +289,6 @@ void loop() {
 }
 
 void onRealTimeSystem(uint8_t rtb) {
-      Serial.println(rtb);
-
     sequencer.onMidiInput(rtb);
 }
 
