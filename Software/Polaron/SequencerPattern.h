@@ -25,15 +25,14 @@
 
 #include <inttypes.h>
 #include "SequencerStep.h"
+#include "ParameterSet.h"
 
 #define NUMBER_OF_STEPS_PER_PATTERN 16
 
 class SequencerPattern {
    public:
     SequencerPattern();
-
-    uint8_t offset = 0;
-    
+   
     uint8_t trackLength;
     bool autoMutate = false;
 
@@ -44,7 +43,7 @@ class SequencerPattern {
        currentStep = index % NUMBER_OF_STEPS_PER_PATTERN;
     }
 
-    void init(SequencerStepDefault &defaultValues);
+    void init(ParameterSet &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
 
     // does a Step and returns the new step
@@ -61,15 +60,19 @@ class SequencerPattern {
 
     void turnOffPLockMode();
 
+    void rotate(uint8_t steps){offset = steps;}
+
     // all steps store their 1bit states in the following two 16bit ints.
     // because of this, functions like togglePLockMode become very simple and do not need to iterate through all steps.
     uint16_t triggerState = 0;
+    uint16_t pLockArmState = 0;
+    uint8_t offset = 0;
+    SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
 
    private:
     int8_t currentStep = 16;
     
-    uint16_t pLockArmState = 0;
 
-    SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
+    
 };
 #endif

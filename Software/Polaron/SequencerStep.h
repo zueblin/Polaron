@@ -25,24 +25,7 @@
 
 #include "FastLED.h"
 #include <inttypes.h>
-
-class SequencerStepDefault {
-   public:
-    SequencerStepDefault(uint16_t p1, uint16_t p2, uint16_t p3, uint16_t p4, uint16_t p5, uint16_t p6) {
-        parameter1 = p1;
-        parameter2 = p2;
-        parameter3 = p3;
-        parameter4 = p4;
-        parameter5 = p5;
-        parameter6 = p6;
-    };
-    uint16_t parameter1;
-    uint16_t parameter2;
-    uint16_t parameter3;
-    uint16_t parameter4;
-    uint16_t parameter5;
-    uint16_t parameter6;
-};
+#include "ParameterSet.h"
 
 class SequencerStep {
    public:
@@ -50,23 +33,20 @@ class SequencerStep {
 
     void toggleTriggerState();
     bool isTriggerOn();
+    void setTriggerOn();
+    void setTriggerOff();
 
     void toggleParameterLockRecord();
     void setParameterLockRecordOn();
     void setParameterLockRecordOff();
     bool isParameterLockOn();
     void copyValuesFrom(SequencerStep sourceStep);
-    void init(SequencerStepDefault &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState);
+    void init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState);
 
     //uint8_t getState();
     CRGB getColor();
 
-    uint16_t parameter1;
-    uint16_t parameter2;
-    uint16_t parameter3;
-    uint16_t parameter4;
-    uint16_t parameter5;
-    uint16_t parameter6;
+    ParameterSet params;
     
    private:
     uint8_t stepIndex;

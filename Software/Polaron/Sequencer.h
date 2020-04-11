@@ -31,6 +31,8 @@
 #include "Sensor.h"
 #include "SequencerTrack.h"
 #include "mixer.h"
+#include "Clock.h"
+#include "ProjectPersistence.h"
 
 #define SHIFT_IN_DATA_PIN 1
 #define TRIGGER_IN_PIN 33
@@ -39,7 +41,6 @@
 #define POTI_PIN_2 A9
 
 #define NUMBER_OF_INSTRUMENTTRACKS 6
-
 #define NUMBER_OF_FUNCTIONBUTTONS 8
 #define NUMBER_OF_TRACKBUTTONS 6
 #define NUMBER_OF_STEPBUTTONS 16
@@ -53,7 +54,8 @@
 #define BUTTON_SET_TRACKLENGTH 6
 #define BUTTON_SET_PATTERN 7
 
-
+// experimental feature: output triggers / track params as midi
+// #define SEND_MIDI_OUTPUT
 
 // led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_TRACKBUTTONS + NUMBER_OF_STEPBUTTONS
@@ -73,11 +75,11 @@ enum class FunctionMode {
     PATTERN_OPS,
     LEAVE_PATTERN_OPS,
     SET_TEMPO,
-    DEFAULT_MODE
+    DEFAULT_MODE,
+    LOAD_PROJECT,
+    SAVE_PROJECT
 };
 enum class PLockParamSet { SET1, SET2, SET3 };
-
-enum class ClockMode { INTERNAL_CLOCK, MIDI_CLOCK, TRIGGER };
 
 class Sequencer {
    public:
@@ -89,6 +91,8 @@ class Sequencer {
     AudioChannel *audioChannels[NUMBER_OF_INSTRUMENTTRACKS];
     Sensor input1;
     Sensor input2;
+
+    ProjectPersistence persistence;
 
     // All leds are in the same array, since i could not get the lib to work
     // with several arrays.
@@ -107,37 +111,35 @@ class Sequencer {
         }
     }
 
+    void setChannelGain(uint8_t channel, float output1Gain, float output2Gain){
+        mixerL->gain(channel, output1Gain);
+        mixerR->gain(channel, output2Gain);
+    }
+
     void onMidiInput(uint8_t rtb);
+    void onTriggerReceived(){clock.onTriggerReceived();};
+    boolean isRunning(){return running;};
+    bool anyPatternOpsArmed() { return patternOpsArmState > 0; }
+    void deactivateAllPatternOpsArms() { patternOpsArmState = 0; }
+    Clock clock;
 
    private:
-
-    
     PLockParamSet pLockParamSet = PLockParamSet::SET1;
-    
-    ClockMode clockMode = ClockMode::INTERNAL_CLOCK;
 
     AudioMixer8 *mixerL;
     AudioMixer8 *mixerR;
 
-    uint32_t lastStepTime = 0;
-    uint32_t nextStepTime = 0;
-    uint32_t stepLength = 120000;
-    uint32_t modulatedStepLength = 120000;
-    uint8_t stepCount = 0;
-    int8_t pulseCount = -1;
-
-    const int16_t buttonTempoChangeMap[6] = {12000,6000,3000,-3000,-6000,-12000};
+    // defines the tempochanges in percent when using the track buttons to adjust the tempochanges
+    const float buttonTempoChangeMap[6] = {1.1,1.01,1.001,0.999,0.99,0.9};
+    // counters used to track led button flashing 
     int8_t buttonTempoFlashMap[6] = {0,0,0,0,0,0};
-    float swing = 0.0;
-    int16_t swingMillis = 0;
-
-    bool midiClockReceived = false;
-
-    uint8_t previousTriggerSignal = 1;
-
-    // currently selected track
+    // counters used to track the note-off signal after note-on 
+    int8_t triggers[6] = {0,0,0,0,0,0};
+    
     uint8_t selectedTrack = 0;
     uint8_t ledFader = 0;
+
+    uint8_t patternOpsArmState = 0;
 
     // tracks state of step copy operation
     int8_t sourceStepIndex = -1;
@@ -146,6 +148,7 @@ class Sequencer {
     // tracks state of pattern copy operation
     int8_t sourcePatternIndex = -1;
     int8_t nextPatternIndex = -1;
+
     bool patternCopy = false;
     bool hasActivePLockReceivers = false;
 
@@ -154,6 +157,7 @@ class Sequencer {
 
     FunctionMode previousFunctionMode = FunctionMode::DEFAULT_MODE;
     FunctionMode functionMode = FunctionMode::DEFAULT_MODE;
+    bool shiftPressedModeChange = false;
 
     FunctionMode calculateFunctionMode();
 
@@ -171,20 +175,16 @@ class Sequencer {
     void doPatternOps();
     void doLeavePatternOps();
     void doSetTempo();
+    void doSaveMode();
+    void doLoadMode();
 
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
-
-    bool shouldStepMidiClock();
-    bool shouldStepInternalClock();
-    bool shouldStepTriggerInput();
-    bool shouldStep();
 
     CRGB colorForStepState(uint8_t state);
 
     void start();
     void stop();
-    void updateNextStepTime();
 
     void deactivateSensors() {
         input1.deactivate();

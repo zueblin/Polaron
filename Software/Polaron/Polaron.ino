@@ -20,12 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
 #include "Bounce2.h"
 #include "FastLED.h"
 #include "Sequencer.h"
 #include "mixer.h"
 #include <Audio.h>
 
+#include "ParameterSet.h"
 #include "BoomChannel.h"
 #include "BroadbandNoiseChannel.h"
 #include "DualSineChannel.h"
@@ -61,13 +65,13 @@ AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 AudioOutputAnalogStereo dacs1;
 
-SequencerStepDefault channelDefaults[6] = {
-    SequencerStepDefault(280, 660, 740, 875, 900, 150),
-    SequencerStepDefault(450, 700, 1, 30, 10, 10),
-    SequencerStepDefault(300, 300, 50, 50, 10, 10),
-    SequencerStepDefault(300, 300, 50, 50, 10, 512),
-    SequencerStepDefault(300, 300, 0, 200, 10, 512),
-    SequencerStepDefault(300, 500, 50, 128, 10, 10)
+ParameterSet channelDefaults[6] = {
+    ParameterSet(280, 660, 740, 875, 900, 150),
+    ParameterSet(450, 700, 1, 30, 10, 10),
+    ParameterSet(300, 300, 50, 50, 10, 10),
+    ParameterSet(300, 300, 50, 50, 10, 512),
+    ParameterSet(300, 300, 0, 200, 10, 512),
+    ParameterSet(300, 500, 50, 128, 10, 10)
 };
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
@@ -88,12 +92,15 @@ AudioConnection patchCord21(mixer2, 0, dacs1, 1);
 
 Sequencer sequencer;
 
+bool triggerInputFell = false;
+
 void setup() {
     pinMode(SHIFT_IN_PLOAD_PIN, OUTPUT);
     pinMode(SHIFT_IN_CLOCK_PIN, OUTPUT);
     pinMode(SHIFT_IN_DATA_PIN, INPUT);
 
     pinMode(TRIGGER_IN_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(TRIGGER_IN_PIN), onTriggerInputFell, FALLING); // interrrupt 1 is data ready
 
 
     // init input shift register
@@ -182,6 +189,13 @@ void setup() {
 
     sequencer.leds[0] = CRGB::Black;
     FastLED.show();
+
+    sequencer.persistence.init();
+
+    //while (!SD.begin(BUILTIN_SDCARD)) {
+    //  Serial.println(F("Failed to initialize SD library"));
+    //  delay(1000);
+    //}
 }
 
 inline void readButtonState(Bounce &button) {
@@ -250,6 +264,12 @@ void loop() {
     midi1.read();
 
     readButtonStates();
+    cli();
+    if (triggerInputFell) {
+      sequencer.onTriggerReceived();
+      triggerInputFell = false;
+    }
+    sei();
     // update the sequencer state
     sequencer.updateState();
     // show the current state
@@ -260,6 +280,12 @@ void onRealTimeSystem(uint8_t rtb) {
       Serial.println(rtb);
 
     sequencer.onMidiInput(rtb);
+}
+
+void onTriggerInputFell(){
+    cli();
+    triggerInputFell = true;
+    sei();
 }
 
 void debugAudioUsage() {

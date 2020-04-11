@@ -26,20 +26,14 @@
 #define TRIGGER_STATE 0
 #define PLOCK_REC_STATE 1
 
-SequencerStep::SequencerStep()
-    : parameter1(512u), parameter2(512u), parameter3(512u), parameter4(512u), parameter5(512u), parameter6(512u) {}
+SequencerStep::SequencerStep() {}
 
-void SequencerStep::init(SequencerStepDefault &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState) {
+void SequencerStep::init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState) {
     
     stepIndex = stepIdx;
     triggerState = trState;
     pLockArmState = pLState;
-    parameter1 = defaultValues.parameter1;
-    parameter2 = defaultValues.parameter2;
-    parameter3 = defaultValues.parameter3;
-    parameter4 = defaultValues.parameter4;
-    parameter5 = defaultValues.parameter5;
-    parameter6 = defaultValues.parameter6;
+    params = defaultValues;
 }
 
 void SequencerStep::toggleTriggerState() {
@@ -61,6 +55,13 @@ void SequencerStep::toggleParameterLockRecord() {
     }
 }
 
+void SequencerStep::setTriggerOn(){
+    *triggerState |= _BV(stepIndex);
+}
+void SequencerStep::setTriggerOff(){
+    *triggerState &= ~_BV(stepIndex);
+}
+
 void SequencerStep::setParameterLockRecordOn() {
     // sets the plock bit
     *pLockArmState |= _BV(stepIndex);
@@ -75,18 +76,17 @@ bool SequencerStep::isParameterLockOn() { return *pLockArmState & _BV(stepIndex)
 
 void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
     if (sourceStep.isTriggerOn()){
-        *triggerState |= _BV(stepIndex);
+        setTriggerOn();
+    } else {
+        setTriggerOff();
     }
     if (sourceStep.isParameterLockOn()){
-        *pLockArmState |= _BV(stepIndex);
+        setParameterLockRecordOn();
+    } else {
+        setParameterLockRecordOff();
     }
     //state = sourceStep.state;
-    parameter1 = sourceStep.parameter1;
-    parameter2 = sourceStep.parameter2;
-    parameter3 = sourceStep.parameter3;
-    parameter4 = sourceStep.parameter4;
-    parameter5 = sourceStep.parameter5;
-    parameter6 = sourceStep.parameter6;
+    params = sourceStep.params;
 }
 
 /*
