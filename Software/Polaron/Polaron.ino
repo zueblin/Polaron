@@ -39,6 +39,8 @@
 #include "SimpleSineChannel.h"
 //#include "SimpleSampleChannel.h"
 
+#include "USBHost_t36.h"
+
 #define PULSE_WIDTH_USEC 5
 
 #define SHIFT_IN_PLOAD_PIN 0  // 2  // Connects to Parallel load pin the 165
@@ -46,6 +48,9 @@
 #define SHIFT_IN_CLOCK_PIN 2  // 5 // Connects to the Clock pin the 165
 // pin used to send the serial data to the array of leds (via fastLED)
 #define DATA_PIN 6
+
+USBHost myusb;
+MIDIDevice midi1(myusb);
 
 BoomChannel channel1;
 //SimpleSampleChannel channel2;
@@ -102,6 +107,9 @@ void setup() {
     digitalWrite(SHIFT_IN_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_IN_PLOAD_PIN, HIGH);
 
+    myusb.begin();
+    midi1.setHandleRealTimeSystem(onRealTimeSystem);
+    
     usbMIDI.setHandleRealTimeSystem(onRealTimeSystem);
 
     AudioMemory(70);
@@ -252,6 +260,9 @@ void loop() {
     FastLED.clearData();
     // read all inputs
     usbMIDI.read();
+    myusb.Task();
+    midi1.read();
+
     readButtonStates();
     cli();
     if (triggerInputFell) {
@@ -266,6 +277,8 @@ void loop() {
 }
 
 void onRealTimeSystem(uint8_t rtb) {
+      Serial.println(rtb);
+
     sequencer.onMidiInput(rtb);
 }
 

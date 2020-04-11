@@ -663,14 +663,14 @@ void Sequencer::setFunctionButtonLights() {
 
 void Sequencer::onMidiInput(uint8_t rtb) {
     switch (rtb) {
-        case 0xF8:  // Clock
+        case 248:  // Clock
             clock.notifyMidiClockReceived();
             break;
-        case 0xFA:  // Start
+        case 250:  // Start
             clock.setClockMode(ClockMode::MIDI_CLOCK);
             start();
             break;
-        case 0xFC:  // Stop
+        case 252:  // Stop
             clock.setClockMode(ClockMode::INTERNAL_CLOCK);
             stop();
             break;
