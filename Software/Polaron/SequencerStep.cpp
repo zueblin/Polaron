@@ -28,12 +28,15 @@
 
 SequencerStep::SequencerStep() {}
 
-void SequencerStep::init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState) {
+void SequencerStep::init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *loopCnt) {
     
+    params = defaultValues;
     stepIndex = stepIdx;
     triggerState = trState;
     pLockArmState = pLState;
-    params = defaultValues;
+    loopCount = loopCnt;
+    triggerMask = 0b00001101;
+    
 }
 
 void SequencerStep::toggleTriggerState() {
@@ -44,6 +47,10 @@ void SequencerStep::toggleTriggerState() {
 bool SequencerStep::isTriggerOn() {
     // return value of trigger state bit
     return *triggerState & _BV(stepIndex);
+}
+
+bool  SequencerStep::isTriggerConditionOn() {
+    return triggerMask & _BV(*loopCount%4);
 }
 
 void SequencerStep::toggleParameterLockRecord() {
@@ -106,13 +113,14 @@ uint8_t SequencerStep::getState(){
 
 CRGB SequencerStep::getColor() {
     bool triggerOn = isTriggerOn();
+    bool triggerConditionOn = isTriggerConditionOn();
     bool pLockOn = isParameterLockOn();
 
     if (triggerOn && pLockOn){
-        return CRGB::DarkOrange;
+        return triggerConditionOn ? CRGB::DarkOrange : 0x692A04;
     } else if (triggerOn){
-        return CRGB::CornflowerBlue;
-    }else {
+        return triggerConditionOn ? CRGB::CornflowerBlue: 0x21224F;
+    } else {
         return CRGB::Black;
     }
 }

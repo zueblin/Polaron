@@ -42,6 +42,9 @@ class SequencerPattern {
     void setCurrentStepIndex(uint8_t index){
        currentStep = index % NUMBER_OF_STEPS_PER_PATTERN;
     }
+    void setLoopCount(uint8_t index){
+        loopCount = index;
+    }
 
     void init(ParameterSet &defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
@@ -71,6 +74,7 @@ class SequencerPattern {
 
    private:
     int8_t currentStep = 16;
+    uint8_t loopCount = 4;
     
 
     

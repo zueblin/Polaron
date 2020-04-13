@@ -87,7 +87,7 @@ void Sequencer::doStep() {
                     break;
             }
         }
-        if (!tracks[i].isMuted() && step.isTriggerOn()) {
+        if (!tracks[i].isMuted() && step.isTriggerOn() && step.isTriggerConditionOn()) {
             ParameterSet & stepParams = step.params;
             audioChannels[i]->setParam1(stepParams.parameter1);
             audioChannels[i]->setParam2(stepParams.parameter2);

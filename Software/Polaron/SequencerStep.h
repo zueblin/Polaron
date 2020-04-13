@@ -33,6 +33,7 @@ class SequencerStep {
 
     void toggleTriggerState();
     bool isTriggerOn();
+    bool isTriggerConditionOn();
     void setTriggerOn();
     void setTriggerOff();
 
@@ -41,7 +42,7 @@ class SequencerStep {
     void setParameterLockRecordOff();
     bool isParameterLockOn();
     void copyValuesFrom(SequencerStep sourceStep);
-    void init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState);
+    void init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *loopCnt);
 
     //uint8_t getState();
     CRGB getColor();
@@ -52,6 +53,8 @@ class SequencerStep {
     uint8_t stepIndex;
     uint16_t *triggerState;
     uint16_t *pLockArmState;
+    uint8_t *loopCount;
+    uint8_t triggerMask;
     
 
 
