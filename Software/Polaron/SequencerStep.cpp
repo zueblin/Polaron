@@ -122,7 +122,7 @@ CRGB SequencerStep::getColor() {
     if (triggerOn && pLockOn){
         return triggerConditionOn ? CRGB::DarkOrange : 0x692A04;
     } else if (triggerOn){
-        return triggerConditionOn ? CRGB::CornflowerBlue: 0x21224F;
+        return triggerConditionOn ? CRGB::CornflowerBlue: 0x00004F;
     } else {
         return CRGB::Black;
     }

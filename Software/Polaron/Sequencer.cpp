@@ -86,7 +86,7 @@ void Sequencer::doStep() {
                     }
                     break;
 
-                case PLockParamSet::SET4:
+                case PLockParamSet::TRIGGER_COND:
                     step.triggerMask = triggerPattern;
                     break;
             }
@@ -186,12 +186,11 @@ void Sequencer::updateState() {
         pLockParamSet = PLockParamSet::SET2;
         deactivateSensors();
     } else if (functionButtons[BUTTON_SET_PARAMSET_3].rose()) {
-        if (pLockParamSet == PLockParamSet::SET3){
-            pLockParamSet = PLockParamSet::SET4;
-            triggerPattern = 0b00111111;
-        } else {
-            pLockParamSet = PLockParamSet::SET3;
-        }
+        pLockParamSet = PLockParamSet::SET3;
+        deactivateSensors();
+    } else if (functionButtons[BUTTON_SET_TRACKLENGTH].rose()) {
+        pLockParamSet = PLockParamSet::TRIGGER_COND;
+        triggerPattern = 0b00111111;
         deactivateSensors();
     }
     
@@ -241,7 +240,7 @@ void Sequencer::updateState() {
         default:
             break;
     }
-    if (hasActivePLockReceivers && pLockParamSet == PLockParamSet::SET4){
+    if (hasActivePLockReceivers && pLockParamSet == PLockParamSet::TRIGGER_COND){
         doSetTriggerConditions();
     } else if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS && functionMode != FunctionMode::SET_TEMPO) {
         // for all modes that do not use the track buttons in a special (non track selection) way
@@ -658,6 +657,9 @@ void Sequencer::doTurnOffPlockMode() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         tracks[i].getCurrentPattern().turnOffPLockMode();
     }
+    if (pLockParamSet == PLockParamSet::TRIGGER_COND){
+        pLockParamSet == PLockParamSet::SET1;
+    }
 }
 
 void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
@@ -684,7 +686,8 @@ void Sequencer::setFunctionButtonLights() {
     }
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::CornflowerBlue;
     functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::Green : CRGB::CornflowerBlue;
-    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : (pLockParamSet == PLockParamSet::SET4) ? CRGB::SeaGreen : CRGB::CornflowerBlue;
+    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : CRGB::CornflowerBlue;
+    functionLED(BUTTON_SET_TRACKLENGTH) = pLockParamSet == PLockParamSet::TRIGGER_COND ? CRGB::Green : CRGB::Black;
 }
 
 

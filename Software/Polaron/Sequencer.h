@@ -79,7 +79,7 @@ enum class FunctionMode {
     LOAD_PROJECT,
     SAVE_PROJECT
 };
-enum class PLockParamSet { SET1, SET2, SET3, SET4 };
+enum class PLockParamSet { SET1, SET2, SET3, TRIGGER_COND };
 
 class Sequencer {
    public:
