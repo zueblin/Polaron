@@ -28,14 +28,14 @@
 
 SequencerStep::SequencerStep() {}
 
-void SequencerStep::init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *loopCnt) {
+void SequencerStep::init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *patternIter) {
     
     params = defaultValues;
     stepIndex = stepIdx;
     triggerState = trState;
     pLockArmState = pLState;
-    loopCount = loopCnt;
-    triggerMask = 0b00001101;
+    patternIteration = patternIter;
+    triggerMask = 0b00111111;
     
 }
 
@@ -50,7 +50,7 @@ bool SequencerStep::isTriggerOn() {
 }
 
 bool  SequencerStep::isTriggerConditionOn() {
-    return triggerMask & _BV(*loopCount%4);
+    return triggerMask & _BV(*patternIteration % iterationMod);
 }
 
 void SequencerStep::toggleParameterLockRecord() {
@@ -94,6 +94,9 @@ void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
     }
     //state = sourceStep.state;
     params = sourceStep.params;
+    triggerMask = sourceStep.triggerMask;
+    iterationMod = sourceStep.iterationMod;
+
 }
 
 /*

@@ -79,7 +79,7 @@ enum class FunctionMode {
     LOAD_PROJECT,
     SAVE_PROJECT
 };
-enum class PLockParamSet { SET1, SET2, SET3 };
+enum class PLockParamSet { SET1, SET2, SET3, SET4 };
 
 class Sequencer {
    public:
@@ -140,6 +140,7 @@ class Sequencer {
     uint8_t ledFader = 0;
 
     uint8_t patternOpsArmState = 0;
+    uint8_t triggerPattern = 0;
 
     // tracks state of step copy operation
     int8_t sourceStepIndex = -1;
@@ -172,6 +173,7 @@ class Sequencer {
     void doUpdateMutes();
     void doTurnOffPlockMode();
     void doSetTrackSelection();
+    void doSetTriggerConditions();
     void doPatternOps();
     void doLeavePatternOps();
     void doSetTempo();

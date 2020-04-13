@@ -85,6 +85,10 @@ void Sequencer::doStep() {
                         step.params.parameter6 = input2.getValue();
                     }
                     break;
+
+                case PLockParamSet::SET4:
+                    step.triggerMask = triggerPattern;
+                    break;
             }
         }
         if (!tracks[i].isMuted() && step.isTriggerOn() && step.isTriggerConditionOn()) {
@@ -168,6 +172,12 @@ void Sequencer::updateState() {
 
 
     hasActivePLockReceivers = false;
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        if (tracks[i].getCurrentPattern().isInPLockMode()) {
+            hasActivePLockReceivers = true;
+            break;
+        }
+    }
 
     if (functionButtons[BUTTON_SET_PARAMSET_1].rose()) {
         pLockParamSet = PLockParamSet::SET1;
@@ -176,7 +186,12 @@ void Sequencer::updateState() {
         pLockParamSet = PLockParamSet::SET2;
         deactivateSensors();
     } else if (functionButtons[BUTTON_SET_PARAMSET_3].rose()) {
-        pLockParamSet = PLockParamSet::SET3;
+        if (pLockParamSet == PLockParamSet::SET3){
+            pLockParamSet = PLockParamSet::SET4;
+            triggerPattern = 0b00111111;
+        } else {
+            pLockParamSet = PLockParamSet::SET3;
+        }
         deactivateSensors();
     }
     
@@ -226,8 +241,9 @@ void Sequencer::updateState() {
         default:
             break;
     }
-
-    if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS && functionMode != FunctionMode::SET_TEMPO) {
+    if (hasActivePLockReceivers && pLockParamSet == PLockParamSet::SET4){
+        doSetTriggerConditions();
+    } else if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS && functionMode != FunctionMode::SET_TEMPO) {
         // for all modes that do not use the track buttons in a special (non track selection) way
         // do default track selection
         doSetTrackSelection();
@@ -542,6 +558,17 @@ void Sequencer::doLeavePatternOps() {
     nextPatternIndex = -1;
 }
 
+void Sequencer::doSetTriggerConditions(){
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        int idx = NUMBER_OF_INSTRUMENTTRACKS - i - 1;
+        if (trackButtons[i].rose()){
+            triggerPattern ^= _BV(idx);
+        }
+        trackLED(i) = triggerPattern & _BV(idx)? CRGB::Green : CRGB::CornflowerBlue;
+    }
+
+}
+
 void Sequencer::doSetTrackSelection() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         if (trackButtons[i].rose()) {
@@ -657,7 +684,7 @@ void Sequencer::setFunctionButtonLights() {
     }
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::CornflowerBlue;
     functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::Green : CRGB::CornflowerBlue;
-    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : CRGB::CornflowerBlue;
+    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : (pLockParamSet == PLockParamSet::SET4) ? CRGB::SeaGreen : CRGB::CornflowerBlue;
 }
 
 

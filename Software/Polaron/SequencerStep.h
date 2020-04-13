@@ -42,19 +42,23 @@ class SequencerStep {
     void setParameterLockRecordOff();
     bool isParameterLockOn();
     void copyValuesFrom(SequencerStep sourceStep);
-    void init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *loopCnt);
+    void init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *patternIter);
 
     //uint8_t getState();
     CRGB getColor();
 
     ParameterSet params;
+
+    uint8_t triggerMask;
+    uint8_t iterationMod = 4;
     
    private:
     uint8_t stepIndex;
     uint16_t *triggerState;
     uint16_t *pLockArmState;
-    uint8_t *loopCount;
-    uint8_t triggerMask;
+    uint8_t *patternIteration;
+    
+    
     
 
 

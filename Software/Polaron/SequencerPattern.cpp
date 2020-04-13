@@ -26,7 +26,7 @@ SequencerPattern::SequencerPattern() : trackLength(NUMBER_OF_STEPS_PER_PATTERN) 
 
 void SequencerPattern::init(ParameterSet &defaultValues) {
     for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
-        steps[i].init(defaultValues,i, &triggerState, &pLockArmState, &loopCount);
+        steps[i].init(defaultValues,i, &triggerState, &pLockArmState, &currentIteration);
     }
 }
 
@@ -36,9 +36,7 @@ SequencerStep & SequencerPattern::doStep() {
         if (autoMutate){
             triggerState ^= triggerState << 2;
         }
-        if (++loopCount >= 4){
-            loopCount = 0;
-        }
+        currentIteration++;
     }
     return getCurrentStep();
 }
@@ -68,4 +66,7 @@ void SequencerPattern::togglePLockMode() {
     }
 }
 
-void SequencerPattern::onStop() { currentStep = 16; }
+void SequencerPattern::onStop() { 
+    currentStep = 16; 
+    currentIteration = 0b11111111;
+}
