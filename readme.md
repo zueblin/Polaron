@@ -22,13 +22,15 @@ Disclaimer: This project is a work in progress. Features may change or not work,
 
 ![Parts](./Doc/Images/parts.jpg)
 
-There's a short demo on vimeo:
+here's some short videos:
 
 https://www.youtube.com/watch?v=JC_pZTxMb0c
 
 https://vimeo.com/302283771
 
 https://vimeo.com/305113707
+
+Follow the project on Instagram: https://www.instagram.com/polaron.me/
 
 And don't forget to check the [Project WIKI](https://github.com/zueblin/Polaron/wiki) for more info.
 
@@ -77,6 +79,7 @@ PCB Rev 1.4
 - Q: Can i buy a PCB? A: Yes, i currently have PCBs at 15 USD (+ shipping from switzerland). Please contact me by email, if interested.
 - Q: Can i buy a part-kit? A: I don't sell part kits anymore, since it is very easy and efficient to order parts online, eg. from mouser. ~~Yes, i currently have part kits (PCB + all parts, EXCLUDING the teensy itself) at 60 USD incl. untracked international shipping. Add 5 USD for tracked shipping. Please send me a mail, if interested.~~
 - Q: Can i buy a fully assembled Polaron? A: Not, not at the moment.
+- Q: How can i support this project? A: Spread the word, star the project on github, let your friends know, buy a PCB, build a Polaron and share a video...there are many ways. In general, knowing that this project sparks some interest is what keeps it going!
 
 # License
 
