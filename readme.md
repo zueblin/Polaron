@@ -7,10 +7,11 @@ Main features:
 - 16 step sequencer
 - 6 instrument tracks
 - 16 patterns per track
+- load/save projects to SD card
 - 2 pots for parameter control
 - parameter locks: all instrument parameters can be recorded for each step
 - different pattern length for each instrument track
-- midi sync
+- midi sync / trigger input
 - crunchy 12bit stereo outputs
 - open source hardware/software: if you miss a feature or are annoyed by a bug... change it!
 
