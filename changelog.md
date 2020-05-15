@@ -1,4 +1,20 @@
 # Software
+
+## Firmware v1.2.0
+* Conditional Triggers: Play a trigger only every n-th time a pattern is looped
+* Auto-mutate feature can change active triggers in a track everytime the loop is started again
+* Channel 5 (the second 'hihat-like' channel) is replaced by a new Instrument
+* Project naming on SD card changed due to length limitation (Old: PROJECT1.TXT, new P_1.TXT).
+
+After updating to this version, you will not be able to load projects stored with v1.1.0. In order to load these projects, manually rename them on the SD card, so that they are in the format P_0.TXT to P_15.TXT. Also due to the change with Channel 5, projects will not sound the same. If you prefer to keep the old Channel 5 simply change the following line in Polaron.ino from
+
+    //BroadbandNoiseChannel channel5;
+    BapChannel channel5;
+to
+
+    BroadbandNoiseChannel channel5;
+    // BapChannel channel5;
+
 ## Firmware v1.1.0
 * Store/Load projects from Micro SD card
 
