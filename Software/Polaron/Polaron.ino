@@ -32,6 +32,7 @@
 #include "ParameterSet.h"
 #include "BoomChannel.h"
 #include "BroadbandNoiseChannel.h"
+#include "BapChannel.h"
 #include "DualSineChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
@@ -64,7 +65,8 @@ SimpleDrumChannel channel2(200, 6000);
 // SimpleSineChannel channel3(100, 2000);
 FMChannel channel3(0, 1024);
 DualSineChannel channel4(16, 2000);
-BroadbandNoiseChannel channel5;
+//BroadbandNoiseChannel channel5;
+BapChannel channel5;
 HatsChannel channel6;
 
 AudioMixer8 mixer1;
@@ -76,7 +78,7 @@ ParameterSet channelDefaults[6] = {
     ParameterSet(450, 700, 1, 30, 10, 10),
     ParameterSet(300, 300, 50, 50, 10, 10),
     ParameterSet(300, 300, 50, 50, 10, 512),
-    ParameterSet(300, 300, 0, 200, 10, 512),
+    ParameterSet(200, 166, 250, 200, 650, 1),
     ParameterSet(300, 500, 50, 128, 10, 10)
 };
 
