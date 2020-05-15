@@ -74,9 +74,10 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
             JsonArray steps = pattern.createNestedArray("steps");
             for (int s = 0; s < NUMBER_OF_STEPS_PER_PATTERN; s++){
                 JsonObject step = steps.createNestedObject();
-                JsonArray stepParams = step.createNestedArray("params");
                 SequencerStep & sequencerStep = sequencerPattern.steps[s];
-                ParameterSet & params = sequencerStep.params;
+                // step["triggerMask"] = sequencerStep.triggerMask;
+                JsonArray stepParams = step.createNestedArray("params");
+                ParameterSet params = sequencerStep.params;
                 stepParams.add(params.parameter1);
                 stepParams.add(params.parameter2);
                 stepParams.add(params.parameter3);
@@ -158,6 +159,7 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
                 //Serial.print(":");
                 JsonArray stepParams = step["params"];
                 SequencerStep & sequencerStep = sequencerPattern.steps[s];
+                sequencerStep.triggerMask = step["triggerMask"] | 0b00111111;
                 ParameterSet & params = sequencerStep.params;
                 params.parameter1 = stepParams[0];
                 params.parameter2 = stepParams[1];

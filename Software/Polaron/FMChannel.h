@@ -48,6 +48,8 @@ class FMChannel : public AudioChannel {
     AudioStream *getOutput1() { return &envelope; }
     AudioStream *getOutput2() { return &envelope; }
 
+    ParameterSet getDefaultParams() { return ParameterSet(300, 300, 50, 50, 10, 10); }
+
     void trigger() {
         envelope.noteOn();
         fmEnvelope.noteOn();

@@ -74,6 +74,8 @@ class BapChannel : public AudioChannel {
     AudioStream *getOutput1() { return &highpass; }
     AudioStream *getOutput2() { return &highpass; }
 
+    ParameterSet getDefaultParams() { return ParameterSet(200, 166, 250, 200, 650, 200); }
+
     void trigger() {
         clickEnv.noteOn();
         bodyEnv.noteOn();

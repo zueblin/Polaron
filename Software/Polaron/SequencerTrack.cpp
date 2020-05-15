@@ -33,7 +33,7 @@
 
 SequencerTrack::SequencerTrack() : currentPattern(0), state(0) {}
 
-void SequencerTrack::init(ParameterSet &defaultValues) {
+void SequencerTrack::init(ParameterSet defaultValues) {
     for (auto &pattern : patterns) {
         pattern.init(defaultValues);
     }

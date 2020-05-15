@@ -40,7 +40,7 @@ class SequencerTrack {
 
     // does a Step and returns 1 if the new step is a trigger, 0 if it is not a
     // trigger
-    void init(ParameterSet &defaultValues);
+    void init(ParameterSet defaultValues);
     void initPatternOpsArmState(uint8_t trackIdx, uint8_t *patternOpsArmSt);
     SequencerStep & doStep();
     void onStop();

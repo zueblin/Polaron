@@ -50,6 +50,8 @@ class DualSineChannel : public AudioChannel {
     AudioStream *getOutput1() { return &envelope; }
     AudioStream *getOutput2() { return &envelope; }
 
+    ParameterSet getDefaultParams() { return ParameterSet(300, 300, 50, 50, 10, 512); }
+
     void trigger() { envelope.noteOn(); }
     void setParam1(int value) { osc1.frequency(map(value, 0, 1024, low, high)); }
     void setParam2(int value) { osc2.frequency(map(value, 0, 1024, low, high)); }

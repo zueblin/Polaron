@@ -70,6 +70,8 @@ class BroadbandNoiseChannel : public AudioChannel {
     AudioStream *getOutput1() { return &envelope; }
     AudioStream *getOutput2() { return &envelope; }
 
+    ParameterSet getDefaultParams() { return ParameterSet(300, 300, 0, 200, 10, 512); }
+
     void trigger() { envelope.noteOn(); }
     void setParam1(int value) { w1.frequency(value); }
     void setParam2(int value) {

@@ -79,7 +79,7 @@ enum class FunctionMode {
     LOAD_PROJECT,
     SAVE_PROJECT
 };
-enum class PLockParamSet { SET1, SET2, SET3, TRIGGER_COND };
+enum class PLockParamSet { SET1, SET2, SET3, SET3_2 };
 
 class Sequencer {
    public:
@@ -182,8 +182,6 @@ class Sequencer {
 
     void setDefaultTrackLight(uint8_t trackNum);
     void setFunctionButtonLights();
-
-    CRGB colorForStepState(uint8_t state);
 
     void start();
     void stop();

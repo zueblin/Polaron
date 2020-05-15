@@ -24,7 +24,7 @@
 
 SequencerPattern::SequencerPattern() : trackLength(NUMBER_OF_STEPS_PER_PATTERN) {}
 
-void SequencerPattern::init(ParameterSet &defaultValues) {
+void SequencerPattern::init(ParameterSet defaultValues) {
     for (int i = 0; i < NUMBER_OF_STEPS_PER_PATTERN; i++) {
         steps[i].init(defaultValues,i, &triggerState, &pLockArmState, &currentIteration);
     }

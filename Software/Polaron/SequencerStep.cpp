@@ -28,7 +28,7 @@
 
 SequencerStep::SequencerStep() {}
 
-void SequencerStep::init(ParameterSet &defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *patternIter) {
+void SequencerStep::init(ParameterSet defaultValues, uint8_t stepIdx, uint16_t *trState, uint16_t *pLState, uint8_t *patternIter) {
     
     params = defaultValues;
     stepIndex = stepIdx;
@@ -99,21 +99,6 @@ void SequencerStep::copyValuesFrom(SequencerStep sourceStep) {
 
 }
 
-/*
-uint8_t SequencerStep::getState(){
-    u_int8_t state = 0;
-    state += 
-    if (isTriggerOn()){
-        state += 1;
-    }
-    if (isParameterLockOn()){
-        state += 2;
-    }
-    return state;
-}
-*/
-
-
 CRGB SequencerStep::getColor() {
     bool triggerOn = isTriggerOn();
     bool triggerConditionOn = isTriggerConditionOn();
@@ -122,7 +107,7 @@ CRGB SequencerStep::getColor() {
     if (triggerOn && pLockOn){
         return triggerConditionOn ? CRGB::DarkOrange : 0x692A04;
     } else if (triggerOn){
-        return triggerConditionOn ? CRGB::CornflowerBlue: 0x00004F;
+        return triggerConditionOn ? CRGB::CornflowerBlue: CRGB::DarkBlue;
     } else {
         return CRGB::Black;
     }
