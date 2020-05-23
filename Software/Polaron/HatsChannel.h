@@ -81,6 +81,8 @@ class HatsChannel : public AudioChannel {
     AudioStream *getOutput1() { return &envelope; }
     AudioStream *getOutput2() { return &envelope; }
 
+    ParameterSet getDefaultParams() { return ParameterSet(300, 500, 50, 128, 10, 10); }
+
     void trigger() {
         w1.frequency(baseFreq);
         w2.frequency(baseFreq * ratio1 * ratioFactor1);

@@ -49,6 +49,9 @@ class BoomChannel : public AudioChannel {
         // setVolume(440);
 
     }
+
+    ParameterSet getDefaultParams() { return ParameterSet(280, 660, 740, 875, 900, 150); }
+
     AudioStream *getOutput1() { return &mixer; }
     AudioStream *getOutput2() { return &mixer; }
 

@@ -21,12 +21,16 @@
 // SOFTWARE.
 
 #include "AudioStream.h"
+#include "ParameterSet.h"
 
 #ifndef AudioChannel_h
 #define AudioChannel_h
 
 class AudioChannel {
    public:
+
+    virtual ParameterSet getDefaultParams() { return ParameterSet(512, 512, 512, 512, 512, 512); }
+
     virtual AudioStream* getOutput1();
     virtual AudioStream* getOutput2();
     virtual void trigger();

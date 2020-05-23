@@ -32,6 +32,7 @@
 #include "ParameterSet.h"
 #include "BoomChannel.h"
 #include "BroadbandNoiseChannel.h"
+#include "BapChannel.h"
 #include "DualSineChannel.h"
 #include "FMChannel.h"
 #include "HatsChannel.h"
@@ -64,21 +65,13 @@ SimpleDrumChannel channel2(200, 6000);
 // SimpleSineChannel channel3(100, 2000);
 FMChannel channel3(0, 1024);
 DualSineChannel channel4(16, 2000);
-BroadbandNoiseChannel channel5;
+//BroadbandNoiseChannel channel5;
+BapChannel channel5;
 HatsChannel channel6;
 
 AudioMixer8 mixer1;
 AudioMixer8 mixer2;
 AudioOutputAnalogStereo dacs1;
-
-ParameterSet channelDefaults[6] = {
-    ParameterSet(280, 660, 740, 875, 900, 150),
-    ParameterSet(450, 700, 1, 30, 10, 10),
-    ParameterSet(300, 300, 50, 50, 10, 10),
-    ParameterSet(300, 300, 50, 50, 10, 512),
-    ParameterSet(300, 300, 0, 200, 10, 512),
-    ParameterSet(300, 500, 50, 128, 10, 10)
-};
 
 AudioConnection patchCord8(*channel1.getOutput1(), 0, mixer1, 0);
 AudioConnection patchCord9(*channel2.getOutput1(), 0, mixer1, 1);
@@ -124,16 +117,17 @@ void setup() {
     AudioMemory(70);
     // dacs1.analogReference(EXTERNAL);
 
-    for (int i = 0; i < 6; i++){
-        sequencer.tracks[i].init(channelDefaults[i]);
-    }
-
     sequencer.audioChannels[0] = &channel1;
     sequencer.audioChannels[1] = &channel2;
     sequencer.audioChannels[2] = &channel3;
     sequencer.audioChannels[3] = &channel4;
     sequencer.audioChannels[4] = &channel5;
     sequencer.audioChannels[5] = &channel6;
+
+
+    for (int i = 0; i < 6; i++){
+        sequencer.tracks[i].init(sequencer.audioChannels[i]->getDefaultParams());
+    }
 
     sequencer.setMixers(&mixer1, &mixer2);
 
@@ -180,12 +174,13 @@ void setup() {
             for (int i = 0; i < 6; i++) {
                 sequencer.leds[24+i] = sequencer.trackButtons[i].read() ? CRGB::Black : color;
                 if (sequencer.trackButtons[i].rose()){
-                    sequencer.audioChannels[i]->setParam1(channelDefaults[i].parameter1);
-                    sequencer.audioChannels[i]->setParam2(channelDefaults[i].parameter2);
-                    sequencer.audioChannels[i]->setParam3(channelDefaults[i].parameter3);
-                    sequencer.audioChannels[i]->setParam4(channelDefaults[i].parameter4);
-                    sequencer.audioChannels[i]->setParam5(channelDefaults[i].parameter5);
-                    sequencer.audioChannels[i]->setParam6(channelDefaults[i].parameter6);
+                    ParameterSet params = sequencer.audioChannels[i]->getDefaultParams();
+                    sequencer.audioChannels[i]->setParam1(params.parameter1);
+                    sequencer.audioChannels[i]->setParam2(params.parameter2);
+                    sequencer.audioChannels[i]->setParam3(params.parameter3);
+                    sequencer.audioChannels[i]->setParam4(params.parameter4);
+                    sequencer.audioChannels[i]->setParam5(params.parameter5);
+                    sequencer.audioChannels[i]->setParam6(params.parameter6);
                     sequencer.audioChannels[i]->trigger();
                 }
             }

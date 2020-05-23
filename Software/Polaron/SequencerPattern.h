@@ -43,7 +43,7 @@ class SequencerPattern {
        currentStep = index % NUMBER_OF_STEPS_PER_PATTERN;
     }
 
-    void init(ParameterSet &defaultValues);
+    void init(ParameterSet defaultValues);
     void copyValuesFrom(SequencerPattern sourcePattern);
 
     // does a Step and returns the new step
@@ -70,8 +70,8 @@ class SequencerPattern {
     SequencerStep steps[NUMBER_OF_STEPS_PER_PATTERN];
 
    private:
-    int8_t currentStep = 16;
-    
+    uint8_t currentStep = 16;
+    uint8_t currentIteration = 0b11111111;
 
     
 };

@@ -35,6 +35,9 @@ class SimpleDrumChannel : public AudioChannel {
         mixer.gain(0, 0.8f);
         mixer.gain(1, 0.8f);
     }
+
+    ParameterSet getDefaultParams() { return ParameterSet(450, 700, 1, 30, 10, 10); }
+
     AudioStream *getOutput1() { return &mixer; }
     AudioStream *getOutput2() { return &mixer; }
 

@@ -26,7 +26,7 @@ void ProjectPersistence::updateProjectList(){
     existingProjects = 0;
     for (int i = 0; i < PROJECTSLOTS; i++){
         char* filename = new char[20];
-        sprintf(filename, "/project%i.txt", i);
+        sprintf(filename, "/p_%i.txt", i);
         if (SD.exists(filename)){
             existingProjects |= _BV(i);
         }
@@ -35,7 +35,9 @@ void ProjectPersistence::updateProjectList(){
 
 void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
     char* filename = new char[20];
-    sprintf(filename, "/project%i.txt", projectNum);
+    sprintf(filename, "/p_%i.txt", projectNum);
+    // Serial.print(F("Storing to file: "));
+    // Serial.println(filename);
     // Delete existing file, otherwise the configuration is appended to the file
     SD.remove(filename);
 
@@ -74,9 +76,10 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
             JsonArray steps = pattern.createNestedArray("steps");
             for (int s = 0; s < NUMBER_OF_STEPS_PER_PATTERN; s++){
                 JsonObject step = steps.createNestedObject();
-                JsonArray stepParams = step.createNestedArray("params");
                 SequencerStep & sequencerStep = sequencerPattern.steps[s];
-                ParameterSet & params = sequencerStep.params;
+                step["triggerMask"] = sequencerStep.triggerMask;
+                JsonArray stepParams = step.createNestedArray("params");
+                ParameterSet params = sequencerStep.params;
                 stepParams.add(params.parameter1);
                 stepParams.add(params.parameter2);
                 stepParams.add(params.parameter3);
@@ -101,7 +104,7 @@ void ProjectPersistence::save(int projectNum, Sequencer * sequencer){
 
 void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
     char* filename = new char[20];
-    sprintf(filename, "/project%i.txt", projectNum);
+    sprintf(filename, "/p_%i.txt", projectNum);
     // Open file for writing
     File file = SD.open(filename, FILE_READ);
     if (!file) {
@@ -127,7 +130,7 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
     int p = 0;
     int s = 0;
     do {
-        StaticJsonDocument<40000> trackDoc;
+        StaticJsonDocument<48000> trackDoc;
         DeserializationError err = deserializeJson(trackDoc, file);
         // Parse succeeded?
         if (err) {
@@ -156,8 +159,9 @@ void ProjectPersistence::load(int projectNum, Sequencer * sequencer){
                 //Serial.print("step ");
                 //Serial.print(s);
                 //Serial.print(":");
-                JsonArray stepParams = step["params"];
                 SequencerStep & sequencerStep = sequencerPattern.steps[s];
+                JsonArray stepParams = step["params"];
+                sequencerStep.triggerMask = step["triggerMask"] | 0b00111111;
                 ParameterSet & params = sequencerStep.params;
                 params.parameter1 = stepParams[0];
                 params.parameter2 = stepParams[1];

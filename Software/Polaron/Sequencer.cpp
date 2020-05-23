@@ -85,9 +85,13 @@ void Sequencer::doStep() {
                         step.params.parameter6 = input2.getValue();
                     }
                     break;
+
+                case PLockParamSet::SET3_2:
+                    step.triggerMask = triggerPattern;
+                    break;
             }
         }
-        if (!tracks[i].isMuted() && step.isTriggerOn()) {
+        if (!tracks[i].isMuted() && step.isTriggerOn() && step.isTriggerConditionOn()) {
             ParameterSet & stepParams = step.params;
             audioChannels[i]->setParam1(stepParams.parameter1);
             audioChannels[i]->setParam2(stepParams.parameter2);
@@ -168,6 +172,12 @@ void Sequencer::updateState() {
 
 
     hasActivePLockReceivers = false;
+    for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        if (tracks[i].getCurrentPattern().isInPLockMode()) {
+            hasActivePLockReceivers = true;
+            break;
+        }
+    }
 
     if (functionButtons[BUTTON_SET_PARAMSET_1].rose()) {
         pLockParamSet = PLockParamSet::SET1;
@@ -176,9 +186,14 @@ void Sequencer::updateState() {
         pLockParamSet = PLockParamSet::SET2;
         deactivateSensors();
     } else if (functionButtons[BUTTON_SET_PARAMSET_3].rose()) {
-        pLockParamSet = PLockParamSet::SET3;
+        if (pLockParamSet == PLockParamSet::SET3 && hasActivePLockReceivers){
+            pLockParamSet = PLockParamSet::SET3_2;
+            triggerPattern = 0b00111111;
+        } else {
+            pLockParamSet = PLockParamSet::SET3;
+        }
         deactivateSensors();
-    }
+    } 
     
     functionMode = calculateFunctionMode();
     if (functionMode != previousFunctionMode) {
@@ -226,8 +241,9 @@ void Sequencer::updateState() {
         default:
             break;
     }
-
-    if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS && functionMode != FunctionMode::SET_TEMPO) {
+    if (hasActivePLockReceivers && pLockParamSet == PLockParamSet::SET3_2){
+        doSetTriggerConditions();
+    } else if (functionMode != FunctionMode::TOGGLE_MUTES && functionMode != FunctionMode::PATTERN_OPS && functionMode != FunctionMode::SET_TEMPO) {
         // for all modes that do not use the track buttons in a special (non track selection) way
         // do default track selection
         doSetTrackSelection();
@@ -542,6 +558,19 @@ void Sequencer::doLeavePatternOps() {
     nextPatternIndex = -1;
 }
 
+void Sequencer::doSetTriggerConditions(){
+    trackLED(0) = CRGB::Black;
+    trackLED(1) = CRGB::Black;
+    for (int i = 2; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
+        int idx = NUMBER_OF_INSTRUMENTTRACKS - i - 1;
+        if (trackButtons[i].rose()){
+            triggerPattern ^= _BV(idx);
+        }
+        trackLED(i) = triggerPattern & _BV(idx)? CRGB::CornflowerBlue : CRGB::DarkBlue;
+    }
+
+}
+
 void Sequencer::doSetTrackSelection() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         if (trackButtons[i].rose()) {
@@ -631,6 +660,9 @@ void Sequencer::doTurnOffPlockMode() {
     for (int i = 0; i < NUMBER_OF_INSTRUMENTTRACKS; i++) {
         tracks[i].getCurrentPattern().turnOffPLockMode();
     }
+    if (pLockParamSet == PLockParamSet::SET3_2){
+        pLockParamSet = PLockParamSet::SET3;
+    }
 }
 
 void Sequencer::setDefaultTrackLight(uint8_t trackNum) {
@@ -657,7 +689,8 @@ void Sequencer::setFunctionButtonLights() {
     }
     functionLED(BUTTON_SET_PARAMSET_1) = pLockParamSet == PLockParamSet::SET1 ? CRGB::Green : CRGB::CornflowerBlue;
     functionLED(BUTTON_SET_PARAMSET_2) = pLockParamSet == PLockParamSet::SET2 ? CRGB::Green : CRGB::CornflowerBlue;
-    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : CRGB::CornflowerBlue;
+    functionLED(BUTTON_SET_PARAMSET_3) = pLockParamSet == PLockParamSet::SET3 ? CRGB::Green : 
+        pLockParamSet == PLockParamSet::SET3_2 ? CRGB::DarkBlue : CRGB::CornflowerBlue;
 }
 
 
@@ -680,22 +713,5 @@ void Sequencer::onMidiInput(uint8_t rtb) {
         //    break;
         default:  // Invalid Real Time marker
             break;
-    }
-}
-
-CRGB Sequencer::colorForStepState(uint8_t state) {
-    switch (state) {
-        case 1:
-            // trigger on / plock rec off
-            return CRGB::CornflowerBlue;
-        case 2:
-            // trigger off / plock rec on
-            return CRGB::Green;
-        case 3:
-            // trigger on / plock rec on
-            return CRGB::DarkOrange;
-        default:
-            // trigger off / plock rec off
-            return CRGB::Black;
     }
 }
