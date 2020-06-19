@@ -77,7 +77,7 @@ PCB Rev 1.4
 - Q: Does it work with a Teensy 3.5? A: PJRC forum member drjohn reports successfully running the Polaron with a Teensy 3.5.
 - Q: Is there a manual? A: Yes, please check the [Project WIKI](https://github.com/zueblin/Polaron/wiki) for build instructions and operating manual. If you still have questions / suggestions, please send me a mail.
 - Q: Does the polaron fit into a euro-rack? A: No, not really (PCB size is 15.7cm x 11.6cm). Polaron builder N.Shaver has experimented with a 3D printable eurorack case for the polaron which he shares on [Thingiverse](https://www.thingiverse.com/thing:3830556)
-- Q: Can i buy a PCB? A: Yes, i currently have PCBs at 15 USD (+ shipping from switzerland). Please contact me by email, if interested.
+- Q: Can i buy a PCB? A: Sold out, but let me know if you'd be interested in buying one. ~~Yes, i currently have PCBs at 15 USD (+ shipping from switzerland). Please contact me by email, if interested.~~
 - Q: Can i buy a part-kit? A: I don't sell part kits anymore, since it is very easy and efficient to order parts online, eg. from mouser. ~~Yes, i currently have part kits (PCB + all parts, EXCLUDING the teensy itself) at 60 USD incl. untracked international shipping. Add 5 USD for tracked shipping. Please send me a mail, if interested.~~
 - Q: Can i buy a fully assembled Polaron? A: Not, not at the moment.
 - Q: How can i support this project? A: Spread the word, star the project on github, let your friends know, buy a PCB, build a Polaron and share a video...there are many ways. In general, knowing that this project sparks some interest is what keeps it going!
