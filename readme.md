@@ -11,11 +11,11 @@ Main features:
 - 2 pots for parameter control
 - parameter locks: all instrument parameters can be recorded for each step
 - different pattern length for each instrument track
-- midi sync / trigger input
+- sync to midi-clock (usb-midi) or trigger input
 - crunchy 12bit stereo outputs
 - open source hardware/software: if you miss a feature or are annoyed by a bug... change it!
 
-Disclaimer: This project is a work in progress. Features may change or not work, use at your own risk.
+Disclaimer: This is a DIY project, features may change or not work for you. Use at your own risk.
 
 ![Sideview](./Doc/Images/sideview.jpg)
 
@@ -72,9 +72,10 @@ PCB Rev 1.4
 
 ## FAQ
 
-- Q: Is this an easy build? A: This is an intermediate project to build, its not particularly hard, but its not a good project if you've never soldered before. You need to be comfortable soldering surface mount parts (SMD). For this you need a decent soldering iron, with a rather fine tip.
+- Q: Is this an easy build? A: This is an intermediate project to build. Its not very complicated, but there are some SMD parts which are not easy to get right (the LEDs). You'll need a decent soldering iron, with a rather fine tip.
 - Q: Is this a pro audio project? A: No, not exactly. The Polaron is more about a fun workflow than super hifi sound.
 - Q: Does it work with a Teensy 3.5? A: PJRC forum member drjohn reports successfully running the Polaron with a Teensy 3.5.
+- Q: Does it work with a Teensy 4.0 / 4.1? A: No, the Polaron relies on the internal DAC of the Teensy 3.6 and is not compatible with Teensy 4.0 / 4.1
 - Q: Is there a manual? A: Yes, please check the [Project WIKI](https://github.com/zueblin/Polaron/wiki) for build instructions and operating manual. If you still have questions / suggestions, please send me a mail.
 - Q: Does the polaron fit into a euro-rack? A: No, not really (PCB size is 15.7cm x 11.6cm). Polaron builder N.Shaver has experimented with a 3D printable eurorack case for the polaron which he shares on [Thingiverse](https://www.thingiverse.com/thing:3830556)
 - Q: Can i buy a PCB? A: Sold out, but let me know if you'd be interested in buying one. ~~Yes, i currently have PCBs at 15 USD (+ shipping from switzerland). Please contact me by email, if interested.~~
